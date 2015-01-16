@@ -1,0 +1,35 @@
+{
+  "name": "nodecg-cli",
+  "description": "The NodeCG command line interface.",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nodecg/nodecg-cli.git"
+  },
+  "bugs": {
+    "url": "http://github.com/nodecg/nodecg-cli/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/nodecg/nodecg-cli/blob/master/LICENSE"
+    }
+  ],
+  "bin": {
+    "nodecg": "bin/nodecg"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "preferGlobal": true,
+  "dependencies": {
+    "findup-sync": "~0.1.0",
+    "fs.extra": "^1.3.2",
+    "inquirer": "^0.8.0",
+    "liftoff": "^2.0.0",
+    "minimist": "^1.1.0",
+    "nopt": "~1.0.10",
+    "npm": "^2.2.0",
+    "resolve": "~0.3.1"
+  }
+}
