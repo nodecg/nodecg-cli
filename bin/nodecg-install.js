@@ -5,21 +5,41 @@ var program = require('commander');
 
 // External libs
 var npa = require('npm-package-arg');
+var clone = require('git-clone');
+var findup = require('findup-sync');
 
-// Pass in the descriptor, and it'll return an object
-var parsed = npa(program.args[0]);
+var nodecgPath = findup('nodecg/');
+if (!nodecgPath) {
+    console.error('NodeCG installation not found, are you in the right directory?');
+    process.exit(1);
+}
 
 program
     .option('-d, --dev', 'install development dependencies')
     .parse(process.argv);
 
-if (parsed.type === 'git') {
-    // clone the git repo
+if (!program.args[0]) {
+    console.log('Hay do stuff if no arg is supplied');
+    process.exit(0);
 }
 
-if (parsed.type === 'hosted') {
-    // clone the hosted git repo
+var parsed = npa(program.args[0]);
+
+var repoUrl = null;
+console.log(parsed);
+if (parsed.type === 'git') {
+    repoUrl = parsed.spec;
+} else if (parsed.type === 'hosted') {
+    repoUrl = parsed.hosted.httpsUrl;
 }
+
+console.log(repoUrl, nodecgPath + '/bundles');
+clone(repoUrl, nodecgPath + '/bundles', {}, function(er) {
+    if (er) {
+        console.error(er.message);
+        process.exit(1);
+    }
+});
 
 if (program.dev) {
     // take the contents of nodecg-installdev.js and put them in here
