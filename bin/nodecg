@@ -11,6 +11,7 @@ program
     .command('config', 'Configure the NodeCG instance in the current path')
     .command('bundle', 'Create a new bundle template')
     .command('start', 'Start NodeCG')
+    .command('install <repo>', 'Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or git url.')
     .parse(process.argv);
 
 if (!process.argv.slice(2).length) {
