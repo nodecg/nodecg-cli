@@ -17,5 +17,5 @@ nodecg init
 * `nodecg start`, start the NodeCG instance in this directory path
 * `nodecg bundle`, interactively generate a new NodeCG bundle template (WIP, feedback wanted)
 * `nodecg install [repo] [--dev]`, install a bundle by cloning a git repo. Can be a GitHub owner/repo pair (`supportclass/lfg-sublistener`) or https git url (`https://github.com/SupportClass/lfg-sublistener.git`).
-If run in a bundle directory with no arguments, installs that bundle\'s dependencies. Enable `--dev` flag to install the bundle's `devDependencies`.
+If run in a bundle directory with no arguments, installs that bundle's dependencies. Enable `--dev` flag to install the bundle's `devDependencies`.
 * `nodecg update`, `git pull` a bundle. If run with no arguments, attempts to update the bundle in the current directory (if any)
