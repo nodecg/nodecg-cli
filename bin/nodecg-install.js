@@ -7,6 +7,7 @@ var program = require('commander');
 var npa = require('npm-package-arg');
 var clone = require('git-clone');
 var findup = require('findup-sync');
+var path = require('path');
 
 var nodecgPath = findup('nodecg/');
 if (!nodecgPath) {
@@ -35,14 +36,19 @@ if (parsed.type === 'git') {
     console.error('Please enter a valid git url (https) or git hub username/repo pair.');
     process.exit(1);
 }
-
-console.log(repoUrl, nodecgPath + '/bundles');
-clone(repoUrl, nodecgPath + '/bundles', {}, function(er) {
+var bundlesPath = path.join(nodecgPath, 'bundles');
+var cwd = process.cwd();
+process.chdir(bundlesPath);
+console.log(repoUrl, bundlesPath);
+clone(repoUrl, '', {}, function(er) {
     if (er) {
         console.error(er.message);
+        process.chdir(cwd);
         process.exit(1);
     }
 });
+
+process.chdir(cwd);
 
 if (program.dev) {
     // take the contents of nodecg-installdev.js and put them in here
