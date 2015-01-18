@@ -5,7 +5,7 @@ var program = require('commander');
 
 // External libs
 var npa = require('npm-package-arg');
-var clone = require('git-clone');
+var git = require('../lib/git');
 var findup = require('findup-sync');
 var path = require('path');
 
@@ -25,24 +25,23 @@ if (!program.args[0]) {
 }
 
 var parsed = npa(program.args[0]);
-
 var repoUrl = null;
-console.log(parsed);
+
 if (parsed.type === 'git') {
     repoUrl = parsed.spec;
 } else if (parsed.type === 'hosted') {
     repoUrl = parsed.hosted.httpsUrl;
 } else {
-    console.error('Please enter a valid git url (https) or git hub username/repo pair.');
+    console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
     process.exit(1);
 }
+
 var bundlesPath = path.join(nodecgPath, 'bundles');
 var cwd = process.cwd();
 process.chdir(bundlesPath);
-console.log(repoUrl, bundlesPath);
-clone(repoUrl, '', {}, function(er) {
-    if (er) {
-        console.error(er.message);
+git.clone(repoUrl, '', function(err) {
+    if (err) {
+        console.error(err.message);
         process.chdir(cwd);
         process.exit(1);
     }
