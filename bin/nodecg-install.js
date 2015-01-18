@@ -31,6 +31,9 @@ if (parsed.type === 'git') {
     repoUrl = parsed.spec;
 } else if (parsed.type === 'hosted') {
     repoUrl = parsed.hosted.httpsUrl;
+} else {
+    console.error('Please enter a valid git url (https) or git hub username/repo pair.');
+    process.exit(1);
 }
 
 console.log(repoUrl, nodecgPath + '/bundles');
