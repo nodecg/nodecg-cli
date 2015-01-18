@@ -23,6 +23,7 @@ program
     .parse(process.argv);
 
 if (!program.args[0]) {
+    // If no args are supplied, assume the user is intending to update the bundle in the current dir
     installDeps(process.cwd());
 } else {
     var parsed = npa(program.args[0]);
@@ -57,7 +58,6 @@ if (!program.args[0]) {
 }
 
 function installDeps(bundlePath) {
-    // If no args are supplied, assume the user is intending to update the bundle in the current dir
     var manifestPath = path.join(bundlePath, 'nodecg.json');
     if (!fs.existsSync(manifestPath)) {
         console.error('nodecg.json not found, are you in a bundle directory?');
