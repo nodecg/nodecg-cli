@@ -3,9 +3,9 @@
 var fs = require('fs');
 var program = require('commander');
 var git = require('../lib/git');
-var findup = require('findup-sync');
 var path = require('path');
 var installDeps = require('../lib/install-deps');
+var util = require('../lib/util');
 
 module.exports = function updateCommand(program) {
     function update(bundleName) {
@@ -33,8 +33,8 @@ module.exports = function updateCommand(program) {
         .command('update [bundleName]')
         .description('\'git pull\' a bundle. If run with no arguments, attempts to update the bundle in the current directory (if any).')
         .action(function(bundleName) {
-            var nodecgPath = findup('nodecg/');
-            if (!nodecgPath) {
+            var nodecgPath = process.cwd();
+            if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
                 process.exit(1);
             }
