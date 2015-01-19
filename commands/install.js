@@ -30,7 +30,7 @@ module.exports = function installCommand(program) {
                 var repoUrl = null;
 
                 if (parsed.type === 'git') {
-                    repoUrl = parsed.spec;
+                    repoUrl = parsed.spec.replace('+https', ''); //nodegit doesn't support git+https:// addresses
                 } else if (parsed.type === 'hosted') {
                     repoUrl = parsed.hosted.httpsUrl;
                 } else {

@@ -34,11 +34,14 @@ module.exports = function updateCommand(program) {
             // with the new one
             .then(function() {
                 // TODO: work on branches other than master
+                // TODO: find out if this operation is sync or not?
                 repository.mergeBranches("master", "origin/master");
             })
-            .done(function() {
-                // TODO: make installDeps return a promise
-                installDeps(bundlePath);
+            .then(function() {
+                return installDeps(bundlePath);
+            })
+            .catch(function(err) {
+                console.error(err.stack);
             })
     }
 
