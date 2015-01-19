@@ -8,6 +8,8 @@ var installDeps = require('../lib/install-deps');
 var util = require('../lib/util');
 
 module.exports = function updateCommand(program) {
+    var nodecgPath = process.cwd();
+
     function update(bundleName) {
         var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
         var manifestPath = path.join(bundlePath, 'nodecg.json');
@@ -33,7 +35,6 @@ module.exports = function updateCommand(program) {
         .command('update [bundleName]')
         .description('\'git pull\' a bundle. If run with no arguments, attempts to update the bundle in the current directory (if any).')
         .action(function(bundleName) {
-            var nodecgPath = process.cwd();
             if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
                 process.exit(1);
