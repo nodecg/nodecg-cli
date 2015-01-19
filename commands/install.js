@@ -1,16 +1,15 @@
 'use strict';
 
-var findup = require('findup-sync');
 var fs = require('fs');
 var git = require('../lib/git');
 var installDeps = require('../lib/install-deps');
 var npa = require('npm-package-arg');
 var path = require('path');
+var util = require('../lib/util');
 
 module.exports = function installCommand(program) {
-    var nodecgPath = findup('nodecg/');
-    console.log(nodecgPath);
-    if (!nodecgPath) {
+    var nodecgPath = process.cwd();
+    if (!util.pathContainsNodeCG(nodecgPath)) {
         console.error('NodeCG installation not found, are you in the right directory?');
         process.exit(1);
     }

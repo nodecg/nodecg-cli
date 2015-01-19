@@ -3,6 +3,7 @@
 var fs = require('fs.extra');
 var npm = require('npm');
 var os = require('os');
+var util = require('../lib/util');
 
 module.exports = function initCommand(program) {
     program
@@ -12,13 +13,9 @@ module.exports = function initCommand(program) {
             version = version || 'latest';
 
             // Check if nodecg is already installed
-            var pjsonPath = process.cwd() + '/package.json';
-            if (fs.existsSync(pjsonPath)) {
-                var pjson = require(pjsonPath);
-                if (pjson.name.toLowerCase() === 'nodecg') {
-                    console.log('NodeCG is already installed in this directory');
-                    process.exit(0);
-                }
+            if (util.pathContainsNodeCG(process.cwd())) {
+                console.log('NodeCG is already installed in this directory');
+                process.exit(0);
             }
 
             // Use npm to install to node_modules, then copy out
