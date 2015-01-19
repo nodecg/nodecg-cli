@@ -1,7 +1,7 @@
 'use strict';
 
 var fs = require('fs');
-var git = require('../lib/git');
+var clone = require('nodegit').Clone.clone;
 var installDeps = require('../lib/install-deps');
 var npa = require('npm-package-arg');
 var path = require('path');
@@ -44,22 +44,19 @@ module.exports = function installCommand(program) {
                     fs.mkdirSync(bundlesPath);
                 }
 
-                var cwd = process.cwd();
-                process.chdir(bundlesPath);
-                git.clone(repoUrl, function(err) {
-                    if (err) {
-                        console.error(err.message);
-                        process.chdir(cwd);
-                        process.exit(1);
-                    }
+                // Extract repo name from git url
+                var temp = repoUrl.split('/').pop();
+                var bundleName = temp.substr(0, temp.length - 4);
+                var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
-                    // Extract repo name from git url
-                    var temp = repoUrl.split('/').pop();
-                    var bundleName = temp.substr(0, temp.length - 4);
-                    var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
-                    installDeps(bundlePath, dev);
-                    process.chdir(cwd);
-                });
+                clone(repoUrl, bundlePath)
+                    .then(function(repo) {
+                        installDeps(bundlePath, dev);
+                    })
+                    .catch(function(err) {
+                        console.error(err.stack);
+                        process.exit(1);
+                    });
             }
         });
 

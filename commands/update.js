@@ -1,8 +1,7 @@
 'use strict';
 
 var fs = require('fs');
-var program = require('commander');
-var git = require('../lib/git');
+var nodegit = require('nodegit');
 var path = require('path');
 var installDeps = require('../lib/install-deps');
 var util = require('../lib/util');
@@ -18,23 +17,36 @@ module.exports = function updateCommand(program) {
             process.exit(1);
         }
 
-        var cwd = process.cwd();
-        process.chdir(bundlePath);
-        git.pull(function(err) {
-            if (err) {
-                console.error(err.message);
-                process.chdir(cwd);
-                process.exit(1);
-            }
-            installDeps(bundlePath);
-            process.chdir(cwd);
-        });
+        var repository;
+
+        // Open a repository that needs to be fetched and fast-forwarded
+        nodegit.Repository.open(bundlePath)
+            .then(function(repo) {
+                repository = repo;
+
+                return repository.fetchAll({
+                    credentials: function(url, userName) {
+                        return nodegit.Cred.sshKeyFromAgent(userName);
+                    }
+                }, true);
+            })
+            // Now that we're finished fetching, go ahead and merge our local branch
+            // with the new one
+            .then(function() {
+                // TODO: work on branches other than master
+                repository.mergeBranches("master", "origin/master");
+            })
+            .done(function() {
+                // TODO: make installDeps return a promise
+                installDeps(bundlePath);
+            })
     }
 
     program
         .command('update [bundleName]')
         .description('\'git pull\' a bundle. If run with no arguments, attempts to update the bundle in the current directory (if any).')
         .action(function(bundleName) {
+            // TODO: this prevents this command working from within a bundle's directory
             if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
                 process.exit(1);
