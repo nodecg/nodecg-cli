@@ -1,9 +1,8 @@
-#!/usr/bin/env node
 'use strict';
 
-// External libs
-var inquirer = require('inquirer');
 var fs = require ('fs.extra');
+var inquirer = require('inquirer');
+var path = require('path');
 
 var questions = [
     {
@@ -33,8 +32,16 @@ var questions = [
         message: 'License:'
     }
 ];
-inquirer.prompt(questions, function(answers) {
-    var dir = path.resolve(process.cwd(), 'bundles', answers.name);
-    fs.mkdirpSync(dir);
-    fs.writeFileSync(path.join(dir, 'nodecg.json'), JSON.stringify(answers, null, 4));
-});
+
+module.exports = function bundleCommand(program) {
+    program
+        .command('bundle')
+        .description('Create a new bundle template')
+        .action(function() {
+            inquirer.prompt(questions, function(answers) {
+                var dir = path.resolve(process.cwd(), 'bundles', answers.name);
+                fs.mkdirpSync(dir);
+                fs.writeFileSync(path.join(dir, 'nodecg.json'), JSON.stringify(answers, null, 4));
+            });
+        });
+};
