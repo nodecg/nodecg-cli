@@ -8,18 +8,18 @@ var path = require('path');
 var util = require('../lib/util');
 
 module.exports = function installCommand(program) {
-    var nodecgPath = process.cwd();
-    if (!util.pathContainsNodeCG(nodecgPath)) {
-        console.error('NodeCG installation not found, are you in the right directory?');
-        process.exit(1);
-    }
-
     program
         .command('install [repo]')
         .description('Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
                      '\n\t\t    If run in a bundle directory with no arguments, installs that bundle\'s dependencies.')
         .option('-d, --dev', 'install development dependencies')
         .action(function(repo, options) {
+            var nodecgPath = process.cwd();
+            if (!util.pathContainsNodeCG(nodecgPath)) {
+                console.error('NodeCG installation not found, are you in the right directory?');
+                process.exit(1);
+            }
+
             var dev = options.dev || false;
 
             if (!repo) {
