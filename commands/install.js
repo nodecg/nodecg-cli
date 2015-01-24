@@ -28,10 +28,16 @@ module.exports = function installCommand(program) {
             } else {
                 var parsed = npa(repo);
                 var repoUrl = null;
+                var opts = {};
 
                 if (parsed.type === 'git') {
                     repoUrl = parsed.spec.replace('+https', ''); //nodegit doesn't support git+https:// addresses
                 } else if (parsed.type === 'hosted') {
+                    // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
+                    if (process.platform === 'darwin') {
+                        opts = { ignoreCertErrors: 1 };
+                    }
+
                     repoUrl = parsed.hosted.httpsUrl;
                 } else {
                     console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
@@ -49,7 +55,7 @@ module.exports = function installCommand(program) {
                 var bundleName = temp.substr(0, temp.length - 4);
                 var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
-                clone(repoUrl, bundlePath)
+                clone(repoUrl, bundlePath, opts)
                     .then(function(repo) {
                         installDeps(bundlePath, dev);
                     })
