@@ -35,7 +35,7 @@ module.exports = function installCommand(program) {
                 } else if (parsed.type === 'hosted') {
                     // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
                     if (process.platform === 'darwin') {
-                        opts = { ignoreCertErrors: 1 };
+                        opts.ignoreCertErrors = 1;
                     }
 
                     repoUrl = parsed.hosted.httpsUrl;
