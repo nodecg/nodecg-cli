@@ -1,11 +1,10 @@
 'use strict';
 
 var util = require('../lib/util');
-var nodegit = require('nodegit');
-var clone = nodegit.Clone.clone;
-var Checkout = nodegit.Checkout;
+var childProcess = require('child_process');
+var exec = childProcess.exec;
+var os = require('os');
 var Q = require('q');
-var exec = require('child_process').exec;
 
 var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -25,11 +24,72 @@ module.exports = function initCommand(program) {
                 version = 'v' + version;
             }
 
-            // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
-            var opts = { ignoreCertErrors: 1 };
+            Q.Promise(function(resolve, reject) {
+                process.stdout.write('Cloning NodeCG...');
 
-            console.log('Cloning NodeCG');
-            clone(NODECG_GIT_URL, process.cwd(), opts)
+                // Put the earbuds in
+                var write = process.stderr.write;
+                process.stderr.write = function(){};
+
+                exec('git clone ' + NODECG_GIT_URL + ' .', function(err, stdout, stderr) {
+                    // Take them earbuds out
+                    process.stderr.write = write;
+
+                    if (err) {
+                        reject(new Error('Failed to clone NodeCG:', err.message));
+                    }
+
+                    process.stdout.write(' done!' + os.EOL);
+                    resolve();
+                });
+            })
+                .then(function() {
+                    if (!version) return;
+
+                    var deferred = Q.defer();
+
+                    // Put the earbuds in
+                    var write = process.stderr.write;
+                    process.stderr.write = function(){};
+
+                    process.stdout.write('Checking out version ' + version + '...');
+
+                    // If a specific version tag argument was supplied, check out that tag
+                    exec('git checkout ' + version, function(err, stdout, stderr) {
+                        // Take them earbuds out
+                        process.stderr.write = write;
+
+                        if (err) {
+                            deferred.reject(new Error('Failed to checkout NodeCG version %s:', version, err.message));
+                        }
+
+                        process.stdout.write(' done!' + os.EOL);
+                        deferred.resolve();
+                    });
+
+                    return deferred.promise;
+                })
+                .then(function(){
+                    process.stdout.write('Installing production npm dependencies...');
+                    var deferred = Q.defer();
+                    exec('npm install --production', {}, function(err, stdout, stderr) {
+                        if (stderr) console.error(stderr);
+                        if (err) {
+                            deferred.reject(new Error('Failed to install npm dependencies:', err.message));
+                        }
+                        process.stdout.write(' done!' + os.EOL);
+                        deferred.resolve();
+                    });
+                    return deferred.promise;
+                })
+                .catch(function(e) {
+                   console.error('Failed to setup NodeCG:', e);
+                })
+                .done(function() {
+                    console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
+                });
+
+            /*clone(NODECG_GIT_URL, process.cwd(), opts)
                 .then(function(repo) {
                     // If a specific version tag was supplied, checkout that tag
                     if (version) {
@@ -64,6 +124,6 @@ module.exports = function initCommand(program) {
                 })
                 .done(function() {
                     console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
-                });
+                });*/
         });
 };
