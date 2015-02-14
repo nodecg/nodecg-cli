@@ -21,8 +21,8 @@ module.exports = function initCommand(program) {
             }
 
             // We prefix our release tags with 'v'
-            if (version) {
-                if (version.charAt(0) !== 'v') version = 'v' + version;
+            if (version && version.charAt(0) !== 'v') {
+                version = 'v' + version;
             }
 
             // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
