@@ -1,10 +1,13 @@
 'use strict';
 
 var fs = require('fs');
-var nodegit = require('nodegit');
 var path = require('path');
 var installDeps = require('../lib/install-deps');
 var util = require('../lib/util');
+var Q = require('q');
+var chalk = require('chalk');
+var os = require('os');
+var exec = require('child_process').exec;
 
 module.exports = function updateCommand(program) {
     var nodecgPath = process.cwd();
@@ -17,32 +20,35 @@ module.exports = function updateCommand(program) {
             process.exit(1);
         }
 
-        var repository;
+        process.chdir(bundlePath);
+        var write = process.stderr.write;
+        Q.Promise(function(resolve, reject) {
+            process.stdout.write('Updating ' + bundleName + '...');
 
-        // Open a repository that needs to be fetched and fast-forwarded
-        nodegit.Repository.open(bundlePath)
-            .then(function(repo) {
-                repository = repo;
+            // Make git be quiet
+            process.stderr.write = function(){};
 
-                return repository.fetchAll({
-                    credentials: function(url, userName) {
-                        return nodegit.Cred.sshKeyFromAgent(userName);
-                    }
-                }, true);
-            })
-            // Now that we're finished fetching, go ahead and merge our local branch
-            // with the new one
-            .then(function() {
-                // TODO: work on branches other than master
-                // TODO: find out if this operation is sync or not?
-                repository.mergeBranches("master", "origin/master");
-            })
+            exec('git pull', function(err, stdout, stderr) {
+                process.stderr.write = write;
+
+                if (err) {
+                    process.stdout.write(chalk.red(' failed!') + os.EOL);
+                    reject(err);
+                    return;
+                }
+
+                process.stdout.write(chalk.green(' done!') + os.EOL);
+                resolve();
+            });
+        })
             .then(function() {
                 return installDeps(bundlePath);
             })
             .catch(function(err) {
-                console.error(err.stack);
-            })
+                process.stderr.write = write;
+                console.error(err.message);
+                process.exit(1);
+            });
     }
 
     program
