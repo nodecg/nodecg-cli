@@ -23,11 +23,11 @@ module.exports = function initCommand(program) {
                 version = 'v' + version;
             }
 
-            // If NodeCG is already installed and the `-f` flag was supplied, update NodeCG
+            // If NodeCG is already installed and the `-u` flag was supplied, update NodeCG
             if (util.pathContainsNodeCG(process.cwd())) {
                 if (!options.update) {
                     console.log('NodeCG is already installed in this directory.');
-                    console.log('Use ' + chalk.cyan('nodecg setup -u') + ' to update your existing install.');
+                    console.log('Use ' + chalk.cyan('nodecg setup [version] -u') + ' if you want update your existing install.');
                     process.exit(0);
                 }
 
