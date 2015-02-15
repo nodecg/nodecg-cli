@@ -31,8 +31,6 @@ module.exports = function initCommand(program) {
                     process.exit(0);
                 }
 
-                // Fetch the latest tags
-                // Then pull the latest tag
                 Q.Promise(function(resolve, reject) {
                     process.stdout.write('Fetching the list of releases... ');
 
