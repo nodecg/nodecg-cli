@@ -53,10 +53,10 @@ module.exports = function initCommand(program) {
                         var deferred = Q.defer();
                         process.stderr.write = function(){}; // Shh git...
 
-                        if (!version) {
-                            process.stdout.write('Checking against local install for updates... ');
-                        } else {
+                        if (version) {
                             process.stdout.write('Searching for release '+chalk.magenta(version)+' ... ');
+                        } else {
+                            process.stdout.write('Checking against local install for updates... ');
                         }
 
 
@@ -216,7 +216,7 @@ module.exports = function initCommand(program) {
                     process.stderr.write = write;
                    console.error('Failed to setup NodeCG:', os.EOL, e.message);
                 })
-                
+
                 .done(function() {
                     console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
                 });
