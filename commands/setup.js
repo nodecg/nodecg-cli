@@ -31,6 +31,7 @@ module.exports = function initCommand(program) {
                     process.exit(0);
                 }
 
+                // Fetch the latest tags from GitHub
                 Q.Promise(function(resolve, reject) {
                     process.stdout.write('Fetching the list of releases... ');
 
@@ -45,11 +46,13 @@ module.exports = function initCommand(program) {
                         resolve();
                     });
                 })
+
+                    // If [version] was supplied, check that it exists
+                    // If not, grab whatever the latest tag is
                     .then(function() {
                         var deferred = Q.defer();
                         process.stderr.write = function(){}; // Shh git...
 
-                        // If no version is supplied, assume they want the latest release
                         if (!version) {
                             process.stdout.write('Checking against local install for updates... ');
                         } else {
@@ -98,6 +101,9 @@ module.exports = function initCommand(program) {
 
                         return deferred.promise;
                     })
+
+                    // Now that we know for sure if the target tag exists (and if its newer or older than current),
+                    // we can `git pull` and `git checkout <tag>` if appropriate.
                     .then(function(result) {
                         if (result.updatingToLatest && result.current >= result.latest) {
                             console.log('No updates found! Your current version (%s) is the latest.', chalk.magenta(result.current));
@@ -130,10 +136,12 @@ module.exports = function initCommand(program) {
 
                         return deferred.promise;
                     })
+
                     .catch(function(e) {
                         process.stderr.write = write;
                         console.error('Failed to update NodeCG:', os.EOL, e.message);
                     })
+
                     .done(function(target) {
                         if (target) {
                             console.log('NodeCG updated to', chalk.magenta(target));
@@ -142,6 +150,8 @@ module.exports = function initCommand(program) {
                 return;
             }
 
+            // If we're here, then NodeCG must not be installed yet.
+            // Clone it into the cwd.
             Q.Promise(function(resolve, reject) {
                 process.stdout.write('Cloning NodeCG... ');
                 process.stderr.write = function(){}; // Shh git...
@@ -159,6 +169,8 @@ module.exports = function initCommand(program) {
                     resolve();
                 });
             })
+
+                // If [version] was supplied, checkout that version
                 .then(function() {
                     if (!version) return;
 
@@ -182,6 +194,8 @@ module.exports = function initCommand(program) {
 
                     return deferred.promise;
                 })
+
+                // Install NodeCG's production depdendencies (`npm install --production`)
                 .then(function(){
                     process.stdout.write('Installing production npm dependencies... ');
                     var deferred = Q.defer();
@@ -197,10 +211,12 @@ module.exports = function initCommand(program) {
                     });
                     return deferred.promise;
                 })
+
                 .catch(function(e) {
                     process.stderr.write = write;
                    console.error('Failed to setup NodeCG:', os.EOL, e.message);
                 })
+                
                 .done(function() {
                     console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
                 });
