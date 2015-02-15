@@ -47,9 +47,7 @@ module.exports = function initCommand(program) {
                 })
                     .then(function() {
                         var deferred = Q.defer();
-
-                        // Shh git...
-                        process.stderr.write = function(){};
+                        process.stderr.write = function(){}; // Shh git...
 
                         // If no version is supplied, assume they want the latest release
                         if (!version) {
@@ -79,7 +77,6 @@ module.exports = function initCommand(program) {
 
                             // Now that we know our version exists, our target is either the version or the newest tag.
                             var target = version || tags.pop();
-
                             process.stdout.write(chalk.green('done!') + os.EOL);
 
                             if (target < current) {
@@ -108,12 +105,8 @@ module.exports = function initCommand(program) {
                         }
 
                         var deferred = Q.defer();
-
-                        // Shh git...
-                        process.stderr.write = function(){};
-
+                        process.stderr.write = function(){}; // Shh git...
                         process.stdout.write('Updating from '+chalk.magenta(result.current)+' to '+chalk.magenta(result.target)+'... ');
-
                         exec('git pull origin master', function(err, stdout, stderr) {
                             if (err) {
                                 process.stdout.write(chalk.red('failed!') + os.EOL);
@@ -151,9 +144,7 @@ module.exports = function initCommand(program) {
 
             Q.Promise(function(resolve, reject) {
                 process.stdout.write('Cloning NodeCG... ');
-
-                // Shh git...
-                process.stderr.write = function(){};
+                process.stderr.write = function(){}; // Shh git...
 
                 exec('git clone ' + NODECG_GIT_URL + ' .', function(err, stdout, stderr) {
                     process.stderr.write = write;
@@ -172,10 +163,7 @@ module.exports = function initCommand(program) {
                     if (!version) return;
 
                     var deferred = Q.defer();
-
-                    // Shh git...
-                    process.stderr.write = function(){};
-
+                    process.stderr.write = function(){}; // Shh git...
                     process.stdout.write('Checking out version ' + version + '... ');
 
                     // If a specific version tag argument was supplied, check out that tag
