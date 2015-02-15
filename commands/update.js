@@ -23,7 +23,7 @@ module.exports = function updateCommand(program) {
         process.chdir(bundlePath);
         var write = process.stderr.write;
         Q.Promise(function(resolve, reject) {
-            process.stdout.write('Updating ' + bundleName + '...');
+            process.stdout.write('Updating ' + bundleName + '... ');
 
             // Make git be quiet
             process.stderr.write = function(){};
@@ -32,12 +32,12 @@ module.exports = function updateCommand(program) {
                 process.stderr.write = write;
 
                 if (err) {
-                    process.stdout.write(chalk.red(' failed!') + os.EOL);
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
                     reject(err);
                     return;
                 }
 
-                process.stdout.write(chalk.green(' done!') + os.EOL);
+                process.stdout.write(chalk.green('done!') + os.EOL);
                 resolve();
             });
         })

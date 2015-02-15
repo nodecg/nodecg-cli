@@ -27,7 +27,7 @@ module.exports = function initCommand(program) {
 
             var write = process.stderr.write;
             Q.Promise(function(resolve, reject) {
-                process.stdout.write('Cloning NodeCG...');
+                process.stdout.write('Cloning NodeCG... ');
 
                 // Shh git...
                 process.stderr.write = function(){};
@@ -36,12 +36,12 @@ module.exports = function initCommand(program) {
                     process.stderr.write = write;
 
                     if (err) {
-                        process.stdout.write(chalk.red(' failed!') + os.EOL);
+                        process.stdout.write(chalk.red('failed!') + os.EOL);
                         reject(err);
                         return;
                     }
 
-                    process.stdout.write(chalk.green(' done!') + os.EOL);
+                    process.stdout.write(chalk.green('done!') + os.EOL);
                     resolve();
                 });
             })
@@ -53,35 +53,35 @@ module.exports = function initCommand(program) {
                     // Shh git...
                     process.stderr.write = function(){};
 
-                    process.stdout.write('Checking out version ' + version + '...');
+                    process.stdout.write('Checking out version ' + version + '... ');
 
                     // If a specific version tag argument was supplied, check out that tag
                     exec('git checkout ' + version, function(err, stdout, stderr) {
                         process.stderr.write = write;
 
                         if (err) {
-                            process.stdout.write(chalk.red(' failed!') + os.EOL);
+                            process.stdout.write(chalk.red('failed!') + os.EOL);
                             deferred.reject(err);
                             return;
                         }
 
-                        process.stdout.write(chalk.green(' done!') + os.EOL);
+                        process.stdout.write(chalk.green('done!') + os.EOL);
                         deferred.resolve();
                     });
 
                     return deferred.promise;
                 })
                 .then(function(){
-                    process.stdout.write('Installing production npm dependencies...');
+                    process.stdout.write('Installing production npm dependencies... ');
                     var deferred = Q.defer();
                     exec('npm install --production', {}, function(err, stdout, stderr) {
                         if (stderr) console.error(stderr);
                         if (err) {
-                            process.stdout.write(chalk.red(' failed!') + os.EOL);
+                            process.stdout.write(chalk.red('failed!') + os.EOL);
                             deferred.reject(err);
                             return;
                         }
-                        process.stdout.write(chalk.green(' done!') + os.EOL);
+                        process.stdout.write(chalk.green('done!') + os.EOL);
                         deferred.resolve();
                     });
                     return deferred.promise;

@@ -56,7 +56,7 @@ module.exports = function installCommand(program) {
 
                 var write = process.stderr.write;
                 Q.Promise(function(resolve, reject) {
-                    process.stdout.write('Installing ' + bundleName + '...');
+                    process.stdout.write('Installing ' + bundleName + '... ');
 
                     // Make git be quiet
                     process.stderr.write = function(){};
@@ -66,12 +66,12 @@ module.exports = function installCommand(program) {
                         process.stderr.write = write;
 
                         if (err) {
-                            process.stdout.write(chalk.red(' failed!') + os.EOL);
+                            process.stdout.write(chalk.red('failed!') + os.EOL);
                             reject(err);
                             return;
                         }
 
-                        process.stdout.write(chalk.green(' done!') + os.EOL);
+                        process.stdout.write(chalk.green('done!') + os.EOL);
                         resolve();
                     });
                 })
