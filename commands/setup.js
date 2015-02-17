@@ -200,7 +200,6 @@ module.exports = function initCommand(program) {
                     process.stdout.write('Installing production npm dependencies... ');
                     var deferred = Q.defer();
                     exec('npm install --production', {}, function(err, stdout, stderr) {
-                        if (stderr) console.error(stderr);
                         if (err) {
                             process.stdout.write(chalk.red('failed!') + os.EOL);
                             deferred.reject(err);
