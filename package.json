@@ -38,6 +38,7 @@
     "inquirer": "^0.8.0",
     "npm-package-arg": "^3.0.0",
     "request": "^2.51.0",
+    "rimraf": "^2.2.8",
     "semver": "^4.2.0"
   }
 }
