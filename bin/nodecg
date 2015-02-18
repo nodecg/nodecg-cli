@@ -1,3 +1,15 @@
 #!/usr/bin/env node
 
+var chalk = require('chalk');
+var execSync = require('child_process').execSync;
+
+try {
+    execSync('git --version', { stdio: ['pipe', 'pipe', 'pipe']} );
+} catch (e) {
+    console.error('nodecg-cli requires that %s be available in your PATH.', chalk.cyan('git'));
+    console.error('If you do not have %s installed, you can get it from http://git-scm.com/', chalk.cyan('git'));
+    console.error('By default, the installer will add %s to your PATH.', chalk.cyan('git'));
+    return;
+}
+
 require('../index');
