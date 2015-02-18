@@ -24,7 +24,6 @@ module.exports = function installCommand(program) {
             }
 
             var dev = options.dev || false;
-
             if (!repo) {
                 // If no args are supplied, assume the user is intending to operate on the bundle in the current dir
                 installDeps(process.cwd(), dev)
@@ -42,8 +41,8 @@ module.exports = function installCommand(program) {
                     process.exit(1);
                 }
 
+                // Check that `bundles` exists
                 var bundlesPath = path.join(nodecgPath, 'bundles');
-                // Check that bundles exists
                 if (!fs.existsSync(bundlesPath)) {
                     fs.mkdirSync(bundlesPath);
                 }

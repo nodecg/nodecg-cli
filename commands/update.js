@@ -45,9 +45,7 @@ module.exports = function updateCommand(program) {
             }
 
             var dev = options.dev || false;
-
             bundleName = bundleName || path.basename(process.cwd());
-
             if (bundleName === '*') {
                 // update all bundles
                 var bundlesPath = path.join(nodecgPath, 'bundles/');

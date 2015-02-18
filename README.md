@@ -2,13 +2,16 @@
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
 ## Installation
-`npm install -g nodecg-cli`
+First, make sure you have [git](http://git-scm.com/) installed, and that it is in your PATH. Then, install via npm:
+```sh
+$ npm install -g nodecg-cli
+````
 
 Installing `nodecg-cli` does not install `NodeCG`. To install an instance of `NodeCG`, use the `setup` command in an empty directory:
-```
-mkdir nodecg
-cd nodecg
-nodecg setup
+```sh
+$ mkdir nodecg
+$ cd nodecg
+$ nodecg setup
 ```
 
 ## Usage
