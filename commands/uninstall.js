@@ -42,14 +42,13 @@ module.exports = function installCommand(program) {
 
     function deleteBundle(name, path) {
         process.stdout.write('Uninstalling ' + chalk.magenta(name) + '... ');
-        rimraf(path, function(err) {
-            if (err) {
-                process.stdout.write(chalk.green('failed!'));
-                console.log(error);
-                return;
-            }
-
-            process.stdout.write(chalk.green('done!'));
-        });
+        try {
+            rimraf.sync(path);
+        } catch (e) {
+            process.stdout.write(chalk.green('failed!'));
+            console.error(e.stack);
+            return;
+        }
+        process.stdout.write(chalk.green('failed!'));
     }
 };
