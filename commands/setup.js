@@ -92,7 +92,7 @@ module.exports = function initCommand(program) {
                     return;
                 }
 
-                if (updatingToLatest && current >= latest) {
+                if (updatingToLatest && current >= target) {
                     console.log('No updates found! Your current version (%s) is the latest.', chalk.magenta(current));
                     return;
                 }
