@@ -18,6 +18,15 @@
   "bin": {
     "nodecg": "bin/nodecg"
   },
+  "files": [
+    "AUTHORS",
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "lib/",
+    "commands/",
+    "bin/"
+  ],
   "engines": {
     "node": ">= 0.12.0"
   },
