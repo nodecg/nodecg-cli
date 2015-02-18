@@ -1,6 +1,30 @@
 # nodecg-cli
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
+<table>
+  <thead>
+    <tr>
+      <th>Linux</th>
+      <th>OS X</th>
+      <th>Windows</th>
+      <th>Test Coverage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2" align="center">
+        <a href="https://travis-ci.org/nodecg/nodecg-cli"><img src="https://travis-ci.org/nodecg/nodecg-cli.svg"></a>
+      </td>
+      <td align="center">
+        <a href="https://ci.appveyor.com/project/lange/nodecg-cli"><img src="https://ci.appveyor.com/api/projects/status/ugveb0i580w3kyf9?svg=true"></a>
+      </td>
+      <td align="center">
+        <a href="https://coveralls.io/r/nodecg/nodecg-cli"><img src="https://img.shields.io/coveralls/nodecg/nodecg-cli.svg"></a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 ## Installation
 First, make sure you have [git](http://git-scm.com/) installed, and that it is in your PATH. Then, install via npm:
 ```sh
