@@ -2,10 +2,8 @@
 
 var util = require('../lib/util');
 var childProcess = require('child_process');
-var exec = childProcess.exec;
 var execSync = childProcess.execSync;
 var os = require('os');
-var Q = require('q');
 var chalk = require('chalk');
 var inquirer = require('inquirer');
 
@@ -17,9 +15,6 @@ module.exports = function initCommand(program) {
         .option('-u, --update', 'Update the local NodeCG installation')
         .description('Install a new NodeCG instance')
         .action(function(version, options) {
-            // We'll need this for later...
-            var write = process.stderr.write;
-
             // We prefix our release tags with 'v'
             if (version && version.charAt(0) !== 'v') {
                 version = 'v' + version;
@@ -34,8 +29,8 @@ module.exports = function initCommand(program) {
                 }
 
                 // Fetch the latest tags from GitHub
+                process.stdout.write('Fetching the list of releases... ');
                 try {
-                    process.stdout.write('Fetching the list of releases... ');
                     execSync('git fetch');
                     process.stdout.write(chalk.green('done!') + os.EOL);
                 } catch (e) {

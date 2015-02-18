@@ -3,12 +3,11 @@
 var fs = require('fs');
 var os = require('os');
 var installDeps = require('../lib/install-deps');
-var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var npa = require('npm-package-arg');
 var path = require('path');
 var util = require('../lib/util');
 var format = require('util').format;
-var Q = require('q');
 var chalk = require('chalk');
 
 module.exports = function installCommand(program) {
@@ -21,7 +20,7 @@ module.exports = function installCommand(program) {
             var nodecgPath = process.cwd();
             if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
-                process.exit(1);
+                return;
             }
 
             var dev = options.dev || false;
@@ -54,35 +53,20 @@ module.exports = function installCommand(program) {
                 var bundleName = temp.substr(0, temp.length - 4);
                 var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
-                var write = process.stderr.write;
-                Q.Promise(function(resolve, reject) {
-                    process.stdout.write('Installing ' + bundleName + '... ');
-
-                    // Make git be quiet
-                    process.stderr.write = function(){};
-
+                // Fetch the latest tags from GitHub
+                process.stdout.write('Installing ' + bundleName + '... ');
+                try {
                     var cmdline = format('git clone %s "%s"', repoUrl, bundlePath);
-                    exec(cmdline, function(err, stdout, stderr) {
-                        process.stderr.write = write;
+                    execSync(cmdline, {stdio: ['pipe', 'pipe', 'pipe']});
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
 
-                        if (err) {
-                            process.stdout.write(chalk.red('failed!') + os.EOL);
-                            reject(err);
-                            return;
-                        }
-
-                        process.stdout.write(chalk.green('done!') + os.EOL);
-                        resolve();
-                    });
-                })
-                    .then(function() {
-                        return installDeps(bundlePath, dev);
-                    })
-                    .catch(function(err) {
-                        process.stderr.write = write;
-                        console.error(err.message);
-                        process.exit(1);
-                    });
+                // After installing the bundle, install its npm dependencies
+                installDeps(bundlePath, dev)
             }
         });
 
