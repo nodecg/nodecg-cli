@@ -1,69 +1,156 @@
 'use strict';
 
 var util = require('../lib/util');
-var nodegit = require('nodegit');
-var clone = nodegit.Clone.clone;
-var Checkout = nodegit.Checkout;
-var Q = require('q');
-var exec = require('child_process').exec;
+var childProcess = require('child_process');
+var execSync = childProcess.execSync;
+var os = require('os');
+var chalk = require('chalk');
+var inquirer = require('inquirer');
 
 var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
 module.exports = function initCommand(program) {
     program
         .command('setup [version]')
+        .option('-u, --update', 'Update the local NodeCG installation')
         .description('Install a new NodeCG instance')
-        .action(function(version) {
-            // Check if nodecg is already installed
-            if (util.pathContainsNodeCG(process.cwd())) {
-                console.log('NodeCG is already installed in this directory');
-                process.exit(0);
-            }
-
+        .action(function(version, options) {
             // We prefix our release tags with 'v'
             if (version && version.charAt(0) !== 'v') {
                 version = 'v' + version;
             }
 
-            // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
-            var opts = { ignoreCertErrors: 1 };
+            // If NodeCG is already installed and the `-u` flag was supplied, update NodeCG
+            if (util.pathContainsNodeCG(process.cwd())) {
+                if (!options.update) {
+                    console.log('NodeCG is already installed in this directory.');
+                    console.log('Use ' + chalk.cyan('nodecg setup [version] -u') + ' if you want update your existing install.');
+                    return;
+                }
 
-            console.log('Cloning NodeCG');
-            clone(NODECG_GIT_URL, process.cwd(), opts)
-                .then(function(repo) {
-                    // If a specific version tag was supplied, checkout that tag
-                    if (version) {
-                        console.log('Checking out version', version);
-                        return repo.getReferenceCommit(version)
-                            .then(function(tag) {
-                                return Checkout.tree(repo, tag, { checkoutStrategy: Checkout.STRATEGY.SAFE_CREATE });
-                            })
-                    }
-                })
-                .then(function(){
-                    console.log('Installing production npm dependencies');
-                    var deferred = Q.defer();
-                    exec('npm install --production', {}, function(err, stdout, stderr) {
-                        if (stderr) console.error(stderr);
-                        if (err) {
-                            deferred.reject(new Error('Failed to install npm dependencies:', err.message));
+                // Fetch the latest tags from GitHub
+                process.stdout.write('Fetching the list of releases... ');
+                try {
+                    execSync('git fetch');
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
+
+                if (version) {
+                    process.stdout.write('Searching for release ' + chalk.magenta(version) + ' ... ');
+                } else {
+                    process.stdout.write('Checking against local install for updates... ');
+                }
+
+                try {
+                    var tags = execSync('git tag').toString().trim().split('\n');
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
+
+                var current = 'v' + require(process.cwd() + '/package.json').version;
+
+                // If a version was specified, look for it in the list of tags
+                if (version && tags.indexOf(version) < 0) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error('The desired release, ' + chalk.magenta(version) + ', could not be found.');
+                    return;
+                }
+
+                // Now that we know our version exists, our target is either the version or the newest tag.
+                var updatingToLatest = Boolean(!version);
+                var target = version || tags.pop();
+                process.stdout.write(chalk.green('done!') + os.EOL);
+
+                if (target < current) {
+                    console.log(chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
+                        chalk.magenta(target), chalk.magenta(current));
+                    inquirer.prompt([{
+                        name: 'installOlder',
+                        message: 'Are you sure you wish to continue?',
+                        type: 'confirm'
+                    }], function (answers) {
+                        if (answers.installOlder) {
+                            checkoutAfterFetch();
                         }
-                        deferred.resolve();
                     });
-                    return deferred.promise;
-                })
-                .catch(function(err) {
-                    if (err.toString() === 'Error: The requested type does not match the type in the ODB') {
-                        console.log('Could not find the specified version tag.');
-                        console.log('A list of tags can be found here: https://github.com/nodecg/nodecg/releases');
-                        console.log('Please be aware that only annotated tags (tags with descriptions) are currently supported.');
-                    } else {
-                        console.error(err.stack);
-                    }
-                    process.exit(1);
-                })
-                .done(function() {
-                    console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
-                });
+                } else {
+                    checkoutAfterFetch();
+                }
+
+                return;
+            }
+
+            function checkoutAfterFetch() {
+                if (target === current) {
+                    console.log('Already on version %s', chalk.magenta(current));
+                    return;
+                }
+
+                if (updatingToLatest && current >= latest) {
+                    console.log('No updates found! Your current version (%s) is the latest.', chalk.magenta(current));
+                    return;
+                }
+
+                // Now that we know for sure if the target tag exists (and if its newer or older than current),
+                // we can `git pull` and `git checkout <tag>` if appropriate.
+                process.stdout.write('Updating from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
+                try {
+                    execSync('git pull origin master', {stdio: ['pipe', 'pipe', 'pipe']});
+                    execSync('git checkout ' + target, {stdio: ['pipe', 'pipe', 'pipe']});
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
+
+                if (target) {
+                    console.log('NodeCG updated to', chalk.magenta(target));
+                }
+            }
+
+            // If we're here, then NodeCG must not be installed yet.
+            // Clone it into the cwd.
+            process.stdout.write('Cloning NodeCG... ');
+            try {
+                execSync('git clone ' + NODECG_GIT_URL + ' .', {stdio: ['pipe', 'pipe', 'pipe']});
+                process.stdout.write(chalk.green('done!') + os.EOL);
+            } catch (e) {
+                process.stdout.write(chalk.red('failed!') + os.EOL);
+                console.error(e.stack);
+                return;
+            }
+
+            // If [version] was supplied, checkout that version
+            if (version) {
+                process.stdout.write('Checking out version ' + version + '... ');
+                try {
+                    execSync('git checkout ' + version, {stdio: ['pipe', 'pipe', 'pipe']});
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
+            }
+
+            // Install NodeCG's production depdendencies (`npm install --production`)
+            process.stdout.write('Installing production npm dependencies... ');
+            try {
+                execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+                process.stdout.write(chalk.green('done!') + os.EOL);
+            } catch (e) {
+                process.stdout.write(chalk.red('failed!') + os.EOL);
+                console.error(e.stack);
+                return;
+            }
+
+            console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());
         });
 };

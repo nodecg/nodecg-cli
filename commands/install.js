@@ -1,11 +1,14 @@
 'use strict';
 
 var fs = require('fs');
-var clone = require('nodegit').Clone.clone;
+var os = require('os');
 var installDeps = require('../lib/install-deps');
+var execSync = require('child_process').execSync;
 var npa = require('npm-package-arg');
 var path = require('path');
 var util = require('../lib/util');
+var format = require('util').format;
+var chalk = require('chalk');
 
 module.exports = function installCommand(program) {
     program
@@ -17,35 +20,29 @@ module.exports = function installCommand(program) {
             var nodecgPath = process.cwd();
             if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
-                process.exit(1);
+                return;
             }
 
             var dev = options.dev || false;
-
             if (!repo) {
                 // If no args are supplied, assume the user is intending to operate on the bundle in the current dir
                 installDeps(process.cwd(), dev)
             } else {
                 var parsed = npa(repo);
                 var repoUrl = null;
-                var opts = {};
 
                 if (parsed.type === 'git') {
+                    // TODO: This line was meant to accomodate nodegit, which is no longer used. Is is still needed?
                     repoUrl = parsed.spec.replace('+https', ''); //nodegit doesn't support git+https:// addresses
                 } else if (parsed.type === 'hosted') {
-                    // Github SSL cert isn't trusted by nodegit on OS X d-(^_^)z
-                    if (process.platform === 'darwin') {
-                        opts.ignoreCertErrors = 1;
-                    }
-
                     repoUrl = parsed.hosted.httpsUrl;
                 } else {
                     console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
                     process.exit(1);
                 }
 
+                // Check that `bundles` exists
                 var bundlesPath = path.join(nodecgPath, 'bundles');
-                // Check that bundles exists
                 if (!fs.existsSync(bundlesPath)) {
                     fs.mkdirSync(bundlesPath);
                 }
@@ -55,14 +52,20 @@ module.exports = function installCommand(program) {
                 var bundleName = temp.substr(0, temp.length - 4);
                 var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
-                clone(repoUrl, bundlePath, opts)
-                    .then(function(repo) {
-                        installDeps(bundlePath, dev);
-                    })
-                    .catch(function(err) {
-                        console.error(err.stack);
-                        process.exit(1);
-                    });
+                // Fetch the latest tags from GitHub
+                process.stdout.write('Installing ' + bundleName + '... ');
+                try {
+                    var cmdline = format('git clone %s "%s"', repoUrl, bundlePath);
+                    execSync(cmdline, {stdio: ['pipe', 'pipe', 'pipe']});
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
+
+                // After installing the bundle, install its npm dependencies
+                installDeps(bundlePath, dev)
             }
         });
 
