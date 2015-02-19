@@ -5,7 +5,7 @@ var MockProgram = require('../mocks/program');
 var UninstallCommand = require('../../commands/uninstall');
 
 describe('uninstall command', function () {
-	var uninstallCommand, program;
+    var uninstallCommand, program;
 
     before(function() {
         program = new MockProgram();

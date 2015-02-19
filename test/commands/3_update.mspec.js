@@ -5,7 +5,7 @@ var MockProgram = require('../mocks/program');
 var UpdateCommand = require('../../commands/update');
 
 describe('update command', function () {
-	var updateCommand, program;
+    var updateCommand, program;
 
     before(function() {
         program = new MockProgram();

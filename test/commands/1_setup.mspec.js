@@ -6,7 +6,7 @@ var MockProgram = require('../mocks/program');
 var SetupCommand = require('../../commands/setup');
 
 describe('setup command', function () {
-	var setupCommand, program;
+    var setupCommand, program;
 
     before(function(done) {
         this.timeout(20000);
@@ -20,7 +20,7 @@ describe('setup command', function () {
 
     it('should install NodeCG', function () {
         this.timeout(120000);
-        fs.mkdir('tmp');
+        fs.mkdirSync('tmp');
         process.chdir('tmp');
         program.runWith('setup 0.4.7');
         assert.equal(fs.existsSync('./package.json'), true);
