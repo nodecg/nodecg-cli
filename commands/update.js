@@ -14,9 +14,15 @@ module.exports = function updateCommand(program) {
     function update(bundleName, installDev) {
         var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
         var manifestPath = path.join(bundlePath, 'nodecg.json');
+
+        if (!fs.existsSync(bundlePath)) {
+            console.error('Bundle %s is not installed, not updating', bundleName);
+            return;
+        }
+
         if (!fs.existsSync(manifestPath)) {
             console.error('nodecg.json not found, are you in a bundle directory?');
-            process.exit(1);
+            return;
         }
 
         process.stdout.write('Updating ' + bundleName + '... ');
