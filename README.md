@@ -19,7 +19,7 @@
         <a href="https://ci.appveyor.com/project/lange/nodecg-cli"><img src="https://ci.appveyor.com/api/projects/status/ugveb0i580w3kyf9?svg=true"></a>
       </td>
       <td align="center">
-        <a href="https://coveralls.io/r/nodecg/nodecg-cli"><img src="https://img.shields.io/coveralls/nodecg/nodecg-cli.svg"></a>
+        <a href='https://coveralls.io/r/nodecg/nodecg-cli?branch=master'><img src='https://coveralls.io/repos/nodecg/nodecg-cli/badge.svg?branch=master' alt='Coverage Status' /></a>
       </td>
     </tr>
   </tbody>
