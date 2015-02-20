@@ -1,4 +1,4 @@
-var assert = require('chai').assert;
+var expect = require('chai').expect;
 var fs = require('fs');
 var path = require('path');
 var MockProgram = require('../mocks/program');
@@ -14,6 +14,9 @@ describe('update command', function () {
 
     it('shouldn\'t throw any errors', function () {
         this.timeout(25000);
-        program.runWith('update agdq15-layouts');
+        function doUpdate() {
+            program.runWith('update agdq15-layouts');
+        }
+        expect(doUpdate).to.not.throw(Error);
     });
 });
