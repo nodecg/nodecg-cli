@@ -6,6 +6,7 @@ var path = require('path');
 var util = require('../lib/util');
 var chalk = require('chalk');
 var rimraf = require('rimraf');
+var os = require('os');
 
 module.exports = function installCommand(program) {
     program
