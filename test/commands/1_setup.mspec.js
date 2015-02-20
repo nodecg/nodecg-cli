@@ -19,17 +19,17 @@ describe('setup command', function () {
     });
 
     it('should install NodeCG', function () {
-        this.timeout(120000);
+        this.timeout(20000);
         fs.mkdirSync('tmp');
         process.chdir('tmp');
-        program.runWith('setup 0.4.7');
+        program.runWith('setup 0.5.0 --skip-npm');
         assert.equal(fs.existsSync('./package.json'), true);
         assert.equal(JSON.parse(fs.readFileSync('./package.json')).name, 'nodecg');
     });
 
     it('should let the user change versions', function () {
-        this.timeout(4000);
-        program.runWith('setup 0.4.8 -u');
-        assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.4.8');
+        this.timeout(8000);
+        program.runWith('setup 0.5.1 -u --skip-npm');
+        assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.5.1');
     });
 });

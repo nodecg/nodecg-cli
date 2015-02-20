@@ -13,6 +13,7 @@ module.exports = function initCommand(program) {
     program
         .command('setup [version]')
         .option('-u, --update', 'Update the local NodeCG installation')
+        .option('--skip-npm', 'Skip installing npm dependencies')
         .description('Install a new NodeCG instance')
         .action(function(version, options) {
             // We prefix our release tags with 'v'
@@ -141,14 +142,18 @@ module.exports = function initCommand(program) {
             }
 
             // Install NodeCG's production depdendencies (`npm install --production`)
-            process.stdout.write('Installing production npm dependencies... ');
-            try {
-                execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
-                process.stdout.write(chalk.green('done!') + os.EOL);
-            } catch (e) {
-                process.stdout.write(chalk.red('failed!') + os.EOL);
-                console.error(e.stack);
-                return;
+            // This operation takes a very long time, so we don't test it.
+            /* istanbul ignore if */
+            if (!options.skipNpm) {
+                process.stdout.write('Installing production npm dependencies... ');
+                try {
+                    execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+                    process.stdout.write(chalk.green('done!') + os.EOL);
+                } catch (e) {
+                    process.stdout.write(chalk.red('failed!') + os.EOL);
+                    console.error(e.stack);
+                    return;
+                }
             }
 
             console.log('NodeCG (%s) installed to', version ? version : 'latest', process.cwd());

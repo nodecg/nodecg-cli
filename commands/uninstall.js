@@ -41,14 +41,19 @@ module.exports = function installCommand(program) {
         });
 
     function deleteBundle(name, path) {
+        if (!fs.existsSync(path)) {
+            console.log('Nothing to uninstall.');
+            return;
+        }
+
         process.stdout.write('Uninstalling ' + chalk.magenta(name) + '... ');
         try {
             rimraf.sync(path);
         } catch (e) {
-            process.stdout.write(chalk.green('failed!'));
+            process.stdout.write(chalk.red('failed!'));
             console.error(e.stack);
             return;
         }
-        process.stdout.write(chalk.green('failed!'));
+        process.stdout.write(chalk.green('done!'));
     }
 };

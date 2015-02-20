@@ -17,4 +17,12 @@ describe('install command', function () {
         program.runWith('install gamesdonequick/agdq15-layouts');
         assert.equal(fs.existsSync('./bundles/agdq15-layouts/nodecg.json'), true);
     });
+
+    it('should install npm dependencies', function () {
+        assert.equal(fs.existsSync('./bundles/agdq15-layouts/node_modules'), true);
+    });
+
+    it('should install bower dependencies', function () {
+        assert.equal(fs.existsSync('./bundles/agdq15-layouts/bower_components'), true);
+    });
 });
