@@ -28,7 +28,7 @@ describe('setup command', function () {
     });
 
     it('should let the user change versions', function () {
-        this.timeout(8000);
+        this.timeout(16000);
         program.runWith('setup 0.5.1 -u --skip-npm');
         assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.5.1');
     });

@@ -13,7 +13,7 @@ describe('install command', function () {
     });
 
     it('should install a bundle', function () {
-        this.timeout(25000);
+        this.timeout(40000);
         program.runWith('install gamesdonequick/agdq15-layouts');
         assert.equal(fs.existsSync('./bundles/agdq15-layouts/nodecg.json'), true);
     });
