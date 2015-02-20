@@ -50,10 +50,10 @@ module.exports = function installCommand(program) {
         try {
             rimraf.sync(path);
         } catch (e) {
-            process.stdout.write(chalk.red('failed!'));
+            process.stdout.write(chalk.red('failed!') + os.EOL);
             console.error(e.stack);
             return;
         }
-        process.stdout.write(chalk.green('done!'));
+        process.stdout.write(chalk.green('done!') + os.EOL);
     }
 };
