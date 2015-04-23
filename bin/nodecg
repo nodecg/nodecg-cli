@@ -4,7 +4,7 @@ var chalk = require('chalk');
 var execSync = require('child_process').execSync;
 var REQUIRED_VERSION = 'v0.11.22';
 
-if (process.version < REQUIRED_VERSION) {
+if (typeof execSync !== 'function') {
     console.error('nodecg-cli relies on %s, which was added to Node.js in %s (your version: %s).',
         chalk.cyan('execSync'), chalk.magenta(REQUIRED_VERSION), chalk.magenta(process.version));
     console.error('Please upgrade your Node.js installation.');
