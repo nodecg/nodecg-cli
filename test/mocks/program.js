@@ -1,3 +1,5 @@
+'use strict';
+
 var sinon  = require('sinon');
 var commander = require('commander');
 
@@ -7,7 +9,7 @@ module.exports = function MockProgram() {
 
     sinon.stub(program, 'log').returns(void 0);
 
-    program.request = function (opts, callback) {
+    program.request = function (opts) {
         throw new Error('Unexpected request: ' + JSON.stringify(opts, null, 2));
     };
 

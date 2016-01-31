@@ -3,12 +3,12 @@
  * https://github.com/tsantef/commander-starter
  */
 
+'use strict';
+
 var fs = require('fs');
 var path = require('path');
 
 module.exports = function commandLoader(program) {
-    'use strict';
-
     var commands = {};
     var loadPath = path.dirname(__filename);
 

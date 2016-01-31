@@ -67,31 +67,33 @@ module.exports = function configCommand(program) {
         .command('config')
         .description('Configure the NodeCG instance in the current directory')
         .alias('cfg')
-        .action(function() {
-            if (fs.existsSync(path.join(process.cwd(), 'cfg/nodecg.json'))) {
-                console.warn('cfg/nodecg.json already exists, exiting');
-                process.exit(0);
-            }
-
-            inquirer.prompt(questions, function(answers) {
-                var cfg = {
-                    host: answers.host,
-                    port: answers.port,
-                    logging: {
-                        console: {
-                            enabled: answers['console.enabled'],
-                            level: answers['console.level']
-                        },
-                        file: {
-                            enabled: answers['file.enabled'],
-                            path: 'logs/server.log',
-                            level: answers['file.level']
-                        }
-                    }
-                };
-                var dir = path.resolve(process.cwd(), 'cfg');
-                fs.mkdirpSync(dir);
-                fs.writeFileSync(path.join(dir, 'nodecg.json'), JSON.stringify(cfg, null, 4));
-            });
-        })
+        .action(action);
 };
+
+function action() {
+    if (fs.existsSync(path.join(process.cwd(), 'cfg/nodecg.json'))) {
+        console.warn('cfg/nodecg.json already exists, exiting');
+        process.exit(0);
+    }
+
+    inquirer.prompt(questions, function(answers) {
+        var cfg = {
+            host: answers.host,
+            port: answers.port,
+            logging: {
+                console: {
+                    enabled: answers['console.enabled'],
+                    level: answers['console.level']
+                },
+                file: {
+                    enabled: answers['file.enabled'],
+                    path: 'logs/server.log',
+                    level: answers['file.level']
+                }
+            }
+        };
+        var dir = path.resolve(process.cwd(), 'cfg');
+        fs.mkdirpSync(dir);
+        fs.writeFileSync(path.join(dir, 'nodecg.json'), JSON.stringify(cfg, null, 4));
+    });
+}

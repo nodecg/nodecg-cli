@@ -1,6 +1,6 @@
+'use strict';
+
 var expect = require('chai').expect;
-var fs = require('fs');
-var path = require('path');
 var MockProgram = require('../mocks/program');
 var UpdateCommand = require('../../commands/update');
 

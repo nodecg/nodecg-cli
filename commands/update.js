@@ -41,7 +41,8 @@ module.exports = function updateCommand(program) {
 
     program
         .command('update [bundleName]')
-        .description('\'git pull\' a bundle. If run with no arguments, attempts to update the bundle in the current directory (if any).')
+        .description('\'git pull\' a bundle. If run with no arguments, ' +
+            'attempts to update the bundle in the current directory (if any).')
         .option('-d, --dev', 'install development dependencies')
         .action(function(bundleName, options) {
             // TODO: this prevents this command working from within a bundle's directory
@@ -65,6 +66,5 @@ module.exports = function updateCommand(program) {
                 // update a single bundle
                 update(bundleName, dev);
             }
-        })
-
+        });
 };

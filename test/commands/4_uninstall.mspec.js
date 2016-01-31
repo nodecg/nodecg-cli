@@ -1,6 +1,7 @@
+'use strict';
+
 var assert = require('chai').assert;
 var fs = require('fs');
-var path = require('path');
 var MockProgram = require('../mocks/program');
 var UninstallCommand = require('../../commands/uninstall');
 

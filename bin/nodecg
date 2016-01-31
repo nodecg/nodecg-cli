@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict';
+
 var chalk = require('chalk');
 var execSync = require('child_process').execSync;
 var REQUIRED_VERSION = 'v0.11.22';

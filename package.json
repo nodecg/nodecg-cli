@@ -48,10 +48,15 @@
     "istanbul": "^0.3.5",
     "lcov-filter": "0.0.1",
     "mocha": "^2.1.0",
+    "pre-commit": "^1.1.2",
     "sinon": "^1.12.2"
   },
   "scripts": {
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
-    "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage"
-  }
+    "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
+    "jshint": "jshint -c .jshintrc --exclude-path .gitignore ."
+  },
+  "pre-commit": [
+    "jshint"
+  ]
 }

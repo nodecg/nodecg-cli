@@ -1,7 +1,8 @@
+'use strict';
+
 var assert = require('chai').assert;
 var fs = require('fs');
 var rimraf = require('rimraf');
-var path = require('path');
 var MockProgram = require('../mocks/program');
 var SetupCommand = require('../../commands/setup');
 
@@ -15,7 +16,7 @@ describe('setup command', function () {
         rimraf('tmp', function(e) {
             if (e) throw e;
             done();
-        })
+        });
     });
 
     it('should install NodeCG', function () {
