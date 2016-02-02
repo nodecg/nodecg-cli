@@ -23,14 +23,14 @@ describe('setup command', function () {
         this.timeout(20000);
         fs.mkdirSync('tmp');
         process.chdir('tmp');
-        program.runWith('setup 0.5.0 --skip-npm');
+        program.runWith('setup 0.5.0 --skip-dependencies');
         assert.equal(fs.existsSync('./package.json'), true);
         assert.equal(JSON.parse(fs.readFileSync('./package.json')).name, 'nodecg');
     });
 
     it('should let the user change versions', function () {
         this.timeout(16000);
-        program.runWith('setup 0.5.1 -u --skip-npm');
+        program.runWith('setup 0.5.1 -u --skip-dependencies');
         assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.5.1');
     });
 });
