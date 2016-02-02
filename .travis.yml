@@ -1,28 +1,16 @@
-env:
-  - NODE_VERSION=0.12
-  - NODE_VERSION=iojs
-
 sudo: false
 
+language: node_js
+node_js:
+  - '4.2'
+  - 'stable'
+
 os:
-  - osx
   - linux
-
-install:
-  - test $TRAVIS_OS_NAME = "osx" && brew update && brew install nvm && source $(brew --prefix nvm)/nvm.sh || test $TRAVIS_OS_NAME = "linux"
-  - nvm install $NODE_VERSION
-  - node --version
-  - npm --version
-  - npm install
-
-script:
-  - npm test
 
 after_success: npm run coveralls
 
 matrix:
-  allow_failures:
-    - env: "NODE_VERSION=iojs"
   fast_finish: true
 
 notifications:
@@ -32,4 +20,4 @@ notifications:
       - https://webhooks.gitter.im/e/8c1769bff63cbd033bf7
     on_success: always
     on_failure: always
-    on_start: false
+    on_start: never
