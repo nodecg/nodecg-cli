@@ -20,7 +20,7 @@ nodecg setup
 
 ## Usage
 * `nodecg setup [version] [--update]`, install a new instance of NodeCG. `version` is a semver range.
-If `version` is not supplied, the latest release will be installed..
+If `version` is not supplied, the latest release will be installed.
 Enable `--update` flag to install over an existing copy of NodeCG.
 * `nodecg start`, start the NodeCG instance in this directory path
 * `nodecg install [repo] [--dev]`, install a bundle by cloning a git repo.
