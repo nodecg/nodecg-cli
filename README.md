@@ -32,3 +32,6 @@ Enable `--dev` flag to install the bundle's `devDependencies`.
 Re-installs the bundles `dependencies` after updating. If run with no arguments, 
 attempts to update the bundle in the current directory (if any). 
 Enable `--dev` flag to install the bundle's `devDependencies`.
+
+## Special Thanks
+This CLI program is based on [Tim Santeford's commander.js starter](https://github.com/tsantef/commander-starter).
