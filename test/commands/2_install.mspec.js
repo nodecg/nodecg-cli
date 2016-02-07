@@ -15,15 +15,15 @@ describe('install command', function () {
 
     it('should install a bundle', function () {
         this.timeout(40000);
-        program.runWith('install supportclass/lfg-filter');
-        assert.equal(fs.existsSync('./bundles/lfg-filter/package.json'), true);
+        program.runWith('install supportclass/lfg-streamtip');
+        assert.equal(fs.existsSync('./bundles/lfg-streamtip/package.json'), true);
     });
 
     it('should install npm dependencies', function () {
-        assert.equal(fs.existsSync('./bundles/lfg-filter/node_modules'), true);
+        assert.equal(fs.existsSync('./bundles/lfg-streamtip/node_modules'), true);
     });
 
     it('should install bower dependencies', function () {
-        assert.equal(fs.existsSync('./bundles/lfg-filter/bower_components'), true);
+        assert.equal(fs.existsSync('./bundles/lfg-streamtip/bower_components'), true);
     });
 });
