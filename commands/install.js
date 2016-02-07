@@ -20,11 +20,7 @@ module.exports = function installCommand(program) {
 };
 
 function action(repo, options) {
-    var nodecgPath = process.cwd();
-    if (!util.pathContainsNodeCG(nodecgPath)) {
-        console.error('NodeCG installation not found, are you in the right directory?');
-        return;
-    }
+    var nodecgPath = util.getNodeCGPath();
 
     var dev = options.dev || false;
     if (!repo) {
@@ -34,18 +30,16 @@ function action(repo, options) {
         var parsed = npa(repo);
         var repoUrl = null;
 
-        if (parsed.type === 'git') {
-            // TODO: This line was meant to accommodate nodegit, which is no longer used. Is is still needed?
-            repoUrl = parsed.spec.replace('+https', ''); //nodegit doesn't support git+https:// addresses
-        } else if (parsed.type === 'hosted') {
+        if (parsed.type === 'hosted') {
             repoUrl = parsed.hosted.httpsUrl;
         } else {
             console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
-            process.exit(1);
+            return;
         }
 
         // Check that `bundles` exists
         var bundlesPath = path.join(nodecgPath, 'bundles');
+        /* istanbul ignore next: Simple directory creation, not necessary to test */
         if (!fs.existsSync(bundlesPath)) {
             fs.mkdirSync(bundlesPath);
         }
@@ -62,9 +56,9 @@ function action(repo, options) {
             execSync(cmdline, {stdio: ['pipe', 'pipe', 'pipe']});
             process.stdout.write(chalk.green('done!') + os.EOL);
         } catch (e) {
-            process.stdout.write(chalk.red('failed!') + os.EOL);
-            console.error(e.stack);
-            return;
+            /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+            /* istanbul ignore next */ console.error(e.stack);
+            /* istanbul ignore next */ return;
         }
 
         // After installing the bundle, install its npm dependencies

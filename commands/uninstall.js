@@ -17,24 +17,22 @@ module.exports = function installCommand(program) {
 };
 
 function action(bundleName, options) {
-    var nodecgPath = process.cwd();
-    if (!util.pathContainsNodeCG(nodecgPath)) {
-        console.error('NodeCG installation not found, are you in the right directory?');
+    var nodecgPath = util.getNodeCGPath();
+    var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+
+    if (!fs.existsSync(bundlePath)) {
+        console.error('Cannot uninstall %s: bundle is not installed.', chalk.magenta(bundleName));
         return;
     }
 
-    var bundlesPath = path.resolve(nodecgPath, 'bundles');
-    if (!fs.existsSync(bundlesPath)) {
-        console.log('Bundle %s does not exist', chalk.magenta(bundleName));
-    }
 
-    var bundlePath = path.resolve(bundlesPath, bundleName);
+    /* istanbul ignore if: deleteBundle() is tested in the else path */
     if (options.force) {
         deleteBundle(bundleName, bundlePath);
     } else {
         inquirer.prompt([{
             name: 'confirmUninstall',
-            message: 'Are you sure you wish to uninstall ' + bundleName + '?',
+            message: 'Are you sure you wish to uninstall ' + chalk.magenta(bundleName) + '?',
             type: 'confirm'
         }], function (answers) {
             if (answers.confirmUninstall) {
@@ -54,9 +52,9 @@ function deleteBundle(name, path) {
     try {
         rimraf.sync(path);
     } catch (e) {
-        process.stdout.write(chalk.red('failed!') + os.EOL);
-        console.error(e.stack);
-        return;
+        /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+        /* istanbul ignore next */ console.error(e.stack);
+        /* istanbul ignore next */ return;
     }
     process.stdout.write(chalk.green('done!') + os.EOL);
 }
