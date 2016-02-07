@@ -9,11 +9,11 @@ var os = require('os');
 var execSync = require('child_process').execSync;
 
 module.exports = function updateCommand(program) {
-    var nodecgPath = process.cwd();
+    var nodecgPath = util.getNodeCGPath();
 
     function update(bundleName, installDev) {
         var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
-        var manifestPath = path.join(bundlePath, 'nodecg.json');
+        var manifestPath = path.join(bundlePath, 'package.json');
 
         if (!fs.existsSync(bundlePath)) {
             console.error('Bundle %s is not installed, not updating', bundleName);
@@ -21,7 +21,7 @@ module.exports = function updateCommand(program) {
         }
 
         if (!fs.existsSync(manifestPath)) {
-            console.error('nodecg.json not found, are you in a bundle directory?');
+            console.error('package.json not found, are you in a bundle directory?');
             return;
         }
 
@@ -45,14 +45,19 @@ module.exports = function updateCommand(program) {
             'attempts to update the bundle in the current directory (if any).')
         .option('-d, --dev', 'install development dependencies')
         .action(function(bundleName, options) {
-            // TODO: this prevents this command working from within a bundle's directory
-            if (!util.pathContainsNodeCG(nodecgPath)) {
+            var cwd = process.cwd();
+
+            // If we are in a bundle folder...
+            if (util.isBundleFolder(cwd)) {
+                bundleName = bundleName || path.basename(cwd);
+            }
+
+            else if (!util.pathContainsNodeCG(nodecgPath)) {
                 console.error('NodeCG installation not found, are you in the right directory?');
                 process.exit(1);
             }
 
             var dev = options.dev || false;
-            bundleName = bundleName || path.basename(process.cwd());
             if (bundleName === '*') {
                 // update all bundles
                 var bundlesPath = path.join(nodecgPath, 'bundles/');
