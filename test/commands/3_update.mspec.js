@@ -15,7 +15,7 @@ describe('update command', function () {
     it('shouldn\'t throw any errors', function () {
         this.timeout(25000);
         function doUpdate() {
-            program.runWith('update agdq15-layouts');
+            program.runWith('update lfg-filter');
         }
         expect(doUpdate).to.not.throw(Error);
     });

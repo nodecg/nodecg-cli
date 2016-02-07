@@ -15,15 +15,15 @@ describe('install command', function () {
 
     it('should install a bundle', function () {
         this.timeout(40000);
-        program.runWith('install gamesdonequick/agdq15-layouts');
-        assert.equal(fs.existsSync('./bundles/agdq15-layouts/nodecg.json'), true);
+        program.runWith('install supportclass/lfg-filter');
+        assert.equal(fs.existsSync('./bundles/lfg-filter/package.json'), true);
     });
 
     it('should install npm dependencies', function () {
-        assert.equal(fs.existsSync('./bundles/agdq15-layouts/node_modules'), true);
+        assert.equal(fs.existsSync('./bundles/lfg-filter/node_modules'), true);
     });
 
     it('should install bower dependencies', function () {
-        assert.equal(fs.existsSync('./bundles/agdq15-layouts/bower_components'), true);
+        assert.equal(fs.existsSync('./bundles/lfg-filter/bower_components'), true);
     });
 });

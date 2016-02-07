@@ -15,7 +15,7 @@ describe('uninstall command', function () {
 
     it('should delete the bundle\'s folder', function () {
         this.timeout(25000);
-        program.runWith('uninstall agdq15-layouts -f');
-        assert.equal(fs.existsSync('./bundles/agdq15-layouts'), false);
+        program.runWith('uninstall lfg-filter -f');
+        assert.equal(fs.existsSync('./bundles/lfg-filter'), false);
     });
 });

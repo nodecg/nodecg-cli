@@ -7,6 +7,7 @@ var os = require('os');
 var chalk = require('chalk');
 var inquirer = require('inquirer');
 var semver = require('semver');
+var fs = require('fs');
 
 var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -27,8 +28,8 @@ function action(version, options) {
     // If it was supplied, fetch the latest tags and set the `isUpdate` flag to true for later use.
     if (util.pathContainsNodeCG(process.cwd())) {
         if (!options.update) {
-            console.log('NodeCG is already installed in this directory.');
-            console.log('Use ' + chalk.cyan('nodecg setup [version] -u') +
+            console.error('NodeCG is already installed in this directory.');
+            console.error('Use ' + chalk.cyan('nodecg setup [version] -u') +
                 ' if you want update your existing install.');
             return;
         }
@@ -40,9 +41,9 @@ function action(version, options) {
             execSync('git fetch');
             process.stdout.write(chalk.green('done!') + os.EOL);
         } catch (e) {
-            process.stdout.write(chalk.red('failed!') + os.EOL);
-            console.error(e.stack);
-            return;
+            /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+            /* istanbul ignore next */ console.error(e.stack);
+            /* istanbul ignore next */ return;
         }
     }
 
@@ -53,9 +54,9 @@ function action(version, options) {
             execSync('git clone ' + NODECG_GIT_URL + ' .', {stdio: ['pipe', 'pipe', 'pipe']});
             process.stdout.write(chalk.green('done!') + os.EOL);
         } catch (e) {
-            process.stdout.write(chalk.red('failed!') + os.EOL);
-            console.error(e.stack);
-            return;
+            /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+            /* istanbul ignore next */ console.error(e.stack);
+            /* istanbul ignore next */ return;
         }
     }
 
@@ -71,9 +72,9 @@ function action(version, options) {
     try {
         tags = execSync('git tag').toString().trim().split('\n');
     } catch (e) {
-        process.stdout.write(chalk.red('failed!') + os.EOL);
-        console.error(e.stack);
-        return;
+        /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+        /* istanbul ignore next */ console.error(e.stack);
+        /* istanbul ignore next */ return;
     }
 
     var target;
@@ -95,7 +96,8 @@ function action(version, options) {
     process.stdout.write(chalk.green('done!') + os.EOL);
 
     if (isUpdate) {
-        var current = require(process.cwd() + '/package.json').version;
+        var nodecgPath = util.getNodeCGPath();
+        var current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json')).version;
 
         if (semver.eq(target, current)) {
             console.log('The target version (%s) is equal to the current version (%s). No action will be taken.',
@@ -114,16 +116,6 @@ function action(version, options) {
             }], function (answers) {
                 if (answers.installOlder) {
                     checkoutUpdate(current, target, options.skipDependencies, true);
-
-                    /*
-                     I'm unsure why, but using inquirer here causes the process to never exit, because
-                     a net socket is left open. I've no idea why Inquirer is causing a socket to open,
-                     nor why it is not being destroyed. The below workaround forces the socket to be destroyed.
-
-                     Lange - 2/2/2016
-                    */
-                    var handles = process._getActiveHandles();
-                    handles[2].destroy();
                 }
             });
         }
@@ -140,9 +132,9 @@ function action(version, options) {
             execSync('git checkout ' + target, {stdio: ['pipe', 'pipe', 'pipe']});
             process.stdout.write(chalk.green('done!') + os.EOL);
         } catch (e) {
-            process.stdout.write(chalk.red('failed!') + os.EOL);
-            console.error(e.stack);
-            return;
+            /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+            /* istanbul ignore next */ console.error(e.stack);
+            /* istanbul ignore next */ return;
         }
 
         // Install NodeCG's production dependencies (`npm install --production`)
@@ -156,6 +148,7 @@ function action(version, options) {
     }
 }
 
+/* istanbul ignore next: takes forever, not worth testing */
 function installDependencies() {
     process.stdout.write('Installing production npm dependencies... ');
     try {
@@ -184,16 +177,17 @@ function checkoutUpdate(current, target, skipDependencies, downgrade) {
     process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
 
     try {
-        execSync('git pull origin master', {stdio: ['pipe', 'pipe', 'pipe']});
         execSync('git checkout ' + target, {stdio: ['pipe', 'pipe', 'pipe']});
         process.stdout.write(chalk.green('done!') + os.EOL);
+
+        /* istanbul ignore next: takes forever, not worth testing */
         if (!skipDependencies) {
             installDependencies();
         }
     } catch (e) {
-        process.stdout.write(chalk.red('failed!') + os.EOL);
-        console.error(e.stack);
-        return;
+        /* istanbul ignore next */ process.stdout.write(chalk.red('failed!') + os.EOL);
+        /* istanbul ignore next */ console.error(e.stack);
+        /* istanbul ignore next */ return;
     }
 
     if (target) {
