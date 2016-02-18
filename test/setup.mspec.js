@@ -1,24 +1,12 @@
 /* eslint-env mocha */
 'use strict';
 
-var path = require('path');
-var fs = require('fs');
-var rimraf = require('rimraf');
-var nodecgPath = path.resolve(__dirname, '../tmp');
+var temp = require('temp');
+var tempFolder = temp.mkdirSync();
 
-before(function (done) {
-	this.timeout(20000);
-	rimraf(nodecgPath, function (e) {
-		if (e) {
-			throw e;
-		}
-
-		fs.mkdirSync(nodecgPath);
-		process.chdir(nodecgPath);
-		done();
-	});
-});
+// Automatically track and cleanup files at exit
+temp.track();
 
 beforeEach(function () {
-	process.chdir(nodecgPath);
+	process.chdir(tempFolder);
 });
