@@ -2,8 +2,8 @@ sudo: false
 
 language: node_js
 node_js:
-  - '4.2'
-  - 'stable'
+  - v4
+  - v5
 
 os:
   - linux

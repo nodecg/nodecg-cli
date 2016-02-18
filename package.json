@@ -45,6 +45,8 @@
   "devDependencies": {
     "chai": "^2.0.0",
     "coveralls": "^2.11.2",
+    "eslint": "^2.0.0",
+    "eslint-config-xo": "^0.10.1",
     "istanbul": "^0.3.5",
     "lcov-filter": "0.0.1",
     "mkdirp": "^0.5.1",
@@ -55,7 +57,7 @@
   "scripts": {
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
-    "jshint": "jshint -c .jshintrc --exclude-path .gitignore ."
+    "static": "eslint -c .eslintrc index.js lib/**/*.js test/**/*.js bin/**/*.js commands/**/*.js"
   },
   "pre-commit": [
     "jshint"
