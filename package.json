@@ -55,7 +55,7 @@
     "sinon": "^1.12.2"
   },
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
+    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
     "static": "eslint -c .eslintrc index.js lib/**/*.js test/**/*.js bin/**/*.js commands/**/*.js"
   },
