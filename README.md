@@ -32,6 +32,8 @@ Enable `--dev` flag to install the bundle's `devDependencies`.
 Re-installs the bundles `dependencies` after updating. If run with no arguments, 
 attempts to update the bundle in the current directory (if any). 
 Enable `--dev` flag to install the bundle's `devDependencies`.
+* `nodecg defaultconfig`, If a bundle has a `configschema.json` present in its root, this command will create a default
+config file at `nodecg/cfg/:bundleName.json` with defaults based on that schema.
 
 ## Special Thanks
 This CLI program is based on [Tim Santeford's commander.js starter](https://github.com/tsantef/commander-starter).
