@@ -51,7 +51,6 @@
     "lcov-filter": "0.0.1",
     "mkdirp": "^0.5.1",
     "mocha": "^2.1.0",
-    "pre-commit": "^1.1.2",
     "sinon": "^1.12.2",
     "temp": "^0.8.3"
   },
@@ -60,8 +59,5 @@
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
     "static": "eslint -c .eslintrc index.js lib/**/*.js test/**/*.js bin/**/*.js commands/**/*.js"
   },
-  "pre-commit": [
-    "jshint"
-  ],
   "license": "MIT"
 }

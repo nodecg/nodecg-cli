@@ -27,6 +27,9 @@ function action(repo, options) {
 		var parsed = npa(repo);
 		var repoUrl = null;
 
+		console.log(parsed);
+		return;
+
 		if (parsed.type === 'hosted') {
 			repoUrl = parsed.hosted.httpsUrl;
 		} else {
@@ -46,7 +49,7 @@ function action(repo, options) {
 		var bundleName = temp.substr(0, temp.length - 4);
 		var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
-		// Fetch the latest tags from GitHub
+		// Clone from github
 		process.stdout.write('Installing ' + bundleName + '... ');
 		try {
 			var cmdline = format('git clone %s "%s"', repoUrl, bundlePath);
