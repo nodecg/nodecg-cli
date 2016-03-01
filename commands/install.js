@@ -27,11 +27,8 @@ function action(repo, options) {
 		var parsed = npa(repo);
 		var repoUrl = null;
 
-		console.log(parsed);
-		return;
-
 		if (parsed.type === 'hosted') {
-			repoUrl = parsed.hosted.httpsUrl;
+			repoUrl = parsed.hosted.gitUrl;
 		} else {
 			console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
 			return;
