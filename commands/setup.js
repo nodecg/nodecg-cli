@@ -15,7 +15,7 @@ module.exports = function initCommand(program) {
 	program
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')
-		.option('--skip-dependencies', 'Skip installing npm & bower dependencies')
+		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
 		.description('Install a new NodeCG instance')
 		.action(action);
 };
