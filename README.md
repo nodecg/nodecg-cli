@@ -5,7 +5,13 @@
 [![Coverage Status](https://coveralls.io/repos/github/nodecg/nodecg-cli/badge.svg?branch=master)](https://coveralls.io/github/nodecg/nodecg-cli?branch=master)
 
 ## Installation
-First, make sure you have [git](http://git-scm.com/) installed, and that it is in your PATH. Then, install via npm:
+First, make sure you have [git](http://git-scm.com/) installed, and that it is in your PATH.
+Then, install [bower](http://bower.io/), which may be used to install bundles' dependencies:
+```sh
+npm install -g bower
+```
+
+Once those are installed, you may install nodecg-cli via npm:
 ```sh
 npm install -g nodecg-cli
 ````

@@ -7,7 +7,7 @@ node_js:
 
 os:
   - linux
-  
+
 before_script:
   - npm install -g bower
 
