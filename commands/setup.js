@@ -8,6 +8,7 @@ var chalk = require('chalk');
 var inquirer = require('inquirer');
 var semver = require('semver');
 var fs = require('fs');
+var fetchTags = require('../lib/fetch-tags');
 
 var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -36,32 +37,6 @@ function action(version, options) {
 		}
 
 		isUpdate = true;
-
-		process.stdout.write('Fetching the list of releases... ');
-		try {
-			execSync('git fetch');
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
-		}
-	} else {
-		process.stdout.write('Cloning NodeCG... ');
-		try {
-			execSync('git clone ' + NODECG_GIT_URL + ' .', {stdio: ['pipe', 'pipe', 'pipe']});
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
-		}
 	}
 
 	if (version) {
@@ -74,7 +49,7 @@ function action(version, options) {
 
 	var tags;
 	try {
-		tags = execSync('git tag').toString().trim().split('\n');
+		tags = fetchTags(NODECG_GIT_URL);
 	} catch (e) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
@@ -127,10 +102,23 @@ function action(version, options) {
 			checkoutUpdate(current, target, options.skipDependencies);
 		}
 	} else {
-		// Check out the target version.
-		process.stdout.write('Checking out version ' + target + '... ');
+		process.stdout.write('Cloning NodeCG... ');
 		try {
-			execSync('git checkout ' + target, {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync(`git clone ${NODECG_GIT_URL} .`, {stdio: ['pipe', 'pipe', 'pipe']});
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			/* istanbul ignore next */
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			/* istanbul ignore next */
+			console.error(e.stack);
+			/* istanbul ignore next */
+			return;
+		}
+
+		// Check out the target version.
+		process.stdout.write(`Checking out version ${target}... `);
+		try {
+			execSync(`git checkout ${target}`, {stdio: ['pipe', 'pipe', 'pipe']});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -148,7 +136,7 @@ function action(version, options) {
 			installDependencies();
 		}
 
-		console.log('NodeCG (%s) installed to', target, process.cwd());
+		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
 	}
 }
 
@@ -181,7 +169,7 @@ function checkoutUpdate(current, target, skipDependencies, downgrade) {
 	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
 
 	try {
-		execSync('git checkout ' + target, {stdio: ['pipe', 'pipe', 'pipe']});
+		execSync(`git checkout ${target}`, {stdio: ['pipe', 'pipe', 'pipe']});
 		process.stdout.write(chalk.green('done!') + os.EOL);
 
 		/* istanbul ignore next: takes forever, not worth testing */
