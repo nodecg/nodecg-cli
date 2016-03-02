@@ -41,7 +41,7 @@ function action(repo, options) {
 	var repoUrl = null;
 
 	if (parsed.type === 'hosted') {
-		repoUrl = parsed.hosted.ssh;
+		repoUrl = parsed.hosted.httpsUrl;
 	} else {
 		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
 		return;
