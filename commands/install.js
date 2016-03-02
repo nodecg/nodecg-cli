@@ -7,8 +7,9 @@ var execSync = require('child_process').execSync;
 var npa = require('npm-package-arg');
 var path = require('path');
 var util = require('../lib/util');
-var format = require('util').format;
+var semver = require('semver');
 var chalk = require('chalk');
+var fetchTags = require('../lib/fetch-tags');
 
 module.exports = function installCommand(program) {
 	program
@@ -20,37 +21,80 @@ module.exports = function installCommand(program) {
 };
 
 function action(repo, options) {
-	var nodecgPath = util.getNodeCGPath();
-
 	var dev = options.dev || false;
-	if (repo) {
-		var parsed = npa(repo);
-		var repoUrl = null;
 
-		if (parsed.type === 'hosted') {
-			repoUrl = parsed.hosted.gitUrl;
-		} else {
-			console.error('Please enter a valid git url (https) or GitHub username/repo pair.');
-			return;
-		}
+	// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
+	if (!repo) {
+		installBundleDeps(process.cwd(), dev);
+		return;
+	}
 
-		// Check that `bundles` exists
-		var bundlesPath = path.join(nodecgPath, 'bundles');
-		/* istanbul ignore next: Simple directory creation, not necessary to test */
-		if (!fs.existsSync(bundlesPath)) {
-			fs.mkdirSync(bundlesPath);
-		}
+	var range = '';
+	if (repo.indexOf('#') > 0) {
+		var repoParts = repo.split('#');
+		range = repoParts[1];
+		repo = repoParts[0];
+	}
 
-		// Extract repo name from git url
-		var temp = repoUrl.split('/').pop();
-		var bundleName = temp.substr(0, temp.length - 4);
-		var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+	var nodecgPath = util.getNodeCGPath();
+	var parsed = npa(repo);
+	var repoUrl = null;
 
-		// Clone from github
-		process.stdout.write('Installing ' + bundleName + '... ');
+	if (parsed.type === 'hosted') {
+		repoUrl = parsed.hosted.gitUrl;
+	} else {
+		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
+		return;
+	}
+
+	// Check that `bundles` exists
+	var bundlesPath = path.join(nodecgPath, 'bundles');
+	/* istanbul ignore next: Simple directory creation, not necessary to test */
+	if (!fs.existsSync(bundlesPath)) {
+		fs.mkdirSync(bundlesPath);
+	}
+
+	// Extract repo name from git url
+	var temp = repoUrl.split('/').pop();
+	var bundleName = temp.substr(0, temp.length - 4);
+	var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+
+	// Figure out what version to checkout
+	process.stdout.write(`Fetching ${bundleName} release list... `);
+	var tags;
+	var target;
+	try {
+		tags = fetchTags(repoUrl);
+		target = semver.maxSatisfying(tags, range);
+		process.stdout.write(chalk.green('done!') + os.EOL);
+	} catch (e) {
+		/* istanbul ignore next */
+		process.stdout.write(chalk.red('failed!') + os.EOL);
+		/* istanbul ignore next */
+		console.error(e.stack);
+		/* istanbul ignore next */
+		return;
+	}
+
+	// Clone from github
+	process.stdout.write(`Installing ${bundleName}... `);
+	try {
+		execSync(`git clone ${repoUrl} "${bundlePath}"`, {stdio: ['pipe', 'pipe', 'pipe']});
+		process.stdout.write(chalk.green('done!') + os.EOL);
+	} catch (e) {
+		/* istanbul ignore next */
+		process.stdout.write(chalk.red('failed!') + os.EOL);
+		/* istanbul ignore next */
+		console.error(e.stack);
+		/* istanbul ignore next */
+		return;
+	}
+
+	// If a bundle has no git tags, target will be null.
+	if (target) {
+		process.stdout.write(`Checking out version ${target}... `);
 		try {
-			var cmdline = format('git clone %s "%s"', repoUrl, bundlePath);
-			execSync(cmdline, {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync(`git checkout ${target}`, {cwd: bundlePath, stdio: ['pipe', 'pipe', 'pipe']});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -60,11 +104,8 @@ function action(repo, options) {
 			/* istanbul ignore next */
 			return;
 		}
-
-		// After installing the bundle, install its npm dependencies
-		installBundleDeps(bundlePath, dev);
-	} else {
-		// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
-		installBundleDeps(process.cwd(), dev);
 	}
+
+	// After installing the bundle, install its npm dependencies
+	installBundleDeps(bundlePath, dev);
 }

@@ -4,6 +4,7 @@ var assert = require('chai').assert;
 var fs = require('fs');
 var rimraf = require('rimraf');
 var sinon = require('sinon');
+var semver = require('semver');
 var MockProgram = require('../mocks/program');
 var InstallCommand = require('../../commands/install');
 
@@ -23,6 +24,15 @@ describe('install command', function () {
 		assert.isAbove(fs.readdirSync('./bundles/lfg-streamtip/bower_components').length, 0);
 	});
 
+	it('should install a version that satisfies a provided semver range', function () {
+		this.timeout(40000);
+		program.runWith('install supportclass/lfg-nucleus#^1.1.0');
+		assert.equal(fs.existsSync('./bundles/lfg-nucleus/package.json'), true);
+
+		var pjson = JSON.parse(fs.readFileSync('./bundles/lfg-nucleus/package.json'));
+		assert.isTrue(semver.satisfies(pjson.version, '^1.1.0'));
+	});
+
 	it('should install bower & npm dependencies when run with no arguments in a bundle directory', function () {
 		this.timeout(40000);
 
@@ -39,7 +49,7 @@ describe('install command', function () {
 		this.timeout(20000);
 		sinon.spy(console, 'error');
 		program.runWith('install 123');
-		assert.equal('Please enter a valid git url (https) or GitHub username/repo pair.',
+		assert.equal('Please enter a valid git repository URL or GitHub username/repo pair.',
 			console.error.getCall(0).args[0]);
 		console.error.restore();
 	});
