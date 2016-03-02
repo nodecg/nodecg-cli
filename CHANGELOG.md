@@ -1,3 +1,32 @@
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/nodecg/nodecg-cli/compare/v4.1.0...v5.0.0) (2016-03-02)
+
+
+### Bug Fixes
+
+* **install:** I'm the worst, go back to using httpsUrl ([501264d](https://github.com/nodecg/nodecg-cli/commit/501264d))
+* **install:** use gitUrl instead of httpsUrl ([8c483a3](https://github.com/nodecg/nodecg-cli/commit/8c483a3))
+* **install:** use ssh instead of giturl ([7c25f0f](https://github.com/nodecg/nodecg-cli/commit/7c25f0f))
+* **update:** fix error when installing bundle deps ([20ccda4](https://github.com/nodecg/nodecg-cli/commit/20ccda4))
+
+### Code Refactoring
+
+* **install:** use system bower ([1109d82](https://github.com/nodecg/nodecg-cli/commit/1109d82))
+
+### Features
+
+* **install:** install command now respects semver ranges, if supplied ([3be0c6a](https://github.com/nodecg/nodecg-cli/commit/3be0c6a))
+* **setup:** add `-k` alias for `--skip-dependencies` ([fcd841a](https://github.com/nodecg/nodecg-cli/commit/fcd841a))
+* **update:** remove update command while its functionality is re-evaluated ([52fbe07](https://github.com/nodecg/nodecg-cli/commit/52fbe07))
+
+
+### BREAKING CHANGES
+
+* update: remove update command
+* install: requires bower to be globally installed
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/nodecg/nodecg-cli/compare/v4.0.0...v4.1.0) (2016-02-18)
 
