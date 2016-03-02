@@ -28,10 +28,6 @@ Can be a GitHub owner/repo pair (`supportclass/lfg-sublistener`) or https git ur
 If run in a bundle directory with no arguments, installs that bundle's dependencies.
 Enable `--dev` flag to install the bundle's `devDependencies`.
 * `nodecg uninstall <bundle>`, uninstall a bundle
-* `nodecg update [bundle|*] [--dev]`, Runs `git pull` on a bundle. Use `*` to update all installed bundles. 
-Re-installs the bundles `dependencies` after updating. If run with no arguments, 
-attempts to update the bundle in the current directory (if any). 
-Enable `--dev` flag to install the bundle's `devDependencies`.
 * `nodecg defaultconfig`, If a bundle has a `configschema.json` present in its root, this command will create a default
 config file at `nodecg/cfg/:bundleName.json` with defaults based on that schema.
 
