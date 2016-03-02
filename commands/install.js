@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var os = require('os');
-var installDeps = require('../lib/install-deps');
+var installBundleDeps = require('../lib/install-bundle-deps');
 var execSync = require('child_process').execSync;
 var npa = require('npm-package-arg');
 var path = require('path');
@@ -62,9 +62,9 @@ function action(repo, options) {
 		}
 
 		// After installing the bundle, install its npm dependencies
-		installDeps(bundlePath, dev);
+		installBundleDeps(bundlePath, dev);
 	} else {
 		// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
-		installDeps(process.cwd(), dev);
+		installBundleDeps(process.cwd(), dev);
 	}
 }
