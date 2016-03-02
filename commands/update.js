@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var installDeps = require('../lib/install-deps');
+var installBundleDeps = require('../lib/install-bundle-deps');
 var util = require('../lib/util');
 var chalk = require('chalk');
 var os = require('os');
@@ -32,7 +32,7 @@ module.exports = function updateCommand(program) {
 		}
 
 		// After updating the bundle, install/update its npm dependencies
-		installDeps(bundlePath, installDev);
+		installBundleDeps(bundlePath, installDev);
 	}
 
 	program
