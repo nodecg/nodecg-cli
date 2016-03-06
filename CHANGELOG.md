@@ -1,3 +1,13 @@
+<a name="5.0.1"></a>
+## [5.0.1](https://github.com/nodecg/nodecg-cli/compare/v5.0.0...v5.0.1) (2016-03-06)
+
+
+### Bug Fixes
+
+* **setup:** run `git fetch` before attempting to check out an updated release ([aa352c2](https://github.com/nodecg/nodecg-cli/commit/aa352c2))
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/nodecg/nodecg-cli/compare/v4.1.0...v5.0.0) (2016-03-02)
 
