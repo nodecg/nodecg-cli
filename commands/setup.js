@@ -81,6 +81,19 @@ function action(version, options) {
 		var nodecgPath = util.getNodeCGPath();
 		var current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json')).version;
 
+		process.stdout.write('Downloading latest release...');
+		try {
+			execSync('git fetch', {stdio: ['pipe', 'pipe', 'pipe']});
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			/* istanbul ignore next */
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			/* istanbul ignore next */
+			console.error(e.stack);
+			/* istanbul ignore next */
+			return;
+		}
+
 		if (semver.eq(target, current)) {
 			console.log('The target version (%s) is equal to the current version (%s). No action will be taken.',
 				chalk.magenta(target), chalk.magenta(current));
