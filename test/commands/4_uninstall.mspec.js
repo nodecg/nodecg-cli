@@ -25,6 +25,7 @@ describe('uninstall command', function () {
 				inquirer.prompt.restore();
 				done();
 			});
+		program.runWith('uninstall lfg-streamtip');
 	});
 
 	it('should print an error when the target bundle is not installed', function () {
