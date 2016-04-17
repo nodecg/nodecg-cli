@@ -33,7 +33,7 @@ function action(bundleName, options) {
 			name: 'confirmUninstall',
 			message: 'Are you sure you wish to uninstall ' + chalk.magenta(bundleName) + '?',
 			type: 'confirm'
-		}], function (answers) {
+		}]).then(answers => {
 			if (answers.confirmUninstall) {
 				deleteBundle(bundleName, bundlePath);
 			}
