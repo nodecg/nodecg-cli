@@ -15,17 +15,20 @@ describe('uninstall command', function () {
 		uninstallCommand = new UninstallCommand(program);
 	});
 
-	it('should delete the bundle\'s folder after prompting for ocnfirmation', function () {
-		this.timeout(25000);
-		sinon.spy(inquirer, 'prompt');
+	it('should delete the bundle\'s folder after prompting for confirmation', function (done) {
+		this.timeout(10000);
+		sinon.stub(inquirer, 'prompt').returns({
+			then(callback) {
+				callback({confirmUninstall: true});
+				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
+				inquirer.prompt.restore();
+				done();
+			}
+		});
 		program.runWith('uninstall lfg-streamtip');
-		inquirer.prompt.getCall(0).args[1]({confirmUninstall: true});
-		assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
-		inquirer.prompt.restore();
 	});
 
 	it('should print an error when the target bundle is not installed', function () {
-		this.timeout(5000);
 		sinon.spy(console, 'error');
 		program.runWith('uninstall not-installed');
 		assert.equal('Cannot uninstall %s: bundle is not installed.',
