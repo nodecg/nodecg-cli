@@ -17,15 +17,13 @@ describe('uninstall command', function () {
 
 	it('should delete the bundle\'s folder after prompting for confirmation', function (done) {
 		this.timeout(10000);
-		sinon.stub(inquirer, 'prompt').returns(function () {
-			return {
-				then(callback) {
-					callback({confirmUninstall: true});
-					assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
-					inquirer.prompt.restore();
-					done();
-				}
-			};
+		sinon.stub(inquirer, 'prompt').returns({
+			then(callback) {
+				callback({confirmUninstall: true});
+				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
+				inquirer.prompt.restore();
+				done();
+			}
 		});
 		program.runWith('uninstall lfg-streamtip');
 	});
