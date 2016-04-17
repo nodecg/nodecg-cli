@@ -6,6 +6,7 @@ var sinon = require('sinon');
 var inquirer = require('inquirer');
 var MockProgram = require('../mocks/program');
 var UninstallCommand = require('../../commands/uninstall');
+require('sinon-as-promised');
 
 describe('uninstall command', function () {
 	var uninstallCommand, program; // eslint-disable-line
@@ -17,11 +18,12 @@ describe('uninstall command', function () {
 
 	it('should delete the bundle\'s folder after prompting for ocnfirmation', function () {
 		this.timeout(25000);
-		sinon.spy(inquirer, 'prompt');
-		program.runWith('uninstall lfg-streamtip');
-		inquirer.prompt.getCall(0).args[1]({confirmUninstall: true});
-		assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
-		inquirer.prompt.restore();
+		sinon.stub(inquirer, 'prompt')
+			.resolves('foo')()
+			.then(function () {
+				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
+				inquirer.prompt.restore();
+			});
 	});
 
 	it('should print an error when the target bundle is not installed', function () {
