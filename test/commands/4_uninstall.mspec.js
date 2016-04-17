@@ -19,7 +19,7 @@ describe('uninstall command', function () {
 	it('should delete the bundle\'s folder after prompting for ocnfirmation', function () {
 		this.timeout(25000);
 		sinon.stub(inquirer, 'prompt')
-			.resolves('foo')()
+			.resolves({confirmUninstall: true})()
 			.then(function () {
 				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
 				inquirer.prompt.restore();
