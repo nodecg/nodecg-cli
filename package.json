@@ -51,7 +51,6 @@
     "mkdirp": "^0.5.1",
     "mocha": "^2.1.0",
     "sinon": "^1.12.2",
-    "sinon-as-promised": "^4.0.0",
     "temp": "^0.8.3"
   },
   "scripts": {

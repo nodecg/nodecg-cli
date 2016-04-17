@@ -6,7 +6,6 @@ var sinon = require('sinon');
 var inquirer = require('inquirer');
 var MockProgram = require('../mocks/program');
 var UninstallCommand = require('../../commands/uninstall');
-require('sinon-as-promised');
 
 describe('uninstall command', function () {
 	var uninstallCommand, program; // eslint-disable-line
@@ -18,14 +17,16 @@ describe('uninstall command', function () {
 
 	it('should delete the bundle\'s folder after prompting for confirmation', function (done) {
 		this.timeout(10000);
-		sinon.stub(inquirer, 'prompt')
-			.resolves({confirmUninstall: true})()
-			.then(function () {
-				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
-				inquirer.prompt.restore();
-				done();
-			})
-			.catch(done);
+		sinon.stub(inquirer, 'prompt').returns(function () {
+			return {
+				then(callback) {
+					callback({confirmUninstall: true});
+					assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
+					inquirer.prompt.restore();
+					done();
+				}
+			};
+		});
 		program.runWith('uninstall lfg-streamtip');
 	});
 
