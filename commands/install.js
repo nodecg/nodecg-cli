@@ -94,7 +94,10 @@ function action(repo, options) {
 	if (target) {
 		process.stdout.write(`Checking out version ${target}... `);
 		try {
-			execSync(`git checkout ${target}`, {cwd: bundlePath, stdio: ['pipe', 'pipe', 'pipe']});
+			execSync(`git checkout ${target}`, {
+				cwd: bundlePath,
+				stdio: ['pipe', 'pipe', 'pipe']
+			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
