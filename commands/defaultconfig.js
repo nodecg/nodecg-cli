@@ -6,7 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var defaults = require('json-schema-defaults');
 
-module.exports = function initCommand(program) {
+module.exports = function (program) {
 	program
 		.command('defaultconfig [bundle]')
 		.description('Generate default config from configschema.json')

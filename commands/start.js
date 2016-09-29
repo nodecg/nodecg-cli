@@ -2,7 +2,7 @@
 
 var util = require('../lib/util');
 
-module.exports = function startCommand(program) {
+module.exports = function (program) {
 	program
 		.command('start')
 		.description('Start NodeCG')

@@ -12,7 +12,7 @@ var fetchTags = require('../lib/fetch-tags');
 
 var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
-module.exports = function initCommand(program) {
+module.exports = function (program) {
 	program
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')

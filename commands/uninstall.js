@@ -8,7 +8,7 @@ var chalk = require('chalk');
 var rimraf = require('rimraf');
 var os = require('os');
 
-module.exports = function installCommand(program) {
+module.exports = function (program) {
 	program
 		.command('uninstall <bundle>')
 		.description('Uninstalls a bundle.')
