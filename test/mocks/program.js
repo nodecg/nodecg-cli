@@ -3,7 +3,7 @@
 var sinon = require('sinon');
 var commander = require('commander');
 
-module.exports = function MockProgram() {
+module.exports = function () {
 	var program = new commander.Command();
 	program.log = function () {};
 

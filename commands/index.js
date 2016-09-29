@@ -8,7 +8,7 @@
 var fs = require('fs');
 var path = require('path');
 
-module.exports = function commandLoader(program) {
+module.exports = function (program) {
 	var commands = {};
 	var loadPath = path.dirname(__filename);
 

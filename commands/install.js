@@ -11,7 +11,7 @@ var semver = require('semver');
 var chalk = require('chalk');
 var fetchTags = require('../lib/fetch-tags');
 
-module.exports = function installCommand(program) {
+module.exports = function (program) {
 	program
 		.command('install [repo]')
 		.description('Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
