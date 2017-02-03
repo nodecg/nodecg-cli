@@ -1,4 +1,6 @@
 # nodecg-cli
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/nodecg/nodecg-cli.svg)](https://greenkeeper.io/)
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
 [![Build Status](https://travis-ci.org/nodecg/nodecg-cli.svg?branch=master)](https://travis-ci.org/nodecg/nodecg-cli)
