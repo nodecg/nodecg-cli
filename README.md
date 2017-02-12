@@ -1,10 +1,10 @@
 # nodecg-cli
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/nodecg/nodecg-cli.svg)](https://greenkeeper.io/)
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
 [![Build Status](https://travis-ci.org/nodecg/nodecg-cli.svg?branch=master)](https://travis-ci.org/nodecg/nodecg-cli)
 [![Coverage Status](https://coveralls.io/repos/github/nodecg/nodecg-cli/badge.svg?branch=master)](https://coveralls.io/github/nodecg/nodecg-cli?branch=master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/nodecg/nodecg-cli.svg)](https://greenkeeper.io/)
 
 ## Installation
 First, make sure you have [git](http://git-scm.com/) installed, and that it is in your PATH.
