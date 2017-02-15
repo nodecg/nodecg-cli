@@ -1,10 +1,10 @@
 'use strict';
 
-var util = require('../lib/util');
-var chalk = require('chalk');
-var fs = require('fs');
-var path = require('path');
-var defaults = require('json-schema-defaults');
+const util = require('../lib/util');
+const chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
+const defaults = require('json-schema-defaults');
 
 module.exports = function (program) {
 	program
@@ -14,8 +14,8 @@ module.exports = function (program) {
 };
 
 function action(bundleName) {
-	var cwd = process.cwd();
-	var nodecgPath = util.getNodeCGPath();
+	const cwd = process.cwd();
+	const nodecgPath = util.getNodeCGPath();
 
 	if (!bundleName) {
 		if (util.isBundleFolder(cwd)) {
@@ -26,9 +26,9 @@ function action(bundleName) {
 		}
 	}
 
-	var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
-	var schemaPath = path.join(nodecgPath, 'bundles/', bundleName, '/configschema.json');
-	var cfgPath = path.join(nodecgPath, 'cfg/');
+	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+	const schemaPath = path.join(nodecgPath, 'bundles/', bundleName, '/configschema.json');
+	const cfgPath = path.join(nodecgPath, 'cfg/');
 
 	if (!fs.existsSync(bundlePath)) {
 		console.error(chalk.red('Error:') + ' Bundle %s does not exist', bundleName);
@@ -42,8 +42,8 @@ function action(bundleName) {
 		fs.mkdirSync(cfgPath);
 	}
 
-	var schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
-	var configPath = path.join(nodecgPath, 'cfg/', bundleName + '.json');
+	const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+	const configPath = path.join(nodecgPath, 'cfg/', bundleName + '.json');
 	if (fs.existsSync(configPath)) {
 		console.error(chalk.red('Error:') + ' Bundle %s already has a config file', bundleName);
 	} else {

@@ -2,15 +2,15 @@
 
 process.title = 'nodecg';
 
-var request = require('request');
-var semver = require('semver');
-var chalk = require('chalk');
-var program = new (require('commander').Command)('nodecg');
+const request = require('request');
+const semver = require('semver');
+const chalk = require('chalk');
+const program = new (require('commander').Command)('nodecg');
 
-var pjson = require('./package.json');
+const pjson = require('./package.json');
 
 // Check for updates
-request('http://registry.npmjs.org/nodecg-cli/latest', function (err, res, body) {
+request('http://registry.npmjs.org/nodecg-cli/latest', (err, res, body) => {
 	if (!err && res.statusCode === 200) {
 		if (semver.gt(JSON.parse(body).version, pjson.version)) {
 			console.log(chalk.yellow('?') + ' A new update is available for nodecg-cli: ' +
@@ -29,7 +29,7 @@ program
 require('./commands')(program);
 
 // Handle unknown commands
-program.on('*', function () {
+program.on('*', () => {
 	console.log('Unknown command:', program.args.join(' '));
 	program.help();
 });

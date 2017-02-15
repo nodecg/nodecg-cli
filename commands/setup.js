@@ -1,16 +1,16 @@
 'use strict';
 
-var util = require('../lib/util');
-var childProcess = require('child_process');
-var execSync = childProcess.execSync;
-var os = require('os');
-var chalk = require('chalk');
-var inquirer = require('inquirer');
-var semver = require('semver');
-var fs = require('fs');
-var fetchTags = require('../lib/fetch-tags');
+const util = require('../lib/util');
+const childProcess = require('child_process');
+const execSync = childProcess.execSync;
+const os = require('os');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const semver = require('semver');
+const fs = require('fs');
+const fetchTags = require('../lib/fetch-tags');
 
-var NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
+const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
 module.exports = function (program) {
 	program
@@ -23,7 +23,7 @@ module.exports = function (program) {
 
 function action(version, options) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
-	var isUpdate = false;
+	let isUpdate = false;
 
 	// If NodeCG exists in the cwd, but the `-u` flag was not supplied, display an error and return.
 	// If it was supplied, fetch the latest tags and set the `isUpdate` flag to true for later use.
@@ -47,7 +47,7 @@ function action(version, options) {
 		process.stdout.write('Finding latest release... ');
 	}
 
-	var tags;
+	let tags;
 	try {
 		tags = fetchTags(NODECG_GIT_URL);
 	} catch (e) {
@@ -59,12 +59,12 @@ function action(version, options) {
 		return;
 	}
 
-	var target;
+	let target;
 
 	// If a version (or semver range) was supplied, find the latest release that satisfies the range.
 	// Else, make the target the newest version.
 	if (version) {
-		var maxSatisfying = semver.maxSatisfying(tags, version);
+		const maxSatisfying = semver.maxSatisfying(tags, version);
 		if (!maxSatisfying) {
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			console.error('No releases match the supplied semver range (' + chalk.magenta(version) + ')');
@@ -78,8 +78,8 @@ function action(version, options) {
 	process.stdout.write(chalk.green('done!') + os.EOL);
 
 	if (isUpdate) {
-		var nodecgPath = util.getNodeCGPath();
-		var current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json')).version;
+		const nodecgPath = util.getNodeCGPath();
+		const current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json')).version;
 
 		process.stdout.write('Downloading latest release...');
 		try {
@@ -97,7 +97,6 @@ function action(version, options) {
 		if (semver.eq(target, current)) {
 			console.log('The target version (%s) is equal to the current version (%s). No action will be taken.',
 				chalk.magenta(target), chalk.magenta(current));
-			return;
 		} else if (semver.lt(target, current)) {
 			console.log(chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
 				chalk.magenta(target), chalk.magenta(current));
@@ -106,7 +105,7 @@ function action(version, options) {
 				name: 'installOlder',
 				message: 'Are you sure you wish to continue?',
 				type: 'confirm'
-			}], function (answers) {
+			}], answers => {
 				if (answers.installOlder) {
 					checkoutUpdate(current, target, options.skipDependencies, true);
 				}
@@ -178,7 +177,7 @@ function installDependencies() {
 function checkoutUpdate(current, target, skipDependencies, downgrade) {
 	// Now that we know for sure if the target tag exists (and if its newer or older than current),
 	// we can `git pull` and `git checkout <tag>` if appropriate.
-	var Verb = downgrade ? 'Downgrading' : 'Upgrading';
+	const Verb = downgrade ? 'Downgrading' : 'Upgrading';
 	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
 
 	try {
@@ -199,7 +198,7 @@ function checkoutUpdate(current, target, skipDependencies, downgrade) {
 	}
 
 	if (target) {
-		var verb = downgrade ? 'downgraded' : 'upgraded';
+		const verb = downgrade ? 'downgraded' : 'upgraded';
 		console.log('NodeCG %s to', verb, chalk.magenta(target));
 	}
 }

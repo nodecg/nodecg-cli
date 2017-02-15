@@ -1,25 +1,25 @@
 'use strict';
 
-var childProcess = require('child_process');
-var mkdirp = require('mkdirp');
-var assert = require('chai').assert;
-var sinon = require('sinon');
-var MockProgram = require('../mocks/program');
-var DefaultConfigCommand = require('../../commands/defaultconfig');
-var fs = require('fs');
+const childProcess = require('child_process');
+const mkdirp = require('mkdirp');
+const assert = require('chai').assert;
+const sinon = require('sinon');
+const MockProgram = require('../mocks/program');
+const DefaultConfigCommand = require('../../commands/defaultconfig');
+const fs = require('fs');
 
-describe('defaultconfig command', function () {
-	var defaultConfigCommand, program; // eslint-disable-line
+describe('defaultconfig command', () => {
+	let program;
 
-	beforeEach(function () {
+	beforeEach(() => {
 		program = new MockProgram();
-		defaultConfigCommand = new DefaultConfigCommand(program);
+		new DefaultConfigCommand(program); // eslint-disable-line no-new
 		if (fs.existsSync('./cfg/lfg-streamtip.json')) {
 			fs.unlinkSync('./cfg/lfg-streamtip.json');
 		}
 	});
 
-	context('when run with a bundle argument', function () {
+	context('when run with a bundle argument', () => {
 		it('should successfully create a bundle config file when bundle has configschema.json', function () {
 			this.timeout(25000);
 			fs.writeFileSync('./bundles/lfg-streamtip/configschema.json', JSON.stringify({
@@ -41,7 +41,7 @@ describe('defaultconfig command', function () {
 			sinon.spy(childProcess, 'execSync');
 			program.runWith('defaultconfig lfg-streamtip');
 			assert.equal(fs.existsSync('./cfg/lfg-streamtip.json'), true);
-			var config = JSON.parse(fs.readFileSync('./cfg/lfg-streamtip.json'));
+			const config = JSON.parse(fs.readFileSync('./cfg/lfg-streamtip.json'));
 			assert.equal('user', config.username);
 			assert.equal(5, config.value);
 			assert.isUndefined(config.nodefault);
@@ -78,7 +78,7 @@ describe('defaultconfig command', function () {
 		});
 	});
 
-	context('when run with no arguments', function () {
+	context('when run with no arguments', () => {
 		it('should successfully create a bundle config file when run from inside bundle directory', function () {
 			this.timeout(25000);
 			process.chdir('./bundles/lfg-streamtip');

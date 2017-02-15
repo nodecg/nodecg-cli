@@ -1,15 +1,15 @@
 'use strict';
 
-var fs = require('fs');
-var os = require('os');
-var installBundleDeps = require('../lib/install-bundle-deps');
-var execSync = require('child_process').execSync;
-var npa = require('npm-package-arg');
-var path = require('path');
-var util = require('../lib/util');
-var semver = require('semver');
-var chalk = require('chalk');
-var fetchTags = require('../lib/fetch-tags');
+const fs = require('fs');
+const os = require('os');
+const installBundleDeps = require('../lib/install-bundle-deps');
+const execSync = require('child_process').execSync;
+const npa = require('npm-package-arg');
+const path = require('path');
+const util = require('../lib/util');
+const semver = require('semver');
+const chalk = require('chalk');
+const fetchTags = require('../lib/fetch-tags');
 
 module.exports = function (program) {
 	program
@@ -21,7 +21,7 @@ module.exports = function (program) {
 };
 
 function action(repo, options) {
-	var dev = options.dev || false;
+	const dev = options.dev || false;
 
 	// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
 	if (!repo) {
@@ -29,16 +29,16 @@ function action(repo, options) {
 		return;
 	}
 
-	var range = '';
+	let range = '';
 	if (repo.indexOf('#') > 0) {
-		var repoParts = repo.split('#');
+		const repoParts = repo.split('#');
 		range = repoParts[1];
 		repo = repoParts[0];
 	}
 
-	var nodecgPath = util.getNodeCGPath();
-	var parsed = npa(repo);
-	var repoUrl = null;
+	const nodecgPath = util.getNodeCGPath();
+	const parsed = npa(repo);
+	let repoUrl = null;
 
 	if (parsed.type === 'hosted') {
 		repoUrl = parsed.hosted.gitUrl;
@@ -48,21 +48,21 @@ function action(repo, options) {
 	}
 
 	// Check that `bundles` exists
-	var bundlesPath = path.join(nodecgPath, 'bundles');
+	const bundlesPath = path.join(nodecgPath, 'bundles');
 	/* istanbul ignore next: Simple directory creation, not necessary to test */
 	if (!fs.existsSync(bundlesPath)) {
 		fs.mkdirSync(bundlesPath);
 	}
 
 	// Extract repo name from git url
-	var temp = repoUrl.split('/').pop();
-	var bundleName = temp.substr(0, temp.length - 4);
-	var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+	const temp = repoUrl.split('/').pop();
+	const bundleName = temp.substr(0, temp.length - 4);
+	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
 	// Figure out what version to checkout
 	process.stdout.write(`Fetching ${bundleName} release list... `);
-	var tags;
-	var target;
+	let tags;
+	let target;
 	try {
 		tags = fetchTags(repoUrl);
 		target = semver.maxSatisfying(tags, range);

@@ -1,18 +1,18 @@
 'use strict';
 
-var assert = require('chai').assert;
-var fs = require('fs');
-var sinon = require('sinon');
-var inquirer = require('inquirer');
-var MockProgram = require('../mocks/program');
-var UninstallCommand = require('../../commands/uninstall');
+const assert = require('chai').assert;
+const fs = require('fs');
+const sinon = require('sinon');
+const inquirer = require('inquirer');
+const MockProgram = require('../mocks/program');
+const UninstallCommand = require('../../commands/uninstall');
 
-describe('uninstall command', function () {
-	var uninstallCommand, program; // eslint-disable-line
+describe('uninstall command', () => {
+	let program; // eslint-disable-line
 
-	beforeEach(function () {
+	beforeEach(() => {
 		program = new MockProgram();
-		uninstallCommand = new UninstallCommand(program);
+		new UninstallCommand(program); // eslint-disable-line no-new
 	});
 
 	it('should delete the bundle\'s folder after prompting for confirmation', function (done) {
@@ -28,7 +28,7 @@ describe('uninstall command', function () {
 		program.runWith('uninstall lfg-streamtip');
 	});
 
-	it('should print an error when the target bundle is not installed', function () {
+	it('should print an error when the target bundle is not installed', () => {
 		sinon.spy(console, 'error');
 		program.runWith('uninstall not-installed');
 		assert.equal('Cannot uninstall %s: bundle is not installed.',

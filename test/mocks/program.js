@@ -1,13 +1,13 @@
 'use strict';
 
-var sinon = require('sinon');
-var commander = require('commander');
+const sinon = require('sinon');
+const commander = require('commander');
 
 module.exports = function () {
-	var program = new commander.Command();
+	const program = new commander.Command();
 	program.log = function () {};
 
-	sinon.stub(program, 'log').returns(void 0); // eslint-disable-line
+	sinon.stub(program, 'log').returns(void 0); // eslint-disable-line no-void
 
 	program.request = function (opts) {
 		throw new Error('Unexpected request: ' + JSON.stringify(opts, null, 2));

@@ -1,12 +1,12 @@
 'use strict';
 
-var fs = require('fs');
-var inquirer = require('inquirer');
-var path = require('path');
-var util = require('../lib/util');
-var chalk = require('chalk');
-var rimraf = require('rimraf');
-var os = require('os');
+const fs = require('fs');
+const inquirer = require('inquirer');
+const path = require('path');
+const util = require('../lib/util');
+const chalk = require('chalk');
+const rimraf = require('rimraf');
+const os = require('os');
 
 module.exports = function (program) {
 	program
@@ -17,8 +17,8 @@ module.exports = function (program) {
 };
 
 function action(bundleName, options) {
-	var nodecgPath = util.getNodeCGPath();
-	var bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+	const nodecgPath = util.getNodeCGPath();
+	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
 	if (!fs.existsSync(bundlePath)) {
 		console.error('Cannot uninstall %s: bundle is not installed.', chalk.magenta(bundleName));

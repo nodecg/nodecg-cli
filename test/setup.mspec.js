@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 'use strict';
 
-var temp = require('temp');
-var tempFolder = temp.mkdirSync();
+const temp = require('temp');
+const tempFolder = temp.mkdirSync();
 
 // Automatically track and cleanup files at exit
 temp.track();
 
-beforeEach(function () {
+beforeEach(() => {
 	process.chdir(tempFolder);
 });

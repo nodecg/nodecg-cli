@@ -1,18 +1,18 @@
 'use strict';
 
-var assert = require('chai').assert;
-var fs = require('fs');
-var sinon = require('sinon');
-var inquirer = require('inquirer');
-var MockProgram = require('../mocks/program');
-var SetupCommand = require('../../commands/setup');
+const assert = require('chai').assert;
+const fs = require('fs');
+const sinon = require('sinon');
+const inquirer = require('inquirer');
+const MockProgram = require('../mocks/program');
+const SetupCommand = require('../../commands/setup');
 
-describe('setup command', function () {
-	var setupCommand, program; // eslint-disable-line
+describe('setup command', () => {
+	let program;
 
-	beforeEach(function () {
+	beforeEach(() => {
 		program = new MockProgram();
-		setupCommand = new SetupCommand(program);
+		new SetupCommand(program); // eslint-disable-line no-new
 	});
 
 	it('should install the latest NodeCG when no version is specified', function () {
@@ -55,7 +55,7 @@ describe('setup command', function () {
 		console.error.restore();
 	});
 
-	context('when nodecg is already installed in the current directory', function () {
+	context('when nodecg is already installed in the current directory', () => {
 		it('should print an error and exit', function () {
 			this.timeout(16000);
 			sinon.spy(console, 'error');

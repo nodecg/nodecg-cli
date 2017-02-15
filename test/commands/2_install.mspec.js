@@ -1,19 +1,19 @@
 'use strict';
 
-var assert = require('chai').assert;
-var fs = require('fs');
-var rimraf = require('rimraf');
-var sinon = require('sinon');
-var semver = require('semver');
-var MockProgram = require('../mocks/program');
-var InstallCommand = require('../../commands/install');
+const assert = require('chai').assert;
+const fs = require('fs');
+const rimraf = require('rimraf');
+const sinon = require('sinon');
+const semver = require('semver');
+const MockProgram = require('../mocks/program');
+const InstallCommand = require('../../commands/install');
 
-describe('install command', function () {
-	var installCommand, program; // eslint-disable-line
+describe('install command', () => {
+	let program;
 
-	beforeEach(function () {
+	beforeEach(() => {
 		program = new MockProgram();
-		installCommand = new InstallCommand(program);
+		new InstallCommand(program); // eslint-disable-line no-new
 	});
 
 	it('should install a bundle and its dependencies', function () {
@@ -29,7 +29,7 @@ describe('install command', function () {
 		program.runWith('install supportclass/lfg-nucleus#^1.1.0');
 		assert.equal(fs.existsSync('./bundles/lfg-nucleus/package.json'), true);
 
-		var pjson = JSON.parse(fs.readFileSync('./bundles/lfg-nucleus/package.json'));
+		const pjson = JSON.parse(fs.readFileSync('./bundles/lfg-nucleus/package.json'));
 		assert.isTrue(semver.satisfies(pjson.version, '^1.1.0'));
 	});
 

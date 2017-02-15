@@ -5,21 +5,21 @@
 
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function (program) {
-	var commands = {};
-	var loadPath = path.dirname(__filename);
+	const commands = {};
+	const loadPath = path.dirname(__filename);
 
 	// Loop though command files
-	fs.readdirSync(loadPath).filter(function (filename) {
+	fs.readdirSync(loadPath).filter(filename => {
 		return (/\.js$/.test(filename) && filename !== 'index.js');
-	}).forEach(function (filename) {
-		var name = filename.substr(0, filename.lastIndexOf('.'));
+	}).forEach(filename => {
+		const name = filename.substr(0, filename.lastIndexOf('.'));
 
 		// Require command
-		var command = require(path.join(loadPath, filename));
+		const command = require(path.join(loadPath, filename));
 
 		// Initialize command
 		commands[name] = command(program);
