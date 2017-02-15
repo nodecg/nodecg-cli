@@ -25,22 +25,22 @@ describe('setup command', () => {
 	it('should ask the user for confirmation when downgrading versions', function () {
 		this.timeout(16000);
 		sinon.spy(inquirer, 'prompt');
-		program.runWith('setup 0.6.3 -u --skip-dependencies');
+		program.runWith('setup 0.8.1 -u --skip-dependencies');
 		inquirer.prompt.getCall(0).args[1]({installOlder: true});
-		assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.6.3');
+		assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.8.1');
 		inquirer.prompt.restore();
 	});
 
 	it('should let the user change upgrade versions', function () {
 		this.timeout(16000);
-		program.runWith('setup 0.7.1 -u --skip-dependencies');
-		assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.7.1');
+		program.runWith('setup 0.8.2 -u --skip-dependencies');
+		assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.8.2');
 	});
 
 	it('should print an error when the target version is the same as current', function () {
 		this.timeout(16000);
 		sinon.spy(console, 'log');
-		program.runWith('setup 0.7.1 -u --skip-dependencies');
+		program.runWith('setup 0.8.2 -u --skip-dependencies');
 		assert.equal('The target version (%s) is equal to the current version (%s). No action will be taken.',
 			console.log.getCall(0).args[0]);
 		console.log.restore();
