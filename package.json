@@ -37,7 +37,7 @@
     "inquirer": "^3.0.1",
     "json-schema-defaults": "^0.3.0",
     "npm-package-arg": "^4.1.0",
-    "request": "^2.51.0",
+    "request": "^2.78.0",
     "rimraf": "^2.2.8",
     "semver": "^5.1.0"
   },
