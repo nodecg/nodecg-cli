@@ -50,7 +50,7 @@
     "lcov-filter": "0.1.1",
     "mkdirp": "^0.5.1",
     "mocha": "^3.0.0",
-    "sinon": "^2.0.0",
+    "sinon": "^3.0.0",
     "temp": "^0.8.3"
   },
   "scripts": {
