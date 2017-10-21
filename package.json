@@ -49,12 +49,12 @@
     "istanbul": "^0.4.3",
     "lcov-filter": "0.1.1",
     "mkdirp": "^0.5.1",
-    "mocha": "^3.0.0",
+    "mocha": "^4.0.1",
     "sinon": "^4.0.0",
     "temp": "^0.8.3"
   },
   "scripts": {
-    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
+    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --exit",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
     "static": "eslint ."
   },
