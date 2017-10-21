@@ -54,7 +54,7 @@
     "temp": "^0.8.3"
   },
   "scripts": {
-    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
+    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --exit",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
     "static": "eslint ."
   },
