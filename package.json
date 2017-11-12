@@ -34,7 +34,7 @@
   "dependencies": {
     "chalk": "^2.0.0",
     "commander": "^2.6.0",
-    "inquirer": "^3.0.1",
+    "inquirer": "^4.0.0",
     "json-schema-defaults": "^0.3.0",
     "npm-package-arg": "^4.1.0",
     "request": "^2.51.0",
