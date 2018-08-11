@@ -36,7 +36,7 @@
     "commander": "^2.6.0",
     "inquirer": "^4.0.0",
     "json-schema-defaults": "^0.3.0",
-    "npm-package-arg": "^4.1.0",
+    "npm-package-arg": "^5.0.0",
     "request": "^2.51.0",
     "rimraf": "^2.2.8",
     "semver": "^5.1.0"
