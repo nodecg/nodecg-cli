@@ -1,3 +1,34 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/nodecg/nodecg-cli/compare/v5.0.1...v6.0.0) (2018-12-03)
+
+
+### Bug Fixes
+
+* **package:** update chalk to version 2.0.0 ([#44](https://github.com/nodecg/nodecg-cli/issues/44)) ([b19ddc1](https://github.com/nodecg/nodecg-cli/commit/b19ddc1))
+* **package:** update inquirer to version 4.0.0 ([#52](https://github.com/nodecg/nodecg-cli/issues/52)) ([ef4560f](https://github.com/nodecg/nodecg-cli/commit/ef4560f))
+
+
+### Code Refactoring
+
+* port to ES6 ([b373fff](https://github.com/nodecg/nodecg-cli/commit/b373fff))
+
+
+### Features
+
+* add schema-types command ([#62](https://github.com/nodecg/nodecg-cli/issues/62)) ([237d734](https://github.com/nodecg/nodecg-cli/commit/237d734))
+
+
+### BREAKING CHANGES
+
+* drop support for Node 6
+* requires Node 6+
+
+
+
 <a name="5.0.1"></a>
 ## [5.0.1](https://github.com/nodecg/nodecg-cli/compare/v5.0.0...v5.0.1) (2016-03-06)
 
@@ -133,7 +164,3 @@
 
 <a name="0.0.1"></a>
 ## 0.0.1 (2015-01-16)
-
-
-
-
