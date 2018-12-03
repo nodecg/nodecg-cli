@@ -52,12 +52,16 @@
     "lcov-filter": "0.1.1",
     "mocha": "^5.2.0",
     "sinon": "^4.0.0",
+    "standard-version": "^4.4.0",
     "temp": "^0.8.3"
   },
   "scripts": {
     "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- --exit",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
-    "static": "eslint ."
+    "static": "eslint .",
+    "prerelease": "npm t",
+    "release": "standard-version",
+    "postrelease": "npm publish && git push --follow-tags"
   },
   "license": "MIT"
 }
