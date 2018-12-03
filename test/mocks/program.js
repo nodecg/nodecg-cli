@@ -14,7 +14,7 @@ module.exports = function () {
 	};
 
 	program.runWith = function (argString) {
-		program.parse(['node', './'].concat(argString.split(' ')));
+		return program.parse(['node', './'].concat(argString.split(' ')));
 	};
 
 	return program;
