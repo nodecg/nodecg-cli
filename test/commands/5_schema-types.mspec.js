@@ -32,96 +32,59 @@ describe('schema-types command', () => {
 		new SchemaTypesCommand(program); // eslint-disable-line no-new
 	});
 
-	context('when run with a bundle argument', () => {
-		it('should successfully create d.ts files from the replicant schemas', async () => {
-			program.runWith('schema-types schema-types');
+	it('should successfully create d.ts files from the replicant schemas', async () => {
+		process.chdir('bundles/schema-types');
+		program.runWith('schema-types');
 
-			/* Commander has no return values for command invocations.
-			 * This means that if your command returns a promise (or is otherwise async),
-			 * there is no way to get a reference to that promise to await it.
-			 * The command is just invoked by a dispatched event, with no
-			 * way to access the return value of your command's action.
-			 *
-			 * This makes testing async actions very challenging.
-			 *
-			 * Our current solution is to hack custom events onto the process global.
-			 * It's gross, but whatever. It works for now.
-			 */
-			await waitForEvent(process, 'schema-types-done');
+		/* Commander has no return values for command invocations.
+		 * This means that if your command returns a promise (or is otherwise async),
+		 * there is no way to get a reference to that promise to await it.
+		 * The command is just invoked by a dispatched event, with no
+		 * way to access the return value of your command's action.
+		 *
+		 * This makes testing async actions very challenging.
+		 *
+		 * Our current solution is to hack custom events onto the process global.
+		 * It's gross, but whatever. It works for now.
+		 */
+		await waitForEvent(process, 'schema-types-done');
 
-			const outputPath = './bundles/schema-types/src/types/schemas/example.d.ts';
-			assert.isTrue(
-				fs.existsSync(outputPath)
-			);
+		const outputPath = './src/types/schemas/example.d.ts';
+		assert.isTrue(
+			fs.existsSync(outputPath)
+		);
 
-			assert.equal(
-				fs.readFileSync(outputPath, 'utf8'),
-				fs.readFileSync('./results/schema-types/example.d.ts', 'utf8')
-			);
-		});
-
-		it('should print an error when the target bundle does not have a schemas dir', () => {
-			sinon.spy(console, 'error');
-			program.runWith('schema-types uninstall-test');
-			assert.equal('\u001b[31mError:\u001b[39m Input directory ("%s") does not exist',
-				console.error.getCall(0).args[0]);
-			console.error.restore();
-		});
-
-		it('should print an error when the target bundle does not exist', () => {
-			sinon.spy(console, 'error');
-			program.runWith('schema-types not-installed');
-			assert.equal('\u001b[31mError:\u001b[39m Bundle %s does not exist',
-				console.error.getCall(0).args[0]);
-			console.error.restore();
-		});
-
-		it('should successfully compile the config schema', async () => {
-			process.chdir('bundles/config-schema');
-			fs.mkdirSync('garbage');
-			program.runWith('schema-types config-schema --in-dir=garbage');
-
-			await waitForEvent(process, 'schema-types-done');
-
-			const outputPath = './src/types/schemas/configschema.d.ts';
-			assert.isTrue(
-				fs.existsSync(outputPath)
-			);
-
-			assert.equal(
-				fs.readFileSync(outputPath, 'utf8'),
-				fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8')
-			);
-		});
+		assert.equal(
+			fs.readFileSync(outputPath, 'utf8'),
+			fs.readFileSync('../../results/schema-types/example.d.ts', 'utf8')
+		);
 	});
 
-	context('when run with no arguments', () => {
-		it('should successfully create d.ts files from the replicant schemas', async () => {
-			process.chdir('./bundles/schema-types');
-			program.runWith('schema-types');
-			await waitForEvent(process, 'schema-types-done');
+	it('should print an error when the target bundle does not have a schemas dir', () => {
+		process.chdir('bundles/uninstall-test');
+		sinon.spy(console, 'error');
+		program.runWith('schema-types');
+		assert.equal('\u001b[31mError:\u001b[39m Input directory ("%s") does not exist',
+			console.error.getCall(0).args[0]);
+		console.error.restore();
+	});
 
-			const outputPath = './src/types/schemas/example.d.ts';
-			assert.isTrue(
-				fs.existsSync(outputPath)
-			);
+	it('should successfully compile the config schema', async () => {
+		process.chdir('bundles/config-schema');
+		fs.mkdirSync('empty-dir');
+		program.runWith('schema-types empty-dir');
 
-			assert.equal(
-				fs.readFileSync(outputPath, 'utf8'),
-				fs.readFileSync('../../results/schema-types/example.d.ts', 'utf8')
-			);
-		});
+		await waitForEvent(process, 'schema-types-done');
 
-		it('should print an error when in a folder with no package.json', () => {
-			fse.mkdirpSync('./bundles/not-a-bundle');
-			process.chdir('./bundles/not-a-bundle');
+		const outputPath = './src/types/schemas/configschema.d.ts';
+		assert.isTrue(
+			fs.existsSync(outputPath)
+		);
 
-			sinon.spy(console, 'error');
-			program.runWith('schema-types');
-			assert.equal('\u001b[31mError:\u001b[39m No bundle found in the current directory!',
-				console.error.getCall(0).args[0]);
-			console.error.restore();
-		});
+		assert.equal(
+			fs.readFileSync(outputPath, 'utf8'),
+			fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8')
+		);
 	});
 });
 
