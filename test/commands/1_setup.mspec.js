@@ -7,7 +7,7 @@ const fs = require('fs');
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const inquirer = require('inquirer');
-const temp = require('temp');
+const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
@@ -22,9 +22,8 @@ describe('setup command', () => {
 	 */
 	before(() => {
 		// Set up environment.
-		const tempFolder = temp.mkdirSync();
-		temp.track(); // Automatically track and cleanup files at exit
-		process.chdir(tempFolder);
+		const tempFolder = temp.dirSync();
+		process.chdir(tempFolder.name);
 	});
 
 	beforeEach(() => {
@@ -42,9 +41,10 @@ describe('setup command', () => {
 
 	it('should ask the user for confirmation when downgrading versions', function () {
 		this.timeout(16000);
-		sinon.spy(inquirer, 'prompt');
+		sinon.stub(inquirer, 'prompt').callsFake((opts, cb) => {
+			cb({installOlder: true});
+		});
 		program.runWith('setup 0.8.1 -u --skip-dependencies');
-		inquirer.prompt.getCall(0).args[1]({installOlder: true});
 		assert.equal(JSON.parse(fs.readFileSync('./package.json')).version, '0.8.1');
 		inquirer.prompt.restore();
 	});

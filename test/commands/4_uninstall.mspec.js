@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('chai').assert;
 const sinon = require('sinon');
 const inquirer = require('inquirer');
-const temp = require('temp');
+const temp = require('tmp');
 const fse = require('fs-extra');
 
 // Ours
@@ -20,9 +20,8 @@ describe('uninstall command', () => {
 
 	beforeEach(() => {
 		// Set up environment.
-		const tempFolder = temp.mkdirSync();
-		temp.track(); // Automatically track and cleanup files at exit
-		process.chdir(tempFolder);
+		const tempFolder = temp.dirSync();
+		process.chdir(tempFolder.name);
 		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
 
 		// Copy fixtures.

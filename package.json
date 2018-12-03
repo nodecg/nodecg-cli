@@ -34,7 +34,7 @@
   "dependencies": {
     "chalk": "^2.0.0",
     "commander": "^2.19.0",
-    "inquirer": "^4.0.0",
+    "inquirer": "^6.2.1",
     "json-schema-defaults": "^0.3.0",
     "json-schema-to-typescript": "^6.1.0",
     "npm-package-arg": "^4.1.0",
@@ -53,10 +53,10 @@
     "mocha": "^5.2.0",
     "sinon": "^4.0.0",
     "standard-version": "^4.4.0",
-    "temp": "^0.8.3"
+    "tmp": "0.0.33"
   },
   "scripts": {
-    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha -- --exit",
+    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha",
     "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
     "static": "eslint .",
     "prerelease": "npm t",

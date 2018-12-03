@@ -8,7 +8,7 @@ const path = require('path');
 const assert = require('chai').assert;
 const fse = require('fs-extra');
 const sinon = require('sinon');
-const temp = require('temp');
+const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
@@ -19,9 +19,8 @@ describe('schema-types command', () => {
 
 	beforeEach(() => {
 		// Set up environment.
-		const tempFolder = temp.mkdirSync();
-		temp.track(); // Automatically track and cleanup files at exit
-		process.chdir(tempFolder);
+		const tempFolder = temp.dirSync();
+		process.chdir(tempFolder.name);
 		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
 
 		// Copy fixtures.

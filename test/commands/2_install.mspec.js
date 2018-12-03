@@ -8,7 +8,7 @@ const assert = require('chai').assert;
 const rimraf = require('rimraf');
 const sinon = require('sinon');
 const semver = require('semver');
-const temp = require('temp');
+const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
@@ -23,9 +23,8 @@ describe('install command', () => {
 	 */
 	before(() => {
 		// Set up environment.
-		const tempFolder = temp.mkdirSync();
-		temp.track(); // Automatically track and cleanup files at exit
-		process.chdir(tempFolder);
+		const tempFolder = temp.dirSync();
+		process.chdir(tempFolder.name);
 		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
 	});
 
