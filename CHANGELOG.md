@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.3"></a>
+## [6.0.3](https://github.com/nodecg/nodecg-cli/compare/v6.0.2...v6.0.3) (2018-12-03)
+
+
+### Bug Fixes
+
+* **package:** make fs-extra a prod dep, not a devDep ([76ab59d](https://github.com/nodecg/nodecg-cli/commit/76ab59d))
+
+
+
 <a name="6.0.2"></a>
 ## [6.0.2](https://github.com/nodecg/nodecg-cli/compare/v6.0.1...v6.0.2) (2018-12-03)
 
