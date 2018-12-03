@@ -1,65 +1,57 @@
 'use strict';
 
-const childProcess = require('child_process');
-const mkdirp = require('mkdirp');
+// Native
+const fs = require('fs');
+const path = require('path');
+
+// Packages
 const assert = require('chai').assert;
 const sinon = require('sinon');
+const fse = require('fs-extra');
+const temp = require('temp');
+
+// Ours
 const MockProgram = require('../mocks/program');
 const DefaultConfigCommand = require('../../commands/defaultconfig');
-const fs = require('fs');
 
 describe('defaultconfig command', () => {
 	let program;
 
 	beforeEach(() => {
+		// Set up environment.
+		const tempFolder = temp.mkdirSync();
+		temp.track(); // Automatically track and cleanup files at exit
+		process.chdir(tempFolder);
+		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
+
+		// Copy fixtures.
+		fse.copySync(path.resolve(__dirname, '../fixtures/'), './');
+
+		// Build program.
 		program = new MockProgram();
 		new DefaultConfigCommand(program); // eslint-disable-line no-new
-		if (fs.existsSync('./cfg/lfg-streamtip.json')) {
-			fs.unlinkSync('./cfg/lfg-streamtip.json');
-		}
 	});
 
 	context('when run with a bundle argument', () => {
-		it('should successfully create a bundle config file when bundle has configschema.json', function () {
-			this.timeout(25000);
-			fs.writeFileSync('./bundles/lfg-streamtip/configschema.json', JSON.stringify({
-				type: 'object',
-				properties: {
-					username: {
-						type: 'string',
-						default: 'user'
-					},
-					value: {
-						type: 'integer',
-						default: 5
-					},
-					nodefault: {
-						type: 'string'
-					}
-				}
-			}));
-			sinon.spy(childProcess, 'execSync');
-			program.runWith('defaultconfig lfg-streamtip');
-			assert.equal(fs.existsSync('./cfg/lfg-streamtip.json'), true);
-			const config = JSON.parse(fs.readFileSync('./cfg/lfg-streamtip.json'));
+		it('should successfully create a bundle config file when bundle has configschema.json', () => {
+			program.runWith('defaultconfig config-schema');
+			assert.equal(fs.existsSync('./cfg/config-schema.json'), true);
+			const config = JSON.parse(fs.readFileSync('./cfg/config-schema.json'));
 			assert.equal('user', config.username);
 			assert.equal(5, config.value);
 			assert.isUndefined(config.nodefault);
-			childProcess.execSync.restore();
 		});
 
-		it('should print an error when the target bundle does not have a configschema.json', function () {
-			this.timeout(25000);
+		it('should print an error when the target bundle does not have a configschema.json', () => {
 			sinon.spy(console, 'error');
-			mkdirp.sync('./bundles/missing-schema-bundle');
+			fse.mkdirpSync('./bundles/missing-schema-bundle');
 			program.runWith('defaultconfig missing-schema-bundle');
 			assert.equal('\u001b[31mError:\u001b[39m Bundle %s does not have a configschema.json',
 				console.error.getCall(0).args[0]);
 			console.error.restore();
 		});
 
-		it('should print an error when the target bundle does not exist', function () {
-			this.timeout(25000);
+		it('should print an error when the target bundle does not exist', () => {
 			sinon.spy(console, 'error');
 			program.runWith('defaultconfig not-installed');
 			assert.equal('\u001b[31mError:\u001b[39m Bundle %s does not exist',
@@ -67,11 +59,11 @@ describe('defaultconfig command', () => {
 			console.error.restore();
 		});
 
-		it('should print an error when the target bundle already has a config', function () {
-			this.timeout(25000);
+		it('should print an error when the target bundle already has a config', () => {
 			sinon.spy(console, 'error');
-			fs.writeFileSync('./cfg/lfg-streamtip.json', JSON.stringify({fake: 'data'}));
-			program.runWith('defaultconfig lfg-streamtip');
+			fs.mkdirSync('cfg');
+			fs.writeFileSync('./cfg/config-schema.json', JSON.stringify({fake: 'data'}));
+			program.runWith('defaultconfig config-schema');
 			assert.equal('\u001b[31mError:\u001b[39m Bundle %s already has a config file',
 				console.error.getCall(0).args[0]);
 			console.error.restore();
@@ -79,16 +71,14 @@ describe('defaultconfig command', () => {
 	});
 
 	context('when run with no arguments', () => {
-		it('should successfully create a bundle config file when run from inside bundle directory', function () {
-			this.timeout(25000);
-			process.chdir('./bundles/lfg-streamtip');
+		it('should successfully create a bundle config file when run from inside bundle directory', () => {
+			process.chdir('./bundles/config-schema');
 			program.runWith('defaultconfig');
-			assert.equal(fs.existsSync('../../cfg/lfg-streamtip.json'), true);
+			assert.equal(fs.existsSync('../../cfg/config-schema.json'), true);
 		});
 
-		it('should print an error when in a folder with no package.json', function () {
-			this.timeout(25000);
-			mkdirp.sync('./bundles/not-a-bundle');
+		it('should print an error when in a folder with no package.json', () => {
+			fse.mkdirpSync('./bundles/not-a-bundle');
 			process.chdir('./bundles/not-a-bundle');
 
 			sinon.spy(console, 'error');

@@ -1,17 +1,36 @@
 'use strict';
 
-const assert = require('chai').assert;
+// Native
 const fs = require('fs');
+
+// Packages
+const assert = require('chai').assert;
 const rimraf = require('rimraf');
 const sinon = require('sinon');
 const semver = require('semver');
+const temp = require('temp');
+
+// Ours
 const MockProgram = require('../mocks/program');
 const InstallCommand = require('../../commands/install');
 
 describe('install command', () => {
 	let program;
 
+	/*
+	 * These tests depend on global state of the disk.
+	 * Therefore, we only do this setup once.
+	 */
+	before(() => {
+		// Set up environment.
+		const tempFolder = temp.mkdirSync();
+		temp.track(); // Automatically track and cleanup files at exit
+		process.chdir(tempFolder);
+		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
+	});
+
 	beforeEach(() => {
+		// Build program.
 		program = new MockProgram();
 		new InstallCommand(program); // eslint-disable-line no-new
 	});

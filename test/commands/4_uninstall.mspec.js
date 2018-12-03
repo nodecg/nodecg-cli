@@ -1,9 +1,17 @@
 'use strict';
 
-const assert = require('chai').assert;
+// Native
 const fs = require('fs');
+const path = require('path');
+
+// Packages
+const assert = require('chai').assert;
 const sinon = require('sinon');
 const inquirer = require('inquirer');
+const temp = require('temp');
+const fse = require('fs-extra');
+
+// Ours
 const MockProgram = require('../mocks/program');
 const UninstallCommand = require('../../commands/uninstall');
 
@@ -11,6 +19,16 @@ describe('uninstall command', () => {
 	let program; // eslint-disable-line
 
 	beforeEach(() => {
+		// Set up environment.
+		const tempFolder = temp.mkdirSync();
+		temp.track(); // Automatically track and cleanup files at exit
+		process.chdir(tempFolder);
+		fs.writeFileSync('package.json', JSON.stringify({name: 'nodecg'}));
+
+		// Copy fixtures.
+		fse.copySync(path.resolve(__dirname, '../fixtures/'), './');
+
+		// Build program.
 		program = new MockProgram();
 		new UninstallCommand(program); // eslint-disable-line no-new
 	});
@@ -19,13 +37,17 @@ describe('uninstall command', () => {
 		this.timeout(10000);
 		sinon.stub(inquirer, 'prompt').returns({
 			then(callback) {
-				callback({confirmUninstall: true});
-				assert.equal(fs.existsSync('./bundles/lfg-streamtip'), false);
-				inquirer.prompt.restore();
-				done();
+				try {
+					callback({confirmUninstall: true});
+					assert.equal(fs.existsSync('./bundles/uninstall-test'), false);
+					inquirer.prompt.restore();
+					done();
+				} catch (error) {
+					done(error);
+				}
 			}
 		});
-		program.runWith('uninstall lfg-streamtip');
+		program.runWith('uninstall uninstall-test');
 	});
 
 	it('should print an error when the target bundle is not installed', () => {
