@@ -38,7 +38,7 @@ Enable `--dev` flag to install the bundle's `devDependencies`.
 * `nodecg uninstall <bundle>`, uninstall a bundle
 * `nodecg defaultconfig`, If a bundle has a `configschema.json` present in its root, this command will create a default
 config file at `nodecg/cfg/:bundleName.json` with defaults based on that schema.
-* `nodecg schema-types`, Generate d.ts TypeScript typedef files from Replicant schemas and configschema.json (if present)
+* `nodecg schema-types [dir]`, Generate d.ts TypeScript typedef files from Replicant schemas and configschema.json (if present)
 
 ## Special Thanks
 This CLI program is based on [Tim Santeford's commander.js starter](https://github.com/tsantef/commander-starter).
