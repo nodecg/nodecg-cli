@@ -12,7 +12,7 @@ const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const InstallCommand = require('../../dist/commands/install').default;
+const InstallCommand = require('../../dist/commands/install');
 
 describe('install command', () => {
 	let program;

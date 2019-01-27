@@ -11,7 +11,7 @@ import {Command} from 'commander';
 
 const writeFilePromise = promisify(fs.writeFile);
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('schema-types [dir]')
 		.option('-o, --out-dir [path]', 'Where to put the generated d.ts files', 'src/types/schemas')

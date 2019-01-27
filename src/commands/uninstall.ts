@@ -7,7 +7,7 @@ import rimraf from 'rimraf';
 import os from 'os';
 import {Command} from 'commander';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('uninstall <bundle>')
 		.description('Uninstalls a bundle.')

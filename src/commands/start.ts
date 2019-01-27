@@ -1,7 +1,7 @@
 import util from '../lib/util';
 import {Command} from 'commander';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('start')
 		.description('Start NodeCG')

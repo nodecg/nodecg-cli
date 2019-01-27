@@ -13,7 +13,7 @@ const fse = require('fs-extra');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const UninstallCommand = require('../../dist/commands/uninstall').default;
+const UninstallCommand = require('../../dist/commands/uninstall');
 
 describe('uninstall command', () => {
 	let program; // eslint-disable-line

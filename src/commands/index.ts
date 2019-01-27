@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import {Command} from 'commander';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	const commands: {[x: string]: (program: Command) => void} = {};
 	const loadPath = path.dirname(__filename);
 

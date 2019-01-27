@@ -10,7 +10,7 @@ import {Command} from 'commander';
 
 const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')

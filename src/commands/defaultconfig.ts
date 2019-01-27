@@ -5,7 +5,7 @@ import path from 'path';
 import defaults from 'json-schema-defaults';
 import {Command} from 'commander';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('defaultconfig [bundle]')
 		.description('Generate default config from configschema.json')

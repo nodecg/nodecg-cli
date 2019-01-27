@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import {Command} from 'commander';
 
 const program = new Command('nodecg');
-const packageVersion: string = require('../package.json');
+const packageVersion: string = require('../package.json').version;
 
 // Check for updates
 request('http://registry.npmjs.org/nodecg-cli/latest', (err, res, body) => {

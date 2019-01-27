@@ -12,7 +12,7 @@ const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const DefaultConfigCommand = require('../../dist/commands/defaultconfig').default;
+const DefaultConfigCommand = require('../../dist/commands/defaultconfig');
 
 describe('defaultconfig command', () => {
 	let program;

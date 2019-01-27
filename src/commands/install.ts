@@ -11,7 +11,7 @@ import fetchTags from '../lib/fetch-tags';
 import {Command} from 'commander';
 import * as HostedGitInfo from 'hosted-git-info';
 
-export default function (program: Command) {
+export = function (program: Command) {
 	program
 		.command('install [repo]')
 		.description('Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
