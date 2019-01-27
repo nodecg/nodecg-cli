@@ -5,14 +5,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const fse = require('fs-extra');
 const sinon = require('sinon');
 const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const SchemaTypesCommand = require('../../commands/schema-types');
+const SchemaTypesCommand = require('../../dist/commands/schema-types').default;
 
 describe('schema-types command', () => {
 	let program;

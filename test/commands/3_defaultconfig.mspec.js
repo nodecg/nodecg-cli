@@ -5,14 +5,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const sinon = require('sinon');
 const fse = require('fs-extra');
 const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const DefaultConfigCommand = require('../../commands/defaultconfig');
+const DefaultConfigCommand = require('../../dist/commands/defaultconfig').default;
 
 describe('defaultconfig command', () => {
 	let program;

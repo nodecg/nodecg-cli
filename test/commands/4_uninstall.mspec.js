@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const sinon = require('sinon');
 const inquirer = require('inquirer');
 const temp = require('tmp');
@@ -13,7 +13,7 @@ const fse = require('fs-extra');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const UninstallCommand = require('../../commands/uninstall');
+const UninstallCommand = require('../../dist/commands/uninstall').default;
 
 describe('uninstall command', () => {
 	let program; // eslint-disable-line

@@ -1,27 +1,26 @@
-'use strict';
-
 // Native
-const fs = require('fs');
-const path = require('path');
-const {promisify} = require('util');
+import fs from 'fs';
+import path from 'path';
+import {promisify} from 'util';
 
 // Packages
-const chalk = require('chalk');
-const fse = require('fs-extra');
-const {compileFromFile} = require('json-schema-to-typescript');
+import chalk from 'chalk';
+import fse from 'fs-extra';
+import {compileFromFile} from 'json-schema-to-typescript';
+import {Command} from 'commander';
 
 const writeFilePromise = promisify(fs.writeFile);
 
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('schema-types [dir]')
 		.option('-o, --out-dir [path]', 'Where to put the generated d.ts files', 'src/types/schemas')
 		.option('--no-config-schema', 'Don\'t generate a typedef from configschema.json')
 		.description('Generate d.ts TypeScript typedef files from Replicant schemas and configschema.json (if present)')
 		.action(action);
-};
+}
 
-function action(inDir, cmd) {
+function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 	const processCwd = process.cwd();
 	const schemasDir = path.resolve(processCwd, inDir || 'schemas');
 	if (!fs.existsSync(schemasDir)) {
@@ -42,8 +41,8 @@ function action(inDir, cmd) {
 		useTabs: true
 	};
 
-	const compilePromises = [];
-	const compile = (input, output, cwd = processCwd) => {
+	const compilePromises: Promise<void>[] = [];
+	const compile = (input: string, output: string, cwd = processCwd) => {
 		const promise = compileFromFile(input, {
 			cwd,
 			declareExternallyReferenced: true,
@@ -65,7 +64,6 @@ function action(inDir, cmd) {
 		compile(
 			configSchemaPath,
 			path.resolve(outDir, 'configschema.d.ts'),
-			style
 		);
 	}
 

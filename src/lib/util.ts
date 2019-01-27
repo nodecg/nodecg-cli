@@ -1,15 +1,12 @@
-'use strict';
+import fs from 'fs';
+import path from 'path';
 
-const fs = require('fs');
-const path = require('path');
-
-module.exports = {
+export default {
 	/**
 	 * Checks if the given directory contains a NodeCG installation.
 	 * @param pathToCheck
-	 * @returns {boolean}
 	 */
-	pathContainsNodeCG(pathToCheck) {
+	pathContainsNodeCG(pathToCheck: string): boolean {
 		const pjsonPath = path.join(pathToCheck, 'package.json');
 		if (fs.existsSync(pjsonPath)) {
 			const pjson = require(pjsonPath);
@@ -36,8 +33,11 @@ module.exports = {
 			if (nextCurr === curr) {
 				throw new Error('NodeCG installation could not be found in this directory or any parent directory.');
 			}
+
 			curr = nextCurr;
 		} while (fs.lstatSync(curr).isDirectory());
+
+		throw new Error('NodeCG installation could not be found in this directory or any parent directory.');
 	},
 
 	/**
@@ -45,7 +45,7 @@ module.exports = {
 	 * @param pathToCheck
 	 * @returns {boolean}
 	 */
-	isBundleFolder(pathToCheck) {
+	isBundleFolder(pathToCheck: string) {
 		const pjsonPath = path.join(pathToCheck, 'package.json');
 		if (fs.existsSync(pjsonPath)) {
 			const pjson = require(pjsonPath);

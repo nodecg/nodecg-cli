@@ -1,8 +1,7 @@
-'use strict';
+import util from '../lib/util';
+import {Command} from 'commander';
 
-const util = require('../lib/util');
-
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('start')
 		.description('Start NodeCG')
@@ -14,4 +13,4 @@ module.exports = function (program) {
 				console.warn('No NodeCG installation found in this folder.');
 			}
 		});
-};
+}

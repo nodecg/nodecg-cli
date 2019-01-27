@@ -1,26 +1,26 @@
-'use strict';
+import fs from 'fs';
+import os from 'os';
+import installBundleDeps from '../lib/install-bundle-deps';
+import {execSync} from 'child_process';
+import npa from 'npm-package-arg';
+import path from 'path';
+import util from '../lib/util';
+import semver from 'semver';
+import chalk from 'chalk';
+import fetchTags from '../lib/fetch-tags';
+import {Command} from 'commander';
+import * as HostedGitInfo from 'hosted-git-info';
 
-const fs = require('fs');
-const os = require('os');
-const installBundleDeps = require('../lib/install-bundle-deps');
-const execSync = require('child_process').execSync;
-const npa = require('npm-package-arg');
-const path = require('path');
-const util = require('../lib/util');
-const semver = require('semver');
-const chalk = require('chalk');
-const fetchTags = require('../lib/fetch-tags');
-
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('install [repo]')
 		.description('Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
 			'\n\t\t    If run in a bundle directory with no arguments, installs that bundle\'s dependencies.')
 		.option('-d, --dev', 'install development npm & bower dependencies')
 		.action(action);
-};
+}
 
-function action(repo, options) {
+function action(repo: string, options: {dev: boolean}) {
 	const dev = options.dev || false;
 
 	// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
@@ -38,11 +38,14 @@ function action(repo, options) {
 
 	const nodecgPath = util.getNodeCGPath();
 	const parsed = npa(repo);
-	let repoUrl = null;
+	if (!parsed.hosted) {
+		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
+		return;
+	}
 
-	if (parsed.type === 'hosted') {
-		repoUrl = parsed.hosted.gitUrl;
-	} else {
+	const hostedInfo = parsed.hosted as unknown as HostedGitInfo;
+	const repoUrl = hostedInfo.git();
+	if (!repoUrl) {
 		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
 		return;
 	}
@@ -55,7 +58,7 @@ function action(repo, options) {
 	}
 
 	// Extract repo name from git url
-	const temp = repoUrl.split('/').pop();
+	const temp = repoUrl.split('/').pop()!;
 	const bundleName = temp.substr(0, temp.length - 4);
 	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 

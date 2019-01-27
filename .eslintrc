@@ -1,6 +1,8 @@
 {
+	"parser": "@typescript-eslint/parser",
 	"extends": "xo/esnext",
-	"ecmaFeatures": {
-		"globalReturn": true
+	"rules": {
+		"no-unused-vars": "off",
+		"capitalized-comments": "off"
 	}
 }

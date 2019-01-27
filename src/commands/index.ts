@@ -3,13 +3,12 @@
  * https://github.com/tsantef/commander-starter
  */
 
-'use strict';
+import fs from 'fs';
+import path from 'path';
+import {Command} from 'commander';
 
-const fs = require('fs');
-const path = require('path');
-
-module.exports = function (program) {
-	const commands = {};
+export default function (program: Command) {
+	const commands: {[x: string]: (program: Command) => void} = {};
 	const loadPath = path.dirname(__filename);
 
 	// Loop though command files
@@ -26,4 +25,4 @@ module.exports = function (program) {
 	});
 
 	return commands;
-};
+}

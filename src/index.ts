@@ -1,12 +1,11 @@
-'use strict';
-
 process.title = 'nodecg';
 
-const request = require('request');
-const semver = require('semver');
-const chalk = require('chalk');
-const program = new (require('commander').Command)('nodecg');
+import request from 'request';
+import semver from 'semver';
+import chalk from 'chalk';
+import {Command} from 'commander';
 
+const program = new Command('nodecg');
 const pjson = require('./package.json');
 
 // Check for updates

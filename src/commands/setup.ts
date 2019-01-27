@@ -1,27 +1,25 @@
-'use strict';
-
-const util = require('../lib/util');
-const childProcess = require('child_process');
-const execSync = childProcess.execSync;
-const os = require('os');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const semver = require('semver');
-const fs = require('fs');
-const fetchTags = require('../lib/fetch-tags');
+import util from '../lib/util';
+import {execSync} from 'child_process';
+import os from 'os';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import semver from 'semver';
+import fs from 'fs';
+import fetchTags from '../lib/fetch-tags';
+import {Command} from 'commander';
 
 const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')
 		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
 		.description('Install a new NodeCG instance')
 		.action(action);
-};
+}
 
-function action(version, options) {
+function action(version: string, options: {update: boolean, skipDependencies: boolean}) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
 	let isUpdate = false;
 
@@ -59,7 +57,7 @@ function action(version, options) {
 		return;
 	}
 
-	let target;
+	let target: string;
 
 	// If a version (or semver range) was supplied, find the latest release that satisfies the range.
 	// Else, make the target the newest version.
@@ -70,6 +68,7 @@ function action(version, options) {
 			console.error('No releases match the supplied semver range (' + chalk.magenta(version) + ')');
 			return;
 		}
+
 		target = maxSatisfying;
 	} else {
 		target = semver.maxSatisfying(tags, '');
@@ -79,7 +78,7 @@ function action(version, options) {
 
 	if (isUpdate) {
 		const nodecgPath = util.getNodeCGPath();
-		const current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json')).version;
+		const current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json', 'utf8')).version;
 
 		process.stdout.write('Downloading latest release...');
 		try {
@@ -101,7 +100,7 @@ function action(version, options) {
 			console.log(chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
 				chalk.magenta(target), chalk.magenta(current));
 
-			inquirer.prompt([{
+			inquirer.prompt<{installOlder: boolean}>([{
 				name: 'installOlder',
 				message: 'Are you sure you wish to continue?',
 				type: 'confirm'
@@ -174,7 +173,7 @@ function installDependencies() {
 	}
 }
 
-function checkoutUpdate(current, target, skipDependencies, downgrade) {
+function checkoutUpdate(current: string, target: string, skipDependencies: boolean, downgrade?: boolean) {
 	// Now that we know for sure if the target tag exists (and if its newer or older than current),
 	// we can `git pull` and `git checkout <tag>` if appropriate.
 	const Verb = downgrade ? 'Downgrading' : 'Upgrading';

@@ -1,22 +1,21 @@
-'use strict';
+import fs from 'fs';
+import inquirer from 'inquirer';
+import path from 'path';
+import util from '../lib/util';
+import chalk from 'chalk';
+import rimraf from 'rimraf';
+import os from 'os';
+import {Command} from 'commander';
 
-const fs = require('fs');
-const inquirer = require('inquirer');
-const path = require('path');
-const util = require('../lib/util');
-const chalk = require('chalk');
-const rimraf = require('rimraf');
-const os = require('os');
-
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('uninstall <bundle>')
 		.description('Uninstalls a bundle.')
 		.option('-f, --force', 'ignore warnings')
 		.action(action);
-};
+}
 
-function action(bundleName, options) {
+function action(bundleName: string, options: {force: boolean}) {
 	const nodecgPath = util.getNodeCGPath();
 	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
@@ -29,7 +28,7 @@ function action(bundleName, options) {
 	if (options.force) {
 		deleteBundle(bundleName, bundlePath);
 	} else {
-		inquirer.prompt([{
+		inquirer.prompt<{confirmUninstall: boolean}>([{
 			name: 'confirmUninstall',
 			message: 'Are you sure you wish to uninstall ' + chalk.magenta(bundleName) + '?',
 			type: 'confirm'
@@ -41,7 +40,7 @@ function action(bundleName, options) {
 	}
 }
 
-function deleteBundle(name, path) {
+function deleteBundle(name: string, path: string) {
 	if (!fs.existsSync(path)) {
 		console.log('Nothing to uninstall.');
 		return;
@@ -58,5 +57,6 @@ function deleteBundle(name, path) {
 		/* istanbul ignore next */
 		return;
 	}
+
 	process.stdout.write(chalk.green('done!') + os.EOL);
 }
