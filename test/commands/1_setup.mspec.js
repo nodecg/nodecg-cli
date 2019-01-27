@@ -11,7 +11,7 @@ const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const SetupCommand = require('../../commands/setup');
+const SetupCommand = require('../../dist/commands/setup').default;
 
 describe('setup command', () => {
 	let program;

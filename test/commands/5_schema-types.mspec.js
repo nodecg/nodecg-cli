@@ -12,7 +12,7 @@ const temp = require('tmp');
 
 // Ours
 const MockProgram = require('../mocks/program');
-const SchemaTypesCommand = require('../../commands/schema-types');
+const SchemaTypesCommand = require('../../dist/commands/schema-types').default;
 
 describe('schema-types command', () => {
 	let program;
