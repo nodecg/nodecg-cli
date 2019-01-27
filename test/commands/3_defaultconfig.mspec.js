@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const sinon = require('sinon');
 const fse = require('fs-extra');
 const temp = require('tmp');

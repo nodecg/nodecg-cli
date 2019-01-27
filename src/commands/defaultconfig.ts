@@ -1,19 +1,18 @@
-'use strict';
+import util from '../lib/util';
+import chalk from 'chalk';
+import fs from 'fs';
+import path from 'path';
+import defaults from 'json-schema-defaults';
+import {Command} from 'commander';
 
-const util = require('../lib/util');
-const chalk = require('chalk');
-const fs = require('fs');
-const path = require('path');
-const defaults = require('json-schema-defaults');
-
-module.exports = function (program) {
+export default function (program: Command) {
 	program
 		.command('defaultconfig [bundle]')
 		.description('Generate default config from configschema.json')
 		.action(action);
-};
+}
 
-function action(bundleName) {
+function action(bundleName?: string) {
 	const cwd = process.cwd();
 	const nodecgPath = util.getNodeCGPath();
 
@@ -34,10 +33,12 @@ function action(bundleName) {
 		console.error(chalk.red('Error:') + ' Bundle %s does not exist', bundleName);
 		return;
 	}
+
 	if (!fs.existsSync(schemaPath)) {
 		console.error(chalk.red('Error:') + ' Bundle %s does not have a configschema.json', bundleName);
 		return;
 	}
+
 	if (!fs.existsSync(cfgPath)) {
 		fs.mkdirSync(cfgPath);
 	}

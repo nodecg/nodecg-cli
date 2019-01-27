@@ -4,7 +4,7 @@
 const fs = require('fs');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const sinon = require('sinon');
 const inquirer = require('inquirer');
 const temp = require('tmp');

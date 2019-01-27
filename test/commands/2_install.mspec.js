@@ -4,7 +4,7 @@
 const fs = require('fs');
 
 // Packages
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const rimraf = require('rimraf');
 const sinon = require('sinon');
 const semver = require('semver');

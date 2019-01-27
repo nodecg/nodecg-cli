@@ -1,18 +1,16 @@
-'use strict';
-
-const fs = require('fs');
-const format = require('util').format;
-const chalk = require('chalk');
-const os = require('os');
-const execSync = require('child_process').execSync;
-const util = require('./util');
+import fs from 'fs';
+import {format} from 'util';
+import chalk from 'chalk';
+import os from 'os';
+import {execSync} from 'child_process';
+import util from './util';
 
 /**
  * Installs npm and bower dependencies for the NodeCG bundle present at the given path.
- * @param {string} bundlePath - The path of the NodeCG bundle to install dependencies for.
- * @param {boolean} [installDev=false] - Whether to install devDependencies.
+ * @param bundlePath - The path of the NodeCG bundle to install dependencies for.
+ * @param installDev - Whether to install devDependencies.
  */
-module.exports = function (bundlePath, installDev) {
+export default function (bundlePath: string, installDev: boolean = false) {
 	if (!util.isBundleFolder(bundlePath)) {
 		console.error(chalk.red('Error:') + ' There doesn\'t seem to be a valid NodeCG bundle in this folder:' +
 			'\n\t' + chalk.magenta(bundlePath));
@@ -40,6 +38,7 @@ module.exports = function (bundlePath, installDev) {
 			/* istanbul ignore next */
 			return;
 		}
+
 		process.chdir(cachedCwd);
 	}
 
@@ -59,4 +58,4 @@ module.exports = function (bundlePath, installDev) {
 			console.error(e.stack);
 		}
 	}
-};
+}
