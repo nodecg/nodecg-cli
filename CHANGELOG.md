@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.4-alpha.1"></a>
+## [6.0.4-alpha.1](https://github.com/nodecg/nodecg-cli/compare/v6.0.4-alpha.0...v6.0.4-alpha.1) (2019-01-27)
+
+
+### Bug Fixes
+
+* correct require path to package.json ([035e71e](https://github.com/nodecg/nodecg-cli/commit/035e71e))
+
+
+
 <a name="6.0.4-alpha.0"></a>
 ## [6.0.4-alpha.0](https://github.com/nodecg/nodecg-cli/compare/v6.0.3...v6.0.4-alpha.0) (2019-01-27)
 
