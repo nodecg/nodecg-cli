@@ -163,13 +163,15 @@ function installDependencies() {
 		return;
 	}
 
-	process.stdout.write('Installing production bower dependencies... ');
-	try {
-		execSync('bower install --production', {stdio: ['pipe', 'pipe', 'pipe']});
-		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
-		process.stdout.write(chalk.red('failed!') + os.EOL);
-		console.error(e.stack);
+	if (fs.existsSync('./bower.json')) {
+		process.stdout.write('Installing production bower dependencies... ');
+		try {
+			execSync('bower install --production', {stdio: ['pipe', 'pipe', 'pipe']});
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			console.error(e.stack);
+		}
 	}
 }
 
