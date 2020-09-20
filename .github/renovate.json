@@ -1,0 +1,8 @@
+{
+	"extends": [
+		"config:base",
+		":semanticCommits",
+		":dependencyDashboardApproval"
+	],
+	"postUpdateOptions": ["npmDedupe"]
+}
