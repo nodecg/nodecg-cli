@@ -67,7 +67,11 @@ function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 		);
 	}
 
+	const indexFiles = [];
+
 	for (const schema of schemas) {
+		indexFiles.push(`export * from './${schema.replace(/\.json$/i, '')}';`);
+
 		compile(
 			path.resolve(schemasDir, schema),
 			path.resolve(outDir, schema.replace(/\.json$/i, '.d.ts')),
@@ -75,7 +79,9 @@ function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 		);
 	}
 
-	return Promise.all(compilePromises).then(() => {
+	const indexPromise = writeFilePromise(path.resolve(outDir, 'index.d.ts'), `${indexFiles.join('\n')}\n`);
+
+	return Promise.all([indexPromise, ...compilePromises]).then(() => {
 		process.emit('schema-types-done');
 	});
 }

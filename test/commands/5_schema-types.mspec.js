@@ -31,7 +31,7 @@ describe('schema-types command', () => {
 		new SchemaTypesCommand(program); // eslint-disable-line no-new
 	});
 
-	it('should successfully create d.ts files from the replicant schemas', async () => {
+	it('should successfully create d.ts files from the replicant schemas and create an index.d.ts file', async () => {
 		process.chdir('bundles/schema-types');
 		program.runWith('schema-types');
 
@@ -56,6 +56,16 @@ describe('schema-types command', () => {
 		assert.equal(
 			fs.readFileSync(outputPath, 'utf8'),
 			fs.readFileSync('../../results/schema-types/example.d.ts', 'utf8')
+		);
+
+		const indexPath = './src/types/schemas/index.d.ts';
+		assert.isTrue(
+			fs.existsSync(indexPath)
+		);
+
+		assert.equal(
+			fs.readFileSync(indexPath, 'utf8'),
+			fs.readFileSync('../../results/schema-types/index.d.ts', 'utf8')
 		);
 	});
 
