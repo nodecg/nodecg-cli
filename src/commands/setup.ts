@@ -104,7 +104,7 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 				name: 'installOlder',
 				message: 'Are you sure you wish to continue?',
 				type: 'confirm'
-			}], answers => {
+			}]).then(answers => {
 				if (answers.installOlder) {
 					checkoutUpdate(current, target, options.skipDependencies, true);
 				}
