@@ -25,5 +25,7 @@ jobs:
       - run: npm run static
       - run: npm test
       - run: npx coveralls < coverage/lcov.info
+        env:
+          COVERALLS_REPO_TOKEN: ${{ github.token }}
       - run: npm run build
 
