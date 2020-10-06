@@ -25,7 +25,7 @@
     "static": "run-s static:*",
     "static:eslint": "eslint --cache \"**/*.ts\"",
     "static:prettier": "prettier --check \"**/*.ts\"",
-    "test": "jest --coverage"
+    "test": "jest --colors --coverage"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
