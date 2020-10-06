@@ -2,7 +2,7 @@
 
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
-[![Build Status](https://travis-ci.org/nodecg/nodecg-cli.svg?branch=master)](https://travis-ci.org/nodecg/nodecg-cli)
+![CI](https://github.com/nodecg/nodecg-cli/workflows/CI/badge.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/nodecg/nodecg-cli/badge.svg?branch=master)](https://coveralls.io/github/nodecg/nodecg-cli?branch=master)
 
 ## Installation
