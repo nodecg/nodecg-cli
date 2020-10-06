@@ -20,12 +20,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node-version }}
       - run: npm i -g bower
       - run: npm ci
       - run: npm run static
       - run: npm test
-      - run: npx coveralls < coverage/lcov.info
-        env:
-          COVERALLS_REPO_TOKEN: ${{ github.token }}
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ github.token }}
       - run: npm run build
 
