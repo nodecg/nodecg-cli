@@ -1,8 +1,8 @@
 import fs from 'fs';
-import {format} from 'util';
+import { format } from 'util';
 import chalk from 'chalk';
 import os from 'os';
-import {execSync} from 'child_process';
+import { execSync } from 'child_process';
 import util from './util';
 
 /**
@@ -10,10 +10,14 @@ import util from './util';
  * @param bundlePath - The path of the NodeCG bundle to install dependencies for.
  * @param installDev - Whether to install devDependencies.
  */
-export default function (bundlePath: string, installDev: boolean = false) {
+export default function (bundlePath: string, installDev = false) {
 	if (!util.isBundleFolder(bundlePath)) {
-		console.error(chalk.red('Error:') + ' There doesn\'t seem to be a valid NodeCG bundle in this folder:' +
-			'\n\t' + chalk.magenta(bundlePath));
+		console.error(
+			chalk.red('Error:') +
+				" There doesn't seem to be a valid NodeCG bundle in this folder:" +
+				'\n\t' +
+				chalk.magenta(bundlePath),
+		);
 		process.exit(1);
 	}
 
@@ -27,7 +31,7 @@ export default function (bundlePath: string, installDev: boolean = false) {
 		try {
 			execSync(cmdline, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe']
+				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
@@ -48,7 +52,7 @@ export default function (bundlePath: string, installDev: boolean = false) {
 		try {
 			execSync(cmdline, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe']
+				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {

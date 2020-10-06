@@ -1,5 +1,5 @@
 import util from '../lib/util';
-import {Command} from 'commander';
+import { Command } from 'commander';
 
 export = function (program: Command) {
 	program
@@ -13,4 +13,4 @@ export = function (program: Command) {
 				console.warn('No NodeCG installation found in this folder.');
 			}
 		});
-}
+};

@@ -5,7 +5,7 @@ import util from '../lib/util';
 import chalk from 'chalk';
 import rimraf from 'rimraf';
 import os from 'os';
-import {Command} from 'commander';
+import { Command } from 'commander';
 
 export = function (program: Command) {
 	program
@@ -13,9 +13,9 @@ export = function (program: Command) {
 		.description('Uninstalls a bundle.')
 		.option('-f, --force', 'ignore warnings')
 		.action(action);
-}
+};
 
-function action(bundleName: string, options: {force: boolean}) {
+function action(bundleName: string, options: { force: boolean }) {
 	const nodecgPath = util.getNodeCGPath();
 	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
 
@@ -28,15 +28,19 @@ function action(bundleName: string, options: {force: boolean}) {
 	if (options.force) {
 		deleteBundle(bundleName, bundlePath);
 	} else {
-		inquirer.prompt<{confirmUninstall: boolean}>([{
-			name: 'confirmUninstall',
-			message: 'Are you sure you wish to uninstall ' + chalk.magenta(bundleName) + '?',
-			type: 'confirm'
-		}]).then(answers => {
-			if (answers.confirmUninstall) {
-				deleteBundle(bundleName, bundlePath);
-			}
-		});
+		inquirer
+			.prompt<{ confirmUninstall: boolean }>([
+				{
+					name: 'confirmUninstall',
+					message: 'Are you sure you wish to uninstall ' + chalk.magenta(bundleName) + '?',
+					type: 'confirm',
+				},
+			])
+			.then((answers) => {
+				if (answers.confirmUninstall) {
+					deleteBundle(bundleName, bundlePath);
+				}
+			});
 	}
 }
 

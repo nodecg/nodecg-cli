@@ -1,0 +1,11 @@
+{
+	"root": true,
+	"extends": ["xo", "xo-typescript", "prettier", "prettier/@typescript-eslint"],
+	"rules": {
+		"capitalized-comments": 0,
+		"@typescript-eslint/no-floating-promises": 0,
+		"@typescript-eslint/no-var-requires": 0,
+		"@typescript-eslint/no-implicit-any-catch": 0,
+		"@typescript-eslint/promise-function-async": 0
+	}
+}

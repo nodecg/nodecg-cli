@@ -1,12 +1,12 @@
 import util from '../lib/util';
-import {execSync} from 'child_process';
+import { execSync } from 'child_process';
 import os from 'os';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import semver from 'semver';
 import fs from 'fs';
 import fetchTags from '../lib/fetch-tags';
-import {Command} from 'commander';
+import { Command } from 'commander';
 
 const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -17,9 +17,9 @@ export = function (program: Command) {
 		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
 		.description('Install a new NodeCG instance')
 		.action(action);
-}
+};
 
-function action(version: string, options: {update: boolean, skipDependencies: boolean}) {
+function action(version: string, options: { update: boolean; skipDependencies: boolean }) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
 	let isUpdate = false;
 
@@ -29,8 +29,9 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 	if (util.pathContainsNodeCG(process.cwd())) {
 		if (!options.update) {
 			console.error('NodeCG is already installed in this directory.');
-			console.error('Use ' + chalk.cyan('nodecg setup [version] -u') +
-				' if you want update your existing install.');
+			console.error(
+				'Use ' + chalk.cyan('nodecg setup [version] -u') + ' if you want update your existing install.',
+			);
 			return;
 		}
 
@@ -82,7 +83,7 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 
 		process.stdout.write('Downloading latest release...');
 		try {
-			execSync('git fetch', {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync('git fetch', { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -94,28 +95,38 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 		}
 
 		if (semver.eq(target, current)) {
-			console.log('The target version (%s) is equal to the current version (%s). No action will be taken.',
-				chalk.magenta(target), chalk.magenta(current));
+			console.log(
+				'The target version (%s) is equal to the current version (%s). No action will be taken.',
+				chalk.magenta(target),
+				chalk.magenta(current),
+			);
 		} else if (semver.lt(target, current)) {
-			console.log(chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
-				chalk.magenta(target), chalk.magenta(current));
+			console.log(
+				chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
+				chalk.magenta(target),
+				chalk.magenta(current),
+			);
 
-			inquirer.prompt<{installOlder: boolean}>([{
-				name: 'installOlder',
-				message: 'Are you sure you wish to continue?',
-				type: 'confirm'
-			}], answers => {
-				if (answers.installOlder) {
-					checkoutUpdate(current, target, options.skipDependencies, true);
-				}
-			});
+			inquirer
+				.prompt<{ installOlder: boolean }>([
+					{
+						name: 'installOlder',
+						message: 'Are you sure you wish to continue?',
+						type: 'confirm',
+					},
+				])
+				.then((answers) => {
+					if (answers.installOlder) {
+						checkoutUpdate(current, target, options.skipDependencies, true);
+					}
+				});
 		} else {
 			checkoutUpdate(current, target, options.skipDependencies);
 		}
 	} else {
 		process.stdout.write('Cloning NodeCG... ');
 		try {
-			execSync(`git clone ${NODECG_GIT_URL} .`, {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync(`git clone ${NODECG_GIT_URL} .`, { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -129,7 +140,7 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 		// Check out the target version.
 		process.stdout.write(`Checking out version ${target}... `);
 		try {
-			execSync(`git checkout ${target}`, {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			/* istanbul ignore next */
@@ -155,7 +166,7 @@ function action(version: string, options: {update: boolean, skipDependencies: bo
 function installDependencies() {
 	process.stdout.write('Installing production npm dependencies... ');
 	try {
-		execSync('npm install --production', {stdio: ['pipe', 'pipe', 'pipe']});
+		execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		process.stdout.write(chalk.red('failed!') + os.EOL);
@@ -166,7 +177,7 @@ function installDependencies() {
 	if (fs.existsSync('./bower.json')) {
 		process.stdout.write('Installing production bower dependencies... ');
 		try {
-			execSync('bower install --production', {stdio: ['pipe', 'pipe', 'pipe']});
+			execSync('bower install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
 			process.stdout.write(chalk.red('failed!') + os.EOL);
@@ -182,7 +193,7 @@ function checkoutUpdate(current: string, target: string, skipDependencies: boole
 	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
 
 	try {
-		execSync(`git checkout ${target}`, {stdio: ['pipe', 'pipe', 'pipe']});
+		execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
 
 		/* istanbul ignore next: takes forever, not worth testing */
