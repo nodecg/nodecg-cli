@@ -3,7 +3,6 @@
 		"target": "es2017",
 		"module": "commonjs",
 		"lib": ["esnext"],
-		"rootDir": "src",
 		"outDir": "dist",
 		"importHelpers": true,
 
@@ -14,7 +13,6 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"moduleResolution": "node",
-		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true
 	},
 	"include": ["src/**/*.ts"]

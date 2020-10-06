@@ -2,9 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
   pull_request:
-    branches: [master]
 
 jobs:
   test:
@@ -12,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x, 12.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -22,8 +20,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node-version }}
       - run: npm i -g bower
       - run: npm ci
+      - run: npm run static
       - run: npm test
-      - run: npm run coveralls
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ github.token }}
+      - run: npm run build
 

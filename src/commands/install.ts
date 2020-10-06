@@ -1,26 +1,28 @@
 import fs from 'fs';
 import os from 'os';
 import installBundleDeps from '../lib/install-bundle-deps';
-import {execSync} from 'child_process';
+import { execSync } from 'child_process';
 import npa from 'npm-package-arg';
 import path from 'path';
 import util from '../lib/util';
 import semver from 'semver';
 import chalk from 'chalk';
 import fetchTags from '../lib/fetch-tags';
-import {Command} from 'commander';
+import { Command } from 'commander';
 import * as HostedGitInfo from 'hosted-git-info';
 
 export = function (program: Command) {
 	program
 		.command('install [repo]')
-		.description('Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
-			'\n\t\t    If run in a bundle directory with no arguments, installs that bundle\'s dependencies.')
+		.description(
+			'Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
+				"\n\t\t    If run in a bundle directory with no arguments, installs that bundle's dependencies.",
+		)
 		.option('-d, --dev', 'install development npm & bower dependencies')
 		.action(action);
-}
+};
 
-function action(repo: string, options: {dev: boolean}) {
+function action(repo: string, options: { dev: boolean }) {
 	const dev = options.dev || false;
 
 	// If no args are supplied, assume the user is intending to operate on the bundle in the current dir
@@ -43,7 +45,7 @@ function action(repo: string, options: {dev: boolean}) {
 		return;
 	}
 
-	const hostedInfo = parsed.hosted as unknown as HostedGitInfo;
+	const hostedInfo = (parsed.hosted as unknown) as HostedGitInfo;
 	const repoUrl = hostedInfo.git();
 	if (!repoUrl) {
 		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
@@ -82,7 +84,7 @@ function action(repo: string, options: {dev: boolean}) {
 	// Clone from github
 	process.stdout.write(`Installing ${bundleName}... `);
 	try {
-		execSync(`git clone ${repoUrl} "${bundlePath}"`, {stdio: ['pipe', 'pipe', 'pipe']});
+		execSync(`git clone ${repoUrl} "${bundlePath}"`, { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		/* istanbul ignore next */
@@ -99,7 +101,7 @@ function action(repo: string, options: {dev: boolean}) {
 		try {
 			execSync(`git checkout ${target}`, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe']
+				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {

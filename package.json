@@ -1,20 +1,15 @@
 {
   "name": "nodecg-cli",
-  "description": "The NodeCG command line interface.",
   "version": "6.1.0",
+  "description": "The NodeCG command line interface.",
+  "bugs": {
+    "url": "http://github.com/nodecg/nodecg-cli/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/nodecg/nodecg-cli.git"
   },
-  "bugs": {
-    "url": "http://github.com/nodecg/nodecg-cli/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/nodecg/nodecg-cli/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "bin": {
     "nodecg": "dist/bin/nodecg.js"
   },
@@ -24,15 +19,20 @@
     "README.md",
     "dist"
   ],
-  "engines": {
-    "node": ">=8"
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "format": "prettier --write \"**/*.ts\"",
+    "static": "run-s static:*",
+    "static:eslint": "eslint --cache \"**/*.ts\"",
+    "static:prettier": "prettier --check \"**/*.ts\"",
+    "test": "jest --colors --coverage"
   },
-  "preferGlobal": true,
+  "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
     "chalk": "3.0.0",
-    "commander": "2.19.0",
+    "commander": "^6.1.0",
     "fs-extra": "7.0.1",
-    "inquirer": "6.2.1",
+    "inquirer": "^7.3.3",
     "json-schema-defaults": "0.3.0",
     "json-schema-to-typescript": "6.1.0",
     "npm-package-arg": "6.1.0",
@@ -42,37 +42,34 @@
     "tslib": "1.9.3"
   },
   "devDependencies": {
+    "@gamesdonequick/prettier-config": "^2.2.0",
     "@types/fs-extra": "5.0.4",
     "@types/hosted-git-info": "2.7.0",
-    "@types/inquirer": "0.0.43",
-    "@types/node": "10.12.18",
+    "@types/inquirer": "^7.3.1",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^12.0.0",
     "@types/npm-package-arg": "6.1.0",
     "@types/request": "2.48.1",
     "@types/rimraf": "2.0.2",
     "@types/semver": "5.5.0",
-    "@typescript-eslint/parser": "1.1.0",
-    "chai": "4.2.0",
-    "coveralls": "3.0.2",
-    "eslint": "5.12.1",
-    "eslint-config-xo": "0.26.0",
-    "istanbul": "0.4.5",
-    "lcov-filter": "0.1.1",
-    "mocha": "5.2.0",
-    "sinon": "4.5.0",
+    "@types/tmp": "^0.2.0",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.10.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-config-xo": "^0.32.1",
+    "eslint-config-xo-typescript": "^0.33.0",
+    "jest": "^26.4.2",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.1.2",
     "standard-version": "8.0.1",
-    "tmp": "0.0.33",
-    "typescript": "3.2.4"
+    "tmp": "0.2.1",
+    "ts-jest": "^26.4.1",
+    "type-fest": "^0.17.0",
+    "typescript": "^4.0.3"
   },
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc",
-    "pretest": "npm run build",
-    "test": "npm run static && istanbul cover ./node_modules/mocha/bin/_mocha",
-    "coveralls": "node node_modules/lcov-filter/index.js ./coverage/lcov.info test tmp | coveralls && rm -rf ./coverage",
-    "static": "eslint \"**/*.{js,ts}\"",
-    "prerelease": "npm t && npm run build",
-    "release": "standard-version",
-    "postrelease": "npm publish && git push --follow-tags"
-  },
-  "license": "MIT"
+  "engines": {
+    "node": ">=8"
+  }
 }

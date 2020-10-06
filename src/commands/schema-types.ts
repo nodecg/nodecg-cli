@@ -1,13 +1,13 @@
 // Native
 import fs from 'fs';
 import path from 'path';
-import {promisify} from 'util';
+import { promisify } from 'util';
 
 // Packages
 import chalk from 'chalk';
 import fse from 'fs-extra';
-import {compileFromFile} from 'json-schema-to-typescript';
-import {Command} from 'commander';
+import { compileFromFile } from 'json-schema-to-typescript';
+import { Command } from 'commander';
 
 const writeFilePromise = promisify(fs.writeFile);
 
@@ -15,12 +15,12 @@ export = function (program: Command) {
 	program
 		.command('schema-types [dir]')
 		.option('-o, --out-dir [path]', 'Where to put the generated d.ts files', 'src/types/schemas')
-		.option('--no-config-schema', 'Don\'t generate a typedef from configschema.json')
+		.option('--no-config-schema', "Don't generate a typedef from configschema.json")
 		.description('Generate d.ts TypeScript typedef files from Replicant schemas and configschema.json (if present)')
 		.action(action);
-}
+};
 
-function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
+function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 	const processCwd = process.cwd();
 	const schemasDir = path.resolve(processCwd, inDir || 'schemas');
 	if (!fs.existsSync(schemasDir)) {
@@ -34,26 +34,26 @@ function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 	}
 
 	const configSchemaPath = path.join(processCwd, 'configschema.json');
-	const schemas = fs.readdirSync(schemasDir).filter(f => f.endsWith('.json'));
+	const schemas = fs.readdirSync(schemasDir).filter((f) => f.endsWith('.json'));
 
 	const style = {
 		singleQuote: true,
-		useTabs: true
+		useTabs: true,
 	};
 
-	const compilePromises: Promise<void>[] = [];
+	const compilePromises: Array<Promise<void>> = [];
 	const compile = (input: string, output: string, cwd = processCwd) => {
 		const promise = compileFromFile(input, {
 			cwd,
 			declareExternallyReferenced: true,
 			enableConstEnums: true,
-			style
+			style,
 		})
-			.then(ts => writeFilePromise(output, ts))
+			.then((ts) => writeFilePromise(output, ts))
 			.then(() => {
 				console.log(output);
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 		compilePromises.push(promise);
@@ -61,10 +61,7 @@ function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 	};
 
 	if (fs.existsSync(configSchemaPath) && cmd.configSchema) {
-		compile(
-			configSchemaPath,
-			path.resolve(outDir, 'configschema.d.ts'),
-		);
+		compile(configSchemaPath, path.resolve(outDir, 'configschema.d.ts'));
 	}
 
 	const indexFiles = [];
@@ -75,13 +72,13 @@ function action(inDir: string, cmd: {outDir: string, configSchema: boolean}) {
 		compile(
 			path.resolve(schemasDir, schema),
 			path.resolve(outDir, schema.replace(/\.json$/i, '.d.ts')),
-			schemasDir
+			schemasDir,
 		);
 	}
 
 	const indexPromise = writeFilePromise(path.resolve(outDir, 'index.d.ts'), `${indexFiles.join('\n')}\n`);
 
 	return Promise.all([indexPromise, ...compilePromises]).then(() => {
-		process.emit('schema-types-done');
+		(process.emit as any)('schema-types-done');
 	});
 }

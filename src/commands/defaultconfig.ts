@@ -3,14 +3,14 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import defaults from 'json-schema-defaults';
-import {Command} from 'commander';
+import { Command } from 'commander';
 
 export = function (program: Command) {
 	program
 		.command('defaultconfig [bundle]')
 		.description('Generate default config from configschema.json')
 		.action(action);
-}
+};
 
 function action(bundleName?: string) {
 	const cwd = process.cwd();
@@ -18,7 +18,7 @@ function action(bundleName?: string) {
 
 	if (!bundleName) {
 		if (util.isBundleFolder(cwd)) {
-			bundleName = bundleName || path.basename(cwd);
+			bundleName = bundleName ?? path.basename(cwd);
 		} else {
 			console.error(chalk.red('Error:') + ' No bundle found in the current directory!');
 			return;
@@ -50,10 +50,14 @@ function action(bundleName?: string) {
 	} else {
 		try {
 			fs.writeFileSync(configPath, JSON.stringify(defaults(schema), null, '  '));
-			console.log(chalk.green('Success:') + ' Created %s\'s default config from schema\n\n' +
-				JSON.stringify(defaults(schema), null, '  '), bundleName);
+			console.log(
+				chalk.green('Success:') +
+					" Created %s's default config from schema\n\n" +
+					JSON.stringify(defaults(schema), null, '  '),
+				bundleName,
+			);
 		} catch (e) {
-			console.error(chalk.red('Error: ') + e);
+			console.error(chalk.red('Error: ') + String(e));
 		}
 	}
 }
