@@ -25,7 +25,8 @@
     "static": "run-s static:*",
     "static:eslint": "eslint --cache \"**/*.ts\"",
     "static:prettier": "prettier --check \"**/*.ts\"",
-    "test": "jest --colors --coverage"
+    "test": "jest --colors --coverage",
+    "release": "semantic-release"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
@@ -42,7 +43,7 @@
     "tslib": "1.9.3"
   },
   "devDependencies": {
-    "@gamesdonequick/prettier-config": "^2.2.0",
+    "@gamesdonequick/prettier-config": "^2.2.1",
     "@types/fs-extra": "5.0.4",
     "@types/hosted-git-info": "2.7.0",
     "@types/inquirer": "^7.3.1",
@@ -63,7 +64,7 @@
     "jest": "^26.4.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.1.2",
-    "standard-version": "8.0.1",
+    "semantic-release": "^17.3.0",
     "tmp": "0.2.1",
     "ts-jest": "^26.4.1",
     "type-fest": "^0.17.0",
