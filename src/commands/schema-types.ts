@@ -60,11 +60,12 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		return promise;
 	};
 
+	const indexFiles = [];
+
 	if (fs.existsSync(configSchemaPath) && cmd.configSchema) {
 		compile(configSchemaPath, path.resolve(outDir, 'configschema.d.ts'));
+		indexFiles.push(`export * from './configschema';`);
 	}
-
-	const indexFiles = [];
 
 	for (const schema of schemas) {
 		indexFiles.push(`export * from './${schema.replace(/\.json$/i, '')}';`);
