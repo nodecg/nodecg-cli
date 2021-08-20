@@ -9,5 +9,5 @@ export interface Configschema {
 	username?: string;
 	value?: number;
 	nodefault?: string;
-	[k: string]: any;
+	[k: string]: unknown;
 }
