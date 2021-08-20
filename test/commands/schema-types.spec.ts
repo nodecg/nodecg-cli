@@ -71,10 +71,11 @@ it('should successfully compile the config schema', async () => {
 	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
 		fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8'),
 	);
+	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toBe("export * from './configschema';\n");
 });
 
 async function waitForEvent(emitter: EventEmitter, eventName: string) {
-	return new Promise((resolve) => {
+	return new Promise<void>((resolve) => {
 		emitter.on(eventName, () => {
 			resolve();
 		});
