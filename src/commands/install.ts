@@ -46,7 +46,7 @@ function action(repo: string, options: { dev: boolean }) {
 	}
 
 	const hostedInfo = (parsed.hosted as unknown) as HostedGitInfo;
-	const repoUrl = hostedInfo.git();
+	const repoUrl = hostedInfo.https();
 	if (!repoUrl) {
 		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
 		return;
