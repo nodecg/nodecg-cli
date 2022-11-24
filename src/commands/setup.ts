@@ -152,7 +152,7 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 			return;
 		}
 
-		// Install NodeCG's production dependencies (`npm install --production`)
+		// Install NodeCG's dependencies
 		// This operation takes a very long time, so we don't test it.
 		/* istanbul ignore if */
 		if (!options.skipDependencies) {
@@ -174,8 +174,8 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 function installDependencies() {
 	try {
 		if (fs.existsSync('./yarn.lock')) {
-			process.stdout.write('Installing production npm dependencies with yarn... ');
-			execSync('yarn --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+			process.stdout.write('Installing npm dependencies with yarn... ');
+			execSync('yarn', { stdio: ['pipe', 'pipe', 'pipe'] });
 		} else {
 			process.stdout.write('Installing production npm dependencies... ');
 			execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
