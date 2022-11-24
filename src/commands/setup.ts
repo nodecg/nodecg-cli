@@ -164,9 +164,15 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 
 /* istanbul ignore next: takes forever, not worth testing */
 function installDependencies() {
-	process.stdout.write('Installing production npm dependencies... ');
 	try {
-		execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+		if (fs.existsSync('./yarn.lock')) {
+			process.stdout.write('Installing production npm dependencies with yarn... ');
+			execSync('yarn --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+		} else {
+			process.stdout.write('Installing production npm dependencies... ');
+			execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+		}
+
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		process.stdout.write(chalk.red('failed!') + os.EOL);
