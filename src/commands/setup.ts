@@ -15,11 +15,12 @@ export = function (program: Command) {
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')
 		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
+		.option('-p, --skip-build', 'Skip (re)building NodeCG core')
 		.description('Install a new NodeCG instance')
 		.action(action);
 };
 
-function action(version: string, options: { update: boolean; skipDependencies: boolean }) {
+function action(version: string, options: { update: boolean; skipDependencies: boolean; skipBuild: boolean }) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
 	let isUpdate = false;
 
@@ -158,6 +159,13 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 			installDependencies();
 		}
 
+		// Build NodeCG if version >= v2.0.0, which is the first version that requires building.
+		// This operation takes a very long time, so we don't test it.
+		/* istanbul ignore if */
+		if (semver.gte(target, 'v2.0.0') && !options.skipBuild) {
+			buildCore();
+		}
+
 		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
 	}
 }
@@ -218,5 +226,17 @@ function checkoutUpdate(current: string, target: string, skipDependencies: boole
 	if (target) {
 		const verb = downgrade ? 'downgraded' : 'upgraded';
 		console.log('NodeCG %s to', verb, chalk.magenta(target));
+	}
+}
+
+/* istanbul ignore next: takes forever, not worth testing */
+function buildCore() {
+	try {
+		process.stdout.write('Building NodeCG core... ');
+		execSync('yarn build', { stdio: ['pipe', 'pipe', 'pipe'] });
+		process.stdout.write(chalk.green('done!') + os.EOL);
+	} catch (e) {
+		process.stdout.write(chalk.red('failed!') + os.EOL);
+		console.error(e.stack);
 	}
 }
