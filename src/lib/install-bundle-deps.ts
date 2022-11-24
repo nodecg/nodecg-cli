@@ -26,8 +26,15 @@ export default function (bundlePath: string, installDev = false) {
 	const cachedCwd = process.cwd();
 	if (fs.existsSync(bundlePath + '/package.json')) {
 		process.chdir(bundlePath);
-		cmdline = installDev ? 'npm install' : 'npm install --production';
-		process.stdout.write(format('Installing npm dependencies (dev: %s)... ', installDev));
+		let cmdline: string;
+		if (fs.existsSync(bundlePath + '/yarn.lock')) {
+			cmdline = installDev ? 'yarn' : 'yarn --production';
+			process.stdout.write(format('Installing npm dependencies with yarn (dev: %s)... ', installDev));
+		} else {
+			cmdline = installDev ? 'npm install' : 'npm install --production';
+			process.stdout.write(format('Installing npm dependencies (dev: %s)... ', installDev));
+		}
+
 		try {
 			execSync(cmdline, {
 				cwd: bundlePath,
