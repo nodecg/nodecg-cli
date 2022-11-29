@@ -19,7 +19,7 @@ beforeEach(() => {
 
 	// Build program.
 	program = createMockProgram();
-	defaultConfigCommand((program as unknown) as Command);
+	defaultConfigCommand(program as unknown as Command);
 });
 
 describe('when run with a bundle argument', () => {

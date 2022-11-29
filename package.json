@@ -23,8 +23,11 @@
     "build": "rimraf dist && tsc",
     "format": "prettier --write \"**/*.ts\"",
     "static": "run-s static:*",
-    "static:eslint": "eslint --cache \"**/*.ts\"",
     "static:prettier": "prettier --check \"**/*.ts\"",
+    "static:eslint": "eslint --cache \"**/*.ts\"",
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier --write \"**/*.ts\"",
+    "fix:eslint": "eslint --fix \"**/*.ts\"",
     "test": "jest --colors --coverage",
     "release": "semantic-release"
   },

@@ -13,7 +13,7 @@ fs.writeFileSync('package.json', JSON.stringify({ name: 'nodecg' }));
 
 beforeEach(() => {
 	program = createMockProgram();
-	installCommand((program as unknown) as Command);
+	installCommand(program as unknown as Command);
 });
 
 it('should install a bundle and its dependencies', async () => {

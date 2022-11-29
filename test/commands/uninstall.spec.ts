@@ -20,7 +20,7 @@ beforeEach(() => {
 
 	// Build program.
 	program = createMockProgram();
-	uninstallCommand((program as unknown) as Command);
+	uninstallCommand(program as unknown as Command);
 });
 
 it("should delete the bundle's folder after prompting for confirmation", async () => {

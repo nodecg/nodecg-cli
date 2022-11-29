@@ -16,7 +16,7 @@ const readPackageJson = (): PackageJson => {
 
 beforeEach(() => {
 	program = createMockProgram();
-	setupCommand((program as unknown) as Command);
+	setupCommand(program as unknown as Command);
 });
 
 test('should install the latest NodeCG when no version is specified', async () => {
