@@ -1,5 +1,6 @@
 import util from '../lib/util';
 import { Command } from 'commander';
+import { execSync } from 'child_process';
 
 export = function (program: Command) {
 	program
@@ -8,7 +9,7 @@ export = function (program: Command) {
 		.action(() => {
 			// Check if nodecg is already installed
 			if (util.pathContainsNodeCG(process.cwd())) {
-				require(process.cwd());
+				execSync('node --enable-source-maps index.js', { stdio: ['pipe', 'pipe', 'pipe'] });
 			} else {
 				console.warn('No NodeCG installation found in this folder.');
 			}
