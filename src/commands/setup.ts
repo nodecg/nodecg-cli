@@ -233,7 +233,7 @@ function checkoutUpdate(current: string, target: string, skipDependencies: boole
 function buildCore() {
 	try {
 		process.stdout.write('Building NodeCG core... ');
-		execSync('yarn build', { stdio: ['pipe', 'pipe', 'pipe'] });
+		execSync('npm run build', { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		process.stdout.write(chalk.red('failed!') + os.EOL);
