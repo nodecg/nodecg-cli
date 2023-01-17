@@ -11,9 +11,9 @@ export = function (program: Command) {
 			// Check if nodecg is already installed
 			if (util.pathContainsNodeCG(process.cwd())) {
 				if (options.disableSourceMaps) {
-					execSync('node index.js', { stdio: ['pipe', 'pipe', 'pipe'] });
+					execSync('node index.js', { stdio: 'inherit' });
 				} else {
-					execSync('node --enable-source-maps index.js', { stdio: ['pipe', 'pipe', 'pipe'] });
+					execSync('node --enable-source-maps index.js', { stdio: 'inherit' });
 				}
 			} else {
 				console.warn('No NodeCG installation found in this folder.');
