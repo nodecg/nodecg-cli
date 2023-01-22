@@ -1,27 +1,29 @@
 process.title = 'nodecg';
 
-import request from 'request';
 import semver from 'semver';
 import chalk from 'chalk';
 import { Command } from 'commander';
+import util from './lib/util';
 
 const program = new Command('nodecg');
 const packageVersion: string = require('../package.json').version;
 
-// Check for updates
-request('http://registry.npmjs.org/nodecg-cli/latest', (err, res, body) => {
-	if (!err && res.statusCode === 200) {
-		if (semver.gt(JSON.parse(body).version, packageVersion)) {
+// Check for updates, asynchronously, so as to not make the CLI startup time excessively slow
+util.getLatestNodeCGRelease()
+	.then((release) => {
+		if (semver.gt(release.version, packageVersion)) {
 			console.log(
 				chalk.yellow('?') +
 					' A new update is available for nodecg-cli: ' +
-					chalk.green.bold(JSON.parse(body).version) +
+					chalk.green.bold(release.version) +
 					chalk.dim(' (current: ' + packageVersion + ')'),
 			);
 			console.log('  Run ' + chalk.cyan.bold('npm install -g nodecg-cli') + ' to install the latest version');
 		}
-	}
-});
+	})
+	.catch(() => {
+		// Do nothing, as this is an optional check.
+	});
 
 // Initialise CLI
 program.version(packageVersion).usage('<command> [options]');

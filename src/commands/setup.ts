@@ -1,4 +1,4 @@
-import util from '../lib/util';
+import util, { NPMRelease } from '../lib/util';
 import { execSync } from 'child_process';
 import os from 'os';
 import chalk from 'chalk';
@@ -7,6 +7,8 @@ import semver from 'semver';
 import fs from 'fs';
 import fetchTags from '../lib/fetch-tags';
 import { Command } from 'commander';
+import fetch from 'node-fetch';
+import tar from 'tar';
 
 const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -15,12 +17,11 @@ export = function (program: Command) {
 		.command('setup [version]')
 		.option('-u, --update', 'Update the local NodeCG installation')
 		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
-		.option('-p, --skip-build', 'Skip (re)building NodeCG core')
 		.description('Install a new NodeCG instance')
-		.action(action);
+		.action(decideActionVersion);
 };
 
-function action(version: string, options: { update: boolean; skipDependencies: boolean; skipBuild: boolean }) {
+async function decideActionVersion(version: string, options: { update: boolean; skipDependencies: boolean }) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
 	let isUpdate = false;
 
@@ -78,10 +79,74 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 
 	process.stdout.write(chalk.green('done!') + os.EOL);
 
-	if (isUpdate) {
-		const nodecgPath = util.getNodeCGPath();
-		const current = JSON.parse(fs.readFileSync(nodecgPath + '/package.json', 'utf8')).version;
+	let current: string | undefined;
+	let downgrade = false;
 
+	if (isUpdate) {
+		const current = util.getCurrentNodeCGVersion();
+
+		if (semver.eq(target, current)) {
+			console.log(
+				'The target version (%s) is equal to the current version (%s). No action will be taken.',
+				chalk.magenta(target),
+				chalk.magenta(current),
+			);
+			return;
+		}
+
+		if (semver.lt(target, current)) {
+			console.log(
+				chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
+				chalk.magenta(target),
+				chalk.magenta(current),
+			);
+
+			const answers = await inquirer.prompt<{ installOlder: boolean }>([
+				{
+					name: 'installOlder',
+					message: 'Are you sure you wish to continue?',
+					type: 'confirm',
+				},
+			]);
+
+			if (!answers.installOlder) {
+				console.log('Setup cancelled.');
+				return;
+			}
+
+			downgrade = true;
+		}
+	}
+
+	if (semver.lt(target, 'v2.0.0')) {
+		actionV1(current, target, isUpdate);
+	} else if (semver.lt(target, 'v3.0.0')) {
+		await actionV2(current, target, isUpdate);
+	} else {
+		console.error(
+			`Unknown NodeCG verison ${chalk.magenta(
+				version,
+			)}, perhaps you need to update nodecg-cli? (${chalk.cyan.bold('npm i -g nodecg-cli@latest')})`,
+		);
+	}
+
+	// Install NodeCG's dependencies
+	// This operation takes a very long time, so we don't test it.
+	/* istanbul ignore if */
+	if (!options.skipDependencies) {
+		installDependencies();
+	}
+
+	if (isUpdate) {
+		const verb = downgrade ? 'downgraded' : 'upgraded';
+		console.log('NodeCG %s to', verb, chalk.magenta(target));
+	} else {
+		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
+	}
+}
+
+function actionV1(current: string | undefined, target: string, isUpdate: boolean) {
+	if (isUpdate) {
 		process.stdout.write('Downloading latest release...');
 		try {
 			execSync('git fetch', { stdio: ['pipe', 'pipe', 'pipe'] });
@@ -95,35 +160,11 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 			return;
 		}
 
-		if (semver.eq(target, current)) {
-			console.log(
-				'The target version (%s) is equal to the current version (%s). No action will be taken.',
-				chalk.magenta(target),
-				chalk.magenta(current),
-			);
-		} else if (semver.lt(target, current)) {
-			console.log(
-				chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
-				chalk.magenta(target),
-				chalk.magenta(current),
-			);
-
-			inquirer
-				.prompt<{ installOlder: boolean }>([
-					{
-						name: 'installOlder',
-						message: 'Are you sure you wish to continue?',
-						type: 'confirm',
-					},
-				])
-				.then((answers) => {
-					if (answers.installOlder) {
-						checkoutUpdate(current, target, options.skipDependencies, true);
-					}
-				});
-		} else {
-			checkoutUpdate(current, target, options.skipDependencies);
+		if (current) {
+			logDownOrUpgradeMessage(current, target, semver.lt(target, current));
 		}
+
+		gitCheckoutUpdate(target);
 	} else {
 		process.stdout.write('Cloning NodeCG... ');
 		try {
@@ -148,25 +189,67 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			/* istanbul ignore next */
 			console.error(e.stack);
+		}
+	}
+}
+
+async function actionV2(current: string | undefined, target: string, isUpdate: boolean) {
+	if (isUpdate) {
+		let release: NPMRelease;
+
+		process.stdout.write('Downloading latest release...');
+		try {
+			release = await util.getLatestNodeCGRelease();
+			if (release.version !== target) {
+				process.stdout.write(chalk.red('failed!') + os.EOL);
+				console.error(
+					`Expected latest npm release to be ${chalk.magenta(target)} but instead it was ${chalk.magenta(
+						release.version,
+					)}. Aborting.`,
+				);
+				return;
+			}
+
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			/* istanbul ignore next */
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			/* istanbul ignore next */
+			console.error(e.stack);
 			/* istanbul ignore next */
 			return;
 		}
 
-		// Install NodeCG's dependencies
-		// This operation takes a very long time, so we don't test it.
-		/* istanbul ignore if */
-		if (!options.skipDependencies) {
-			installDependencies();
+		if (current) {
+			logDownOrUpgradeMessage(current, target, semver.lt(target, current));
 		}
 
-		// Build NodeCG if version >= v2.0.0, which is the first version that requires building.
-		// This operation takes a very long time, so we don't test it.
-		/* istanbul ignore if */
-		if (semver.gte(target, 'v2.0.0') && !options.skipBuild) {
-			buildCore();
+		downloadAndExtractReleaseTarball(release.dist.tarball);
+	} else {
+		process.stdout.write('Cloning NodeCG... ');
+		try {
+			execSync(`git clone ${NODECG_GIT_URL} .`, { stdio: ['pipe', 'pipe', 'pipe'] });
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			/* istanbul ignore next */
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			/* istanbul ignore next */
+			console.error(e.stack);
+			/* istanbul ignore next */
+			return;
 		}
 
-		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
+		// Check out the target version.
+		process.stdout.write(`Checking out version ${target}... `);
+		try {
+			execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		} catch (e) {
+			/* istanbul ignore next */
+			process.stdout.write(chalk.red('failed!') + os.EOL);
+			/* istanbul ignore next */
+			console.error(e.stack);
+		}
 	}
 }
 
@@ -174,8 +257,8 @@ function action(version: string, options: { update: boolean; skipDependencies: b
 function installDependencies() {
 	try {
 		if (fs.existsSync('./yarn.lock')) {
-			process.stdout.write('Installing npm dependencies with yarn... ');
-			execSync('yarn', { stdio: ['pipe', 'pipe', 'pipe'] });
+			process.stdout.write('Installing production npm dependencies with yarn... ');
+			execSync('yarn --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 		} else {
 			process.stdout.write('Installing production npm dependencies... ');
 			execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
@@ -200,43 +283,37 @@ function installDependencies() {
 	}
 }
 
-function checkoutUpdate(current: string, target: string, skipDependencies: boolean, downgrade?: boolean) {
-	// Now that we know for sure if the target tag exists (and if its newer or older than current),
-	// we can `git pull` and `git checkout <tag>` if appropriate.
-	const Verb = downgrade ? 'Downgrading' : 'Upgrading';
-	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
-
+function gitCheckoutUpdate(target: string) {
 	try {
 		execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
-
-		/* istanbul ignore next: takes forever, not worth testing */
-		if (!skipDependencies) {
-			installDependencies();
-		}
 	} catch (e) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */
 		console.error(e.stack);
-		/* istanbul ignore next */
-		return;
-	}
-
-	if (target) {
-		const verb = downgrade ? 'downgraded' : 'upgraded';
-		console.log('NodeCG %s to', verb, chalk.magenta(target));
 	}
 }
 
-/* istanbul ignore next: takes forever, not worth testing */
-function buildCore() {
+async function downloadAndExtractReleaseTarball(tarballUrl: string) {
 	try {
-		process.stdout.write('Building NodeCG core... ');
-		execSync('npm run build', { stdio: ['pipe', 'pipe', 'pipe'] });
-		process.stdout.write(chalk.green('done!') + os.EOL);
+		const res = await fetch(tarballUrl);
+		if (!res.body) {
+			throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
+		}
+
+		res.body.pipe(tar.x({})).on('end', () => {
+			process.stdout.write(chalk.green('done!') + os.EOL);
+		});
 	} catch (e) {
+		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
+		/* istanbul ignore next */
 		console.error(e.stack);
 	}
+}
+
+function logDownOrUpgradeMessage(current: string, target: string, downgrade: boolean): void {
+	const Verb = downgrade ? 'Downgrading' : 'Upgrading';
+	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
 }
