@@ -193,64 +193,37 @@ function actionV1(current: string | undefined, target: string, isUpdate: boolean
 	}
 }
 
-async function actionV2(current: string | undefined, target: string, isUpdate: boolean) {
-	if (isUpdate) {
-		let release: NPMRelease;
+async function actionV2(current: string | undefined, target: string, _isUpdate: boolean) {
+	let release: NPMRelease;
 
-		process.stdout.write('Downloading latest release...');
-		try {
-			release = await util.getLatestNodeCGRelease();
-			if (release.version !== target) {
-				process.stdout.write(chalk.red('failed!') + os.EOL);
-				console.error(
-					`Expected latest npm release to be ${chalk.magenta(target)} but instead it was ${chalk.magenta(
-						release.version,
-					)}. Aborting.`,
-				);
-				return;
-			}
-
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
+	process.stdout.write('Downloading latest release...');
+	try {
+		release = await util.getLatestNodeCGRelease();
+		if (release.version !== target) {
 			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
+			console.error(
+				`Expected latest npm release to be ${chalk.magenta(target)} but instead it was ${chalk.magenta(
+					release.version,
+				)}. Aborting.`,
+			);
 			return;
 		}
 
-		if (current) {
-			logDownOrUpgradeMessage(current, target, semver.lt(target, current));
-		}
-
-		downloadAndExtractReleaseTarball(release.dist.tarball);
-	} else {
-		process.stdout.write('Cloning NodeCG... ');
-		try {
-			execSync(`git clone ${NODECG_GIT_URL} .`, { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
-		}
-
-		// Check out the target version.
-		process.stdout.write(`Checking out version ${target}... `);
-		try {
-			execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-		}
+		process.stdout.write(chalk.green('done!') + os.EOL);
+	} catch (e) {
+		/* istanbul ignore next */
+		process.stdout.write(chalk.red('failed!') + os.EOL);
+		/* istanbul ignore next */
+		console.error(e.stack);
+		/* istanbul ignore next */
+		return;
 	}
+
+	if (current) {
+		logDownOrUpgradeMessage(current, target, semver.lt(target, current));
+	}
+
+	downloadAndExtractReleaseTarball(release.dist.tarball);
 }
 
 /* istanbul ignore next: takes forever, not worth testing */
