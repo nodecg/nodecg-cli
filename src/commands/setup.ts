@@ -256,13 +256,8 @@ async function actionV2(current: string | undefined, target: string, isUpdate: b
 /* istanbul ignore next: takes forever, not worth testing */
 function installDependencies() {
 	try {
-		if (fs.existsSync('./yarn.lock')) {
-			process.stdout.write('Installing production npm dependencies with yarn... ');
-			execSync('yarn --production', { stdio: ['pipe', 'pipe', 'pipe'] });
-		} else {
-			process.stdout.write('Installing production npm dependencies... ');
-			execSync('npm install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
-		}
+		process.stdout.write('Installing production npm dependencies... ');
+		execSync('npm ci --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
