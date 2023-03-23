@@ -230,7 +230,7 @@ async function actionV2(current: string | undefined, target: string, _isUpdate: 
 function installDependencies() {
 	try {
 		process.stdout.write('Installing production npm dependencies... ');
-		execSync('npm ci --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+		execSync('npm i --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
