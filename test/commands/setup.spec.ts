@@ -21,26 +21,26 @@ const readPackageJson = (): PackageJson => {
 };
 
 beforeEach(() => {
-	chdir(true)
+	chdir(true);
 	program = createMockProgram();
 	setupCommand(program as unknown as Command);
 });
 
 test('should install the latest NodeCG when no version is specified', async () => {
-	chdir()
+	chdir();
 	await program.runWith('setup --skip-dependencies');
 	expect(readPackageJson().name).toBe('nodecg');
 });
 
 test('should install v2 NodeCG when specified', async () => {
-	chdir()
+	chdir();
 	await program.runWith('setup v2.0.0 --skip-dependencies');
 	expect(readPackageJson().name).toBe('nodecg');
 	expect(readPackageJson().version).toBe('2.0.0');
 });
 
 test('should install v1 NodeCG when specified', async () => {
-	chdir()
+	chdir();
 	await program.runWith('setup 1.9.0 -u --skip-dependencies');
 	expect(readPackageJson().name).toBe('nodecg');
 	expect(readPackageJson().version).toBe('1.9.0');

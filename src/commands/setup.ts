@@ -271,7 +271,7 @@ async function downloadAndExtractReleaseTarball(tarballUrl: string) {
 			throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
 		}
 
-		await stream.pipeline(res.body, tar.x({strip: 1}));
+		await stream.pipeline(res.body, tar.x({ strip: 1 }));
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		/* istanbul ignore next */
