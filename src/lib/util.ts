@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
+import semver from 'semver';
 
 export default {
 	/**
@@ -64,13 +65,27 @@ export default {
 	/**
 	 * Gets the latest NodeCG release information from npm, including tarball download link.
 	 */
-	async getLatestNodeCGRelease(): Promise<NPMRelease> {
-		const res = await fetch('http://registry.npmjs.org/nodecg/latest');
+	async getNodeCGRelease(target: string): Promise<NPMRelease> {
+		const targetVersion = semver.coerce(target)?.version;
+		if (!targetVersion) {
+			throw new Error(`Failed to determine target NodeCG version`);
+		}
+
+		const res = await fetch(`http://registry.npmjs.org/nodecg/${targetVersion}`);
 		if (res.status !== 200) {
 			throw new Error(`Failed to fetch NodeCG release information from npm, status code ${res.status}`);
 		}
 
 		return res.json() as Promise<NPMRelease>;
+	},
+
+	async getLatestCLIRelease(): Promise<NPMRelease> {
+		const res = await fetch('http://registry.npmjs.org/nodecg-cli/latest');
+		if (res.status !== 200) {
+			throw new Error(`Failed to fetch NodeCG release information from npm, status code ${res.status}`);
+		}
+
+		return res.json();
 	},
 };
 

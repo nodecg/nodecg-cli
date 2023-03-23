@@ -9,7 +9,7 @@ const program = new Command('nodecg');
 const packageVersion: string = require('../package.json').version;
 
 // Check for updates, asynchronously, so as to not make the CLI startup time excessively slow
-util.getLatestNodeCGRelease()
+util.getLatestCLIRelease()
 	.then((release) => {
 		if (semver.gt(release.version, packageVersion)) {
 			console.log(
