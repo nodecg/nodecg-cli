@@ -9,6 +9,7 @@ import fetchTags from '../lib/fetch-tags';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import tar from 'tar';
+import stream from 'stream/promises';
 
 const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
 
@@ -132,7 +133,6 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 
 	// Install NodeCG's dependencies
 	// This operation takes a very long time, so we don't test it.
-	/* istanbul ignore if */
 	if (!options.skipDependencies) {
 		installDependencies();
 	}
@@ -199,7 +199,8 @@ async function actionV2(current: string | undefined, target: string, _isUpdate: 
 	process.stdout.write('Downloading latest release...');
 	try {
 		release = await util.getLatestNodeCGRelease();
-		if (release.version !== target) {
+		// target is v1.2.3, release.version is 1.2.3
+		if (!semver.satisfies(release.version, target)) {
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			console.error(
 				`Expected latest npm release to be ${chalk.magenta(target)} but instead it was ${chalk.magenta(
@@ -223,7 +224,7 @@ async function actionV2(current: string | undefined, target: string, _isUpdate: 
 		logDownOrUpgradeMessage(current, target, semver.lt(target, current));
 	}
 
-	downloadAndExtractReleaseTarball(release.dist.tarball);
+	await downloadAndExtractReleaseTarball(release.dist.tarball);
 }
 
 /* istanbul ignore next: takes forever, not worth testing */
@@ -270,9 +271,8 @@ async function downloadAndExtractReleaseTarball(tarballUrl: string) {
 			throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
 		}
 
-		res.body.pipe(tar.x({})).on('end', () => {
-			process.stdout.write(chalk.green('done!') + os.EOL);
-		});
+		await stream.pipeline(res.body, tar.x({strip: 1}));
+		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);

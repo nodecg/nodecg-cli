@@ -65,7 +65,7 @@ export default {
 	 * Gets the latest NodeCG release information from npm, including tarball download link.
 	 */
 	async getLatestNodeCGRelease(): Promise<NPMRelease> {
-		const res = await fetch('http://registry.npmjs.org/nodecg-cli/latest');
+		const res = await fetch('http://registry.npmjs.org/nodecg/latest');
 		if (res.status !== 200) {
 			throw new Error(`Failed to fetch NodeCG release information from npm, status code ${res.status}`);
 		}
