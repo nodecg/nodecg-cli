@@ -70,6 +70,15 @@ test('should print an error when the target version is the same as current', asy
 	spy.mockRestore();
 });
 
+test('should correctly handle and refuse when you try to downgrade from v2 to v1', async () => {
+	chdir();
+	jest.spyOn(inquirer, 'prompt').mockReturnValue(Promise.resolve({ installOlder: true }) as any);
+	await program.runWith('setup 2.0.0 --skip-dependencies');
+	expect(readPackageJson().version).toBe('2.0.0');
+	await program.runWith('setup 1.9.0 -u --skip-dependencies');
+	expect(readPackageJson().version).toBe('2.0.0');
+});
+
 test("should print an error when the target version doesn't exist", async () => {
 	const spy = jest.spyOn(console, 'error');
 	await program.runWith('setup 0.0.99 -u --skip-dependencies');

@@ -1,4 +1,4 @@
-import util, { NPMRelease } from '../lib/util';
+import util from '../lib/util';
 import { execSync } from 'child_process';
 import os from 'os';
 import chalk from 'chalk';
@@ -84,7 +84,7 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	let downgrade = false;
 
 	if (isUpdate) {
-		const current = util.getCurrentNodeCGVersion();
+		current = util.getCurrentNodeCGVersion();
 
 		if (semver.eq(target, current)) {
 			console.log(
@@ -120,7 +120,12 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	}
 
 	if (semver.lt(target, 'v2.0.0')) {
-		actionV1(current, target, isUpdate);
+		if (current && semver.gte(current, 'v2.0.0')) {
+			console.error(`You are attempting to downgrade NodeCG from v2.x to v1.x, which is not supported.`);
+			return;
+		}
+
+		await actionV1(current, target, isUpdate);
 	} else if (semver.lt(target, 'v3.0.0')) {
 		await actionV2(current, target, isUpdate);
 	} else {
@@ -145,19 +150,16 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	}
 }
 
-function actionV1(current: string | undefined, target: string, isUpdate: boolean) {
-	if (isUpdate) {
+async function actionV1(current: string | undefined, target: string, isUpdate: boolean) {
+	const isGitRepo = fs.existsSync('.git');
+	if (isGitRepo && isUpdate) {
 		process.stdout.write('Downloading latest release...');
 		try {
 			execSync('git fetch', { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
-			/* istanbul ignore next */
 			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
+			throw e;
 		}
 
 		if (current) {
@@ -171,12 +173,8 @@ function actionV1(current: string | undefined, target: string, isUpdate: boolean
 			execSync(`git clone ${NODECG_GIT_URL} .`, { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
-			/* istanbul ignore next */
 			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
+			throw e;
 		}
 
 		// Check out the target version.
@@ -185,40 +183,22 @@ function actionV1(current: string | undefined, target: string, isUpdate: boolean
 			execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
 		} catch (e) {
-			/* istanbul ignore next */
 			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
+			throw e;
 		}
 	}
 }
 
-async function actionV2(current: string | undefined, target: string, _isUpdate: boolean) {
-	let release: NPMRelease;
-
-	process.stdout.write('Downloading latest release...');
-	try {
-		release = await util.getLatestNodeCGRelease();
-		// target is v1.2.3, release.version is 1.2.3
-		if (!semver.satisfies(release.version, target)) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			console.error(
-				`Expected latest npm release to be ${chalk.magenta(target)} but instead it was ${chalk.magenta(
-					release.version,
-				)}. Aborting.`,
-			);
-			return;
-		}
-
-		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
-		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
-		/* istanbul ignore next */
-		console.error(e.stack);
-		/* istanbul ignore next */
-		return;
+async function actionV2(current: string | undefined, target: string, isUpdate: boolean) {
+	if (isUpdate) {
+		const deletingDirectories = ['.git', 'build', 'scripts', 'schemas'];
+		await Promise.all(deletingDirectories.map((dir) => fs.promises.rm(dir, { recursive: true, force: true })));
 	}
+
+	process.stdout.write(`Downloading ${target} from npm...`);
+	const release = await util.getNodeCGRelease(target);
+
+	process.stdout.write(chalk.green('done!') + os.EOL);
 
 	if (current) {
 		logDownOrUpgradeMessage(current, target, semver.lt(target, current));
@@ -265,20 +245,13 @@ function gitCheckoutUpdate(target: string) {
 }
 
 async function downloadAndExtractReleaseTarball(tarballUrl: string) {
-	try {
-		const res = await fetch(tarballUrl);
-		if (!res.body) {
-			throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
-		}
-
-		await stream.pipeline(res.body, tar.x({ strip: 1 }));
-		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
-		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
-		/* istanbul ignore next */
-		console.error(e.stack);
+	const res = await fetch(tarballUrl);
+	if (!res.body) {
+		throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
 	}
+
+	await stream.pipeline(res.body, tar.x({ strip: 1 }));
+	process.stdout.write(chalk.green('done!') + os.EOL);
 }
 
 function logDownOrUpgradeMessage(current: string, target: string, downgrade: boolean): void {
