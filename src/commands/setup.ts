@@ -195,7 +195,7 @@ async function actionV2(current: string | undefined, target: string, isUpdate: b
 		await Promise.all(deletingDirectories.map((dir) => fs.promises.rm(dir, { recursive: true, force: true })));
 	}
 
-	process.stdout.write(`Downloading ${target} from npm...`);
+	process.stdout.write(`Downloading ${target} from npm... `);
 	const release = await util.getNodeCGRelease(target);
 
 	process.stdout.write(chalk.green('done!') + os.EOL);
@@ -251,7 +251,6 @@ async function downloadAndExtractReleaseTarball(tarballUrl: string) {
 	}
 
 	await stream.pipeline(res.body, tar.x({ strip: 1 }));
-	process.stdout.write(chalk.green('done!') + os.EOL);
 }
 
 function logDownOrUpgradeMessage(current: string, target: string, downgrade: boolean): void {
