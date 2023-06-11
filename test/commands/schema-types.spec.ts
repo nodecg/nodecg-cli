@@ -71,7 +71,9 @@ it('should successfully compile the config schema', async () => {
 	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
 		fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8'),
 	);
-	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toBe("/* eslint-disable */\n// @ts-ignore\nexport * from './configschema';\n");
+	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toBe(
+		"/* eslint-disable */\n// @ts-ignore\nexport * from './configschema';\n",
+	);
 });
 
 async function waitForEvent(emitter: EventEmitter, eventName: string) {
