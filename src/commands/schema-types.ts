@@ -60,14 +60,16 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		return promise;
 	};
 
-	const indexFiles = [];
+	const indexFiles = ['/* eslint-disable */'];
 
 	if (fs.existsSync(configSchemaPath) && cmd.configSchema) {
 		compile(configSchemaPath, path.resolve(outDir, 'configschema.d.ts'));
+		indexFiles.push('// @ts-ignore')
 		indexFiles.push(`export * from './configschema';`);
 	}
 
 	for (const schema of schemas) {
+		indexFiles.push('// @ts-ignore');
 		indexFiles.push(`export * from './${schema.replace(/\.json$/i, '')}';`);
 
 		compile(
