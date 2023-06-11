@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="6.0.4-alpha.2"></a>
+## [8.6.6](https://github.com/nodecg/nodecg-cli/compare/v8.6.5...v8.6.6) (2023-06-11)
+
+
+### Bug Fixes
+
+* force build to try to fix release-please ([e2ae645](https://github.com/nodecg/nodecg-cli/commit/e2ae6451be408d821d3211fea82ed1a95cf6db89))
+
 ## [8.6.5](https://github.com/nodecg/nodecg-cli/compare/v8.6.4...v8.6.5) (2023-06-11)
 
 
