@@ -57,7 +57,6 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 				console.error(err);
 			});
 		compilePromises.push(promise);
-		return promise;
 	};
 
 	const indexFiles = ['/* eslint-disable */'];
