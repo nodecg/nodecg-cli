@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="6.0.4-alpha.2"></a>
+## [8.6.5](https://github.com/nodecg/nodecg-cli/compare/v8.6.4...v8.6.5) (2023-06-11)
+
+
+### Bug Fixes
+
+* don't return a promise from the compile method, it isn't used ([2903e50](https://github.com/nodecg/nodecg-cli/commit/2903e5016a9daa410f3972b7d94873fd9f41adee))
+* prevent eslint and typescript from being overly worried about replicant schemas ([3d2dd82](https://github.com/nodecg/nodecg-cli/commit/3d2dd82ea642e5a6e596ff2191577f0dd8424f42))
+
 ## [6.0.4-alpha.2](https://github.com/nodecg/nodecg-cli/compare/v6.0.4-alpha.1...v6.0.4-alpha.2) (2019-01-27)
 
 
