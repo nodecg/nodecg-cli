@@ -28,8 +28,7 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write \"**/*.ts\"",
     "fix:eslint": "eslint --fix \"**/*.ts\"",
-    "test": "jest --colors --coverage",
-    "release": "semantic-release"
+    "test": "jest --colors --coverage"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
@@ -69,7 +68,6 @@
     "jest": "^26.4.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.1.2",
-    "semantic-release": "^17.3.0",
     "tmp": "0.2.1",
     "ts-jest": "^26.4.1",
     "type-fest": "^0.17.0",
