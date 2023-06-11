@@ -64,7 +64,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 
 	if (fs.existsSync(configSchemaPath) && cmd.configSchema) {
 		compile(configSchemaPath, path.resolve(outDir, 'configschema.d.ts'));
-		indexFiles.push('// @ts-ignore')
+		indexFiles.push('// @ts-ignore');
 		indexFiles.push(`export * from './configschema';`);
 	}
 
