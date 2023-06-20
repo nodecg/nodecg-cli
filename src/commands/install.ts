@@ -102,18 +102,28 @@ function action(repo: string, options: { dev: boolean }) {
 	if (target) {
 		process.stdout.write(`Checking out version ${target}... `);
 		try {
+			// First try the target as-is.
 			execSync(`git checkout ${target}`, {
 				cwd: bundlePath,
 				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
-			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			/* istanbul ignore next */
-			console.error(e.stack);
-			/* istanbul ignore next */
-			return;
+		} catch (_e) {
+			try {
+				// Next try prepending `v` to the target, which may have been stripped by `semver.coerce`.
+				execSync(`git checkout v${target}`, {
+					cwd: bundlePath,
+					stdio: ['pipe', 'pipe', 'pipe'],
+				});
+				process.stdout.write(chalk.green('done!') + os.EOL);
+			} catch (e) {
+				/* istanbul ignore next */
+				process.stdout.write(chalk.red('failed!') + os.EOL);
+				/* istanbul ignore next */
+				console.error(e.stack);
+				/* istanbul ignore next */
+				return;
+			}
 		}
 	}
 
