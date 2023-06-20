@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="6.0.4-alpha.2"></a>
+## [8.6.8](https://github.com/nodecg/nodecg-cli/compare/v8.6.7...v8.6.8) (2023-06-20)
+
+
+### Bug Fixes
+
+* try prepending "v" to the checkout tag when installing a bundle ([58daa03](https://github.com/nodecg/nodecg-cli/commit/58daa0336319624f5ec783806d0e8a00f4aefb24))
+
 ## [8.6.7](https://github.com/nodecg/nodecg-cli/compare/v8.6.6...v8.6.7) (2023-06-20)
 
 
