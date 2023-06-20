@@ -108,7 +108,7 @@ function action(repo: string, options: { dev: boolean }) {
 				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (_e) {
+		} catch (_) {
 			try {
 				// Next try prepending `v` to the target, which may have been stripped by `semver.coerce`.
 				execSync(`git checkout v${target}`, {
