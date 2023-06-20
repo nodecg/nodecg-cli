@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="6.0.4-alpha.2"></a>
+## [8.6.7](https://github.com/nodecg/nodecg-cli/compare/v8.6.6...v8.6.7) (2023-06-20)
+
+
+### Bug Fixes
+
+* better semver parsing ([61a0e8c](https://github.com/nodecg/nodecg-cli/commit/61a0e8cdc704bff5c081beffd3f30d76dbf59cbb))
+
 ## [8.6.6](https://github.com/nodecg/nodecg-cli/compare/v8.6.5...v8.6.6) (2023-06-11)
 
 
