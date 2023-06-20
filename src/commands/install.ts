@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import npa from 'npm-package-arg';
 import path from 'path';
 import util from '../lib/util';
-import semver from 'semver';
+import semver, { SemVer } from 'semver';
 import chalk from 'chalk';
 import fetchTags from '../lib/fetch-tags';
 import { Command } from 'commander';
@@ -70,7 +70,10 @@ function action(repo: string, options: { dev: boolean }) {
 	let target;
 	try {
 		tags = fetchTags(repoUrl);
-		target = semver.maxSatisfying(tags, range);
+		target = semver.maxSatisfying(
+			tags.map((tag) => semver.coerce(tag)).filter((coercedTag): coercedTag is SemVer => Boolean(coercedTag)),
+			range,
+		);
 		process.stdout.write(chalk.green('done!') + os.EOL);
 	} catch (e) {
 		/* istanbul ignore next */
