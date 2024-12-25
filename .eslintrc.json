@@ -2,6 +2,7 @@
 	"root": true,
 	"extends": ["xo", "xo-typescript", "prettier", "prettier/@typescript-eslint"],
 	"rules": {
+		"no-undef": 0,
 		"capitalized-comments": 0,
 		"@typescript-eslint/no-floating-promises": 0,
 		"@typescript-eslint/no-var-requires": 0,
