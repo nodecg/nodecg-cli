@@ -1,24 +1,24 @@
-import fs from 'fs';
-import os from 'os';
-import installBundleDeps from '../lib/install-bundle-deps';
-import { execSync } from 'child_process';
-import npa from 'npm-package-arg';
-import path from 'path';
-import util from '../lib/util';
-import semver, { SemVer } from 'semver';
-import chalk from 'chalk';
-import fetchTags from '../lib/fetch-tags';
-import { Command } from 'commander';
-import * as HostedGitInfo from 'hosted-git-info';
+import fs from "fs";
+import os from "os";
+import installBundleDeps from "../lib/install-bundle-deps";
+import { execSync } from "child_process";
+import npa from "npm-package-arg";
+import path from "path";
+import util from "../lib/util";
+import semver, { SemVer } from "semver";
+import chalk from "chalk";
+import fetchTags from "../lib/fetch-tags";
+import { Command } from "commander";
+import * as HostedGitInfo from "hosted-git-info";
 
 export = function (program: Command) {
 	program
-		.command('install [repo]')
+		.command("install [repo]")
 		.description(
-			'Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url.' +
+			"Install a bundle by cloning a git repo. Can be a GitHub owner/repo pair or a git url." +
 				"\n\t\t    If run in a bundle directory with no arguments, installs that bundle's dependencies.",
 		)
-		.option('-d, --dev', 'install development npm & bower dependencies')
+		.option("-d, --dev", "install development npm & bower dependencies")
 		.action(action);
 };
 
@@ -31,9 +31,9 @@ function action(repo: string, options: { dev: boolean }) {
 		return;
 	}
 
-	let range = '';
-	if (repo.indexOf('#') > 0) {
-		const repoParts = repo.split('#');
+	let range = "";
+	if (repo.indexOf("#") > 0) {
+		const repoParts = repo.split("#");
 		range = repoParts[1];
 		repo = repoParts[0];
 	}
@@ -41,28 +41,32 @@ function action(repo: string, options: { dev: boolean }) {
 	const nodecgPath = util.getNodeCGPath();
 	const parsed = npa(repo);
 	if (!parsed.hosted) {
-		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
+		console.error(
+			"Please enter a valid git repository URL or GitHub username/repo pair.",
+		);
 		return;
 	}
 
 	const hostedInfo = parsed.hosted as unknown as HostedGitInfo;
 	const repoUrl = hostedInfo.https();
 	if (!repoUrl) {
-		console.error('Please enter a valid git repository URL or GitHub username/repo pair.');
+		console.error(
+			"Please enter a valid git repository URL or GitHub username/repo pair.",
+		);
 		return;
 	}
 
 	// Check that `bundles` exists
-	const bundlesPath = path.join(nodecgPath, 'bundles');
+	const bundlesPath = path.join(nodecgPath, "bundles");
 	/* istanbul ignore next: Simple directory creation, not necessary to test */
 	if (!fs.existsSync(bundlesPath)) {
 		fs.mkdirSync(bundlesPath);
 	}
 
 	// Extract repo name from git url
-	const temp = repoUrl.split('/').pop()!;
+	const temp = repoUrl.split("/").pop()!;
 	const bundleName = temp.substr(0, temp.length - 4);
-	const bundlePath = path.join(nodecgPath, 'bundles/', bundleName);
+	const bundlePath = path.join(nodecgPath, "bundles/", bundleName);
 
 	// Figure out what version to checkout
 	process.stdout.write(`Fetching ${bundleName} release list... `);
@@ -71,13 +75,15 @@ function action(repo: string, options: { dev: boolean }) {
 	try {
 		tags = fetchTags(repoUrl);
 		target = semver.maxSatisfying(
-			tags.map((tag) => semver.coerce(tag)).filter((coercedTag): coercedTag is SemVer => Boolean(coercedTag)),
+			tags
+				.map((tag) => semver.coerce(tag))
+				.filter((coercedTag): coercedTag is SemVer => Boolean(coercedTag)),
 			range,
 		);
-		process.stdout.write(chalk.green('done!') + os.EOL);
+		process.stdout.write(chalk.green("done!") + os.EOL);
 	} catch (e: any) {
 		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
+		process.stdout.write(chalk.red("failed!") + os.EOL);
 		/* istanbul ignore next */
 		console.error(e.stack);
 		/* istanbul ignore next */
@@ -87,11 +93,13 @@ function action(repo: string, options: { dev: boolean }) {
 	// Clone from github
 	process.stdout.write(`Installing ${bundleName}... `);
 	try {
-		execSync(`git clone ${repoUrl} "${bundlePath}"`, { stdio: ['pipe', 'pipe', 'pipe'] });
-		process.stdout.write(chalk.green('done!') + os.EOL);
+		execSync(`git clone ${repoUrl} "${bundlePath}"`, {
+			stdio: ["pipe", "pipe", "pipe"],
+		});
+		process.stdout.write(chalk.green("done!") + os.EOL);
 	} catch (e: any) {
 		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
+		process.stdout.write(chalk.red("failed!") + os.EOL);
 		/* istanbul ignore next */
 		console.error(e.stack);
 		/* istanbul ignore next */
@@ -105,20 +113,20 @@ function action(repo: string, options: { dev: boolean }) {
 			// First try the target as-is.
 			execSync(`git checkout ${target}`, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe'],
+				stdio: ["pipe", "pipe", "pipe"],
 			});
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (_) {
 			try {
 				// Next try prepending `v` to the target, which may have been stripped by `semver.coerce`.
 				execSync(`git checkout v${target}`, {
 					cwd: bundlePath,
-					stdio: ['pipe', 'pipe', 'pipe'],
+					stdio: ["pipe", "pipe", "pipe"],
 				});
-				process.stdout.write(chalk.green('done!') + os.EOL);
+				process.stdout.write(chalk.green("done!") + os.EOL);
 			} catch (e: any) {
 				/* istanbul ignore next */
-				process.stdout.write(chalk.red('failed!') + os.EOL);
+				process.stdout.write(chalk.red("failed!") + os.EOL);
 				/* istanbul ignore next */
 				console.error(e.stack);
 				/* istanbul ignore next */

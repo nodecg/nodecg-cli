@@ -3,9 +3,9 @@
  * https://github.com/tsantef/commander-starter
  */
 
-import fs from 'fs';
-import path from 'path';
-import { Command } from 'commander';
+import fs from "fs";
+import path from "path";
+import { Command } from "commander";
 
 export = function (program: Command) {
 	const commands: { [x: string]: (program: Command) => void } = {};
@@ -14,10 +14,10 @@ export = function (program: Command) {
 	// Loop though command files
 	fs.readdirSync(loadPath)
 		.filter((filename) => {
-			return filename.endsWith('.js') && filename !== 'index.js';
+			return filename.endsWith(".js") && filename !== "index.js";
 		})
 		.forEach((filename) => {
-			const name = filename.substr(0, filename.lastIndexOf('.'));
+			const name = filename.substr(0, filename.lastIndexOf("."));
 
 			// Require command
 			const command = require(path.join(loadPath, filename));
