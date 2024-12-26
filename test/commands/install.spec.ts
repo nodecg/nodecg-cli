@@ -3,15 +3,15 @@ import fs from "node:fs";
 import { Command } from "commander";
 import rimraf from "rimraf";
 import semver from "semver";
-import temp from "tmp";
 import { beforeEach, expect, it, vi } from "vitest";
 
 import installCommand from "../../src/commands/install";
 import { createMockProgram, MockCommand } from "../mocks/program";
+import { setupTmpDir } from "./tmp-dir";
 
 let program: MockCommand;
-const tempFolder = temp.dirSync();
-process.chdir(tempFolder.name);
+const tempFolder = setupTmpDir();
+process.chdir(tempFolder);
 fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 beforeEach(() => {
@@ -23,10 +23,10 @@ it("should install a bundle and its dependencies", async () => {
 	await program.runWith("install supportclass/lfg-streamtip");
 	expect(fs.existsSync("./bundles/lfg-streamtip/package.json")).toBe(true);
 	expect(
-		fs.readdirSync("./bundles/lfg-streamtip/node_modules").length,
+		fs.readdirSync("./bundles/lfg-streamtip/node_modules").length
 	).toBeGreaterThan(0);
 	expect(
-		fs.readdirSync("./bundles/lfg-streamtip/bower_components").length,
+		fs.readdirSync("./bundles/lfg-streamtip/bower_components").length
 	).toBeGreaterThan(0);
 });
 
@@ -37,7 +37,7 @@ it("should install a version that satisfies a provided semver range", async () =
 	const pjson = JSON.parse(
 		fs.readFileSync("./bundles/lfg-nucleus/package.json", {
 			encoding: "utf8",
-		}),
+		})
 	);
 	expect(semver.satisfies(pjson.version, "^1.1.0")).toBe(true);
 });
@@ -56,7 +56,7 @@ it("should print an error when no valid git repo is provided", async () => {
 	const spy = vi.spyOn(console, "error");
 	await program.runWith("install 123");
 	expect(spy).toBeCalledWith(
-		"Please enter a valid git repository URL or GitHub username/repo pair.",
+		"Please enter a valid git repository URL or GitHub username/repo pair."
 	);
 	spy.mockRestore();
 });

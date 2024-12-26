@@ -3,18 +3,18 @@ import fs from "node:fs";
 import path from "node:path";
 
 import fse from "fs-extra";
-import temp from "tmp";
 import { beforeEach, expect, it, vi } from "vitest";
 
 import schemaTypesCommand from "../../src/commands/schema-types";
 import { createMockProgram, MockCommand } from "../mocks/program";
+import { setupTmpDir } from "./tmp-dir";
 
 let program: MockCommand;
 
 beforeEach(() => {
 	// Set up environment.
-	const tempFolder = temp.dirSync();
-	process.chdir(tempFolder.name);
+	const tempFolder = setupTmpDir();
+	process.chdir(tempFolder);
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
@@ -49,13 +49,13 @@ it("should successfully create d.ts files from the replicant schemas and create 
 	expect(fs.existsSync(outputPath)).toBe(true);
 
 	await expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
-		"../fixtures/results/schema-types/example.d.ts",
+		"../fixtures/results/schema-types/example.d.ts"
 	);
 
 	const indexPath = "./src/types/schemas/index.d.ts";
 	expect(fs.existsSync(indexPath)).toBe(true);
 	await expect(fs.readFileSync(indexPath, "utf8")).toMatchFileSnapshot(
-		"../fixtures/results/schema-types/index.d.ts",
+		"../fixtures/results/schema-types/index.d.ts"
 	);
 });
 
@@ -64,7 +64,7 @@ it("should print an error when the target bundle does not have a schemas dir", a
 	const spy = vi.spyOn(console, "error");
 	await program.runWith("schema-types");
 	expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
-		`"Error: Input directory ("%s") does not exist"`,
+		`"Error: Input directory ("%s") does not exist"`
 	);
 	spy.mockRestore();
 });
@@ -82,7 +82,7 @@ it("should successfully compile the config schema", async () => {
 	expect(fs.existsSync(outputPath)).toBe(true);
 
 	await expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
-		"../fixtures/results/schema-types/configschema.d.ts",
+		"../fixtures/results/schema-types/configschema.d.ts"
 	);
 	expect(fs.readFileSync("./src/types/schemas/index.d.ts", "utf8"))
 		.toMatchInlineSnapshot(`
