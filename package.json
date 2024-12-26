@@ -20,6 +20,22 @@
     "README.md",
     "dist"
   ],
+  "contributors": [
+    {
+      "name": "Alex Van Camp",
+      "email": "email@alexvan.camp",
+      "url": "https://alexvan.camp/"
+    },
+    {
+      "name": "Matthew McNamara",
+      "email": "matt@mattmcn.com",
+      "url": "http://mattmcn.com/"
+    },
+    {
+      "name": "Keiichiro Amemiya",
+      "email": "kei@hoishin.dev"
+    }
+  ],
   "scripts": {
     "build": "del-cli dist && tsc --build tsconfig.build.json",
     "dev": "tsc --build tsconfig.build.json --watch",
