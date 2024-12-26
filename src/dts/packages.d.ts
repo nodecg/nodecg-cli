@@ -1,1 +1,1 @@
-declare module 'json-schema-defaults';
+declare module "json-schema-defaults";

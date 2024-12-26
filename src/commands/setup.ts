@@ -1,27 +1,34 @@
-import util from '../lib/util';
-import { execSync } from 'child_process';
-import os from 'os';
-import chalk from 'chalk';
-import inquirer from 'inquirer';
-import semver from 'semver';
-import fs from 'fs';
-import fetchTags from '../lib/fetch-tags';
-import { Command } from 'commander';
-import tar from 'tar';
-import stream from 'stream/promises';
+import util from "../lib/util";
+import { execSync } from "child_process";
+import os from "os";
+import chalk from "chalk";
+import inquirer from "inquirer";
+import semver from "semver";
+import fs from "fs";
+import fetchTags from "../lib/fetch-tags";
+import { Command } from "commander";
+import fetch from "node-fetch";
+import tar from "tar";
+import stream from "stream/promises";
 
-const NODECG_GIT_URL = 'https://github.com/nodecg/nodecg.git';
+const NODECG_GIT_URL = "https://github.com/nodecg/nodecg.git";
 
 export = function (program: Command) {
 	program
-		.command('setup [version]')
-		.option('-u, --update', 'Update the local NodeCG installation')
-		.option('-k, --skip-dependencies', 'Skip installing npm & bower dependencies')
-		.description('Install a new NodeCG instance')
+		.command("setup [version]")
+		.option("-u, --update", "Update the local NodeCG installation")
+		.option(
+			"-k, --skip-dependencies",
+			"Skip installing npm & bower dependencies",
+		)
+		.description("Install a new NodeCG instance")
 		.action(decideActionVersion);
 };
 
-async function decideActionVersion(version: string, options: { update: boolean; skipDependencies: boolean }) {
+async function decideActionVersion(
+	version: string,
+	options: { update: boolean; skipDependencies: boolean },
+) {
 	// If NodeCG is already installed but the `-u` flag was not supplied, display an error and return.
 	let isUpdate = false;
 
@@ -30,9 +37,11 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	// Else, if this is a clean, empty directory, then we need to clone a fresh copy of NodeCG into the cwd.
 	if (util.pathContainsNodeCG(process.cwd())) {
 		if (!options.update) {
-			console.error('NodeCG is already installed in this directory.');
+			console.error("NodeCG is already installed in this directory.");
 			console.error(
-				'Use ' + chalk.cyan('nodecg setup [version] -u') + ' if you want update your existing install.',
+				"Use " +
+					chalk.cyan("nodecg setup [version] -u") +
+					" if you want update your existing install.",
 			);
 			return;
 		}
@@ -41,11 +50,15 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	}
 
 	if (version) {
-		process.stdout.write('Finding latest release that satisfies semver range ' + chalk.magenta(version) + '... ');
+		process.stdout.write(
+			"Finding latest release that satisfies semver range " +
+				chalk.magenta(version) +
+				"... ",
+		);
 	} else if (isUpdate) {
-		process.stdout.write('Checking against local install for updates... ');
+		process.stdout.write("Checking against local install for updates... ");
 	} else {
-		process.stdout.write('Finding latest release... ');
+		process.stdout.write("Finding latest release... ");
 	}
 
 	let tags;
@@ -53,7 +66,7 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 		tags = fetchTags(NODECG_GIT_URL);
 	} catch (e: any) {
 		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
+		process.stdout.write(chalk.red("failed!") + os.EOL);
 		/* istanbul ignore next */
 		console.error(e.stack);
 		/* istanbul ignore next */
@@ -67,17 +80,21 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	if (version) {
 		const maxSatisfying = semver.maxSatisfying(tags, version);
 		if (!maxSatisfying) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
-			console.error('No releases match the supplied semver range (' + chalk.magenta(version) + ')');
+			process.stdout.write(chalk.red("failed!") + os.EOL);
+			console.error(
+				"No releases match the supplied semver range (" +
+					chalk.magenta(version) +
+					")",
+			);
 			return;
 		}
 
 		target = maxSatisfying;
 	} else {
-		target = semver.maxSatisfying(tags, '');
+		target = semver.maxSatisfying(tags, "");
 	}
 
-	process.stdout.write(chalk.green('done!') + os.EOL);
+	process.stdout.write(chalk.green("done!") + os.EOL);
 
 	let current: string | undefined;
 	let downgrade = false;
@@ -87,7 +104,7 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 
 		if (semver.eq(target, current)) {
 			console.log(
-				'The target version (%s) is equal to the current version (%s). No action will be taken.',
+				"The target version (%s) is equal to the current version (%s). No action will be taken.",
 				chalk.magenta(target),
 				chalk.magenta(current),
 			);
@@ -96,21 +113,22 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 
 		if (semver.lt(target, current)) {
 			console.log(
-				chalk.red('WARNING: ') + 'The target version (%s) is older than the current version (%s)',
+				chalk.red("WARNING: ") +
+					"The target version (%s) is older than the current version (%s)",
 				chalk.magenta(target),
 				chalk.magenta(current),
 			);
 
 			const answers = await inquirer.prompt<{ installOlder: boolean }>([
 				{
-					name: 'installOlder',
-					message: 'Are you sure you wish to continue?',
-					type: 'confirm',
+					name: "installOlder",
+					message: "Are you sure you wish to continue?",
+					type: "confirm",
 				},
 			]);
 
 			if (!answers.installOlder) {
-				console.log('Setup cancelled.');
+				console.log("Setup cancelled.");
 				return;
 			}
 
@@ -118,20 +136,22 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 		}
 	}
 
-	if (semver.lt(target, 'v2.0.0')) {
-		if (current && semver.gte(current, 'v2.0.0')) {
-			console.error(`You are attempting to downgrade NodeCG from v2.x to v1.x, which is not supported.`);
+	if (semver.lt(target, "v2.0.0")) {
+		if (current && semver.gte(current, "v2.0.0")) {
+			console.error(
+				`You are attempting to downgrade NodeCG from v2.x to v1.x, which is not supported.`,
+			);
 			return;
 		}
 
 		await actionV1(current, target, isUpdate);
-	} else if (semver.lt(target, 'v3.0.0')) {
+	} else if (semver.lt(target, "v3.0.0")) {
 		await actionV2(current, target, isUpdate);
 	} else {
 		console.error(
 			`Unknown NodeCG verison ${chalk.magenta(
 				version,
-			)}, perhaps you need to update nodecg-cli? (${chalk.cyan.bold('npm i -g nodecg-cli@latest')})`,
+			)}, perhaps you need to update nodecg-cli? (${chalk.cyan.bold("npm i -g nodecg-cli@latest")})`,
 		);
 	}
 
@@ -142,22 +162,26 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	}
 
 	if (isUpdate) {
-		const verb = downgrade ? 'downgraded' : 'upgraded';
-		console.log('NodeCG %s to', verb, chalk.magenta(target));
+		const verb = downgrade ? "downgraded" : "upgraded";
+		console.log("NodeCG %s to", verb, chalk.magenta(target));
 	} else {
 		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
 	}
 }
 
-async function actionV1(current: string | undefined, target: string, isUpdate: boolean) {
-	const isGitRepo = fs.existsSync('.git');
+async function actionV1(
+	current: string | undefined,
+	target: string,
+	isUpdate: boolean,
+) {
+	const isGitRepo = fs.existsSync(".git");
 	if (isGitRepo && isUpdate) {
-		process.stdout.write('Downloading latest release...');
+		process.stdout.write("Downloading latest release...");
 		try {
-			execSync('git fetch', { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			execSync("git fetch", { stdio: ["pipe", "pipe", "pipe"] });
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			throw e;
 		}
 
@@ -167,37 +191,47 @@ async function actionV1(current: string | undefined, target: string, isUpdate: b
 
 		gitCheckoutUpdate(target);
 	} else {
-		process.stdout.write('Cloning NodeCG... ');
+		process.stdout.write("Cloning NodeCG... ");
 		try {
-			execSync(`git clone ${NODECG_GIT_URL} .`, { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			execSync(`git clone ${NODECG_GIT_URL} .`, {
+				stdio: ["pipe", "pipe", "pipe"],
+			});
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			throw e;
 		}
 
 		// Check out the target version.
 		process.stdout.write(`Checking out version ${target}... `);
 		try {
-			execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			execSync(`git checkout ${target}`, { stdio: ["pipe", "pipe", "pipe"] });
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			throw e;
 		}
 	}
 }
 
-async function actionV2(current: string | undefined, target: string, isUpdate: boolean) {
+async function actionV2(
+	current: string | undefined,
+	target: string,
+	isUpdate: boolean,
+) {
 	if (isUpdate) {
-		const deletingDirectories = ['.git', 'build', 'scripts', 'schemas'];
-		await Promise.all(deletingDirectories.map((dir) => fs.promises.rm(dir, { recursive: true, force: true })));
+		const deletingDirectories = [".git", "build", "scripts", "schemas"];
+		await Promise.all(
+			deletingDirectories.map((dir) =>
+				fs.promises.rm(dir, { recursive: true, force: true }),
+			),
+		);
 	}
 
 	process.stdout.write(`Downloading ${target} from npm... `);
 	const release = await util.getNodeCGRelease(target);
 
-	process.stdout.write(chalk.green('done!') + os.EOL);
+	process.stdout.write(chalk.green("done!") + os.EOL);
 
 	if (current) {
 		logDownOrUpgradeMessage(current, target, semver.lt(target, current));
@@ -209,23 +243,25 @@ async function actionV2(current: string | undefined, target: string, isUpdate: b
 /* istanbul ignore next: takes forever, not worth testing */
 function installDependencies() {
 	try {
-		process.stdout.write('Installing production npm dependencies... ');
-		execSync('npm i --production', { stdio: ['pipe', 'pipe', 'pipe'] });
+		process.stdout.write("Installing production npm dependencies... ");
+		execSync("npm i --production", { stdio: ["pipe", "pipe", "pipe"] });
 
-		process.stdout.write(chalk.green('done!') + os.EOL);
+		process.stdout.write(chalk.green("done!") + os.EOL);
 	} catch (e: any) {
-		process.stdout.write(chalk.red('failed!') + os.EOL);
+		process.stdout.write(chalk.red("failed!") + os.EOL);
 		console.error(e.stack);
 		return;
 	}
 
-	if (fs.existsSync('./bower.json')) {
-		process.stdout.write('Installing production bower dependencies... ');
+	if (fs.existsSync("./bower.json")) {
+		process.stdout.write("Installing production bower dependencies... ");
 		try {
-			execSync('bower install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			execSync("bower install --production", {
+				stdio: ["pipe", "pipe", "pipe"],
+			});
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e: any) {
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			console.error(e.stack);
 		}
 	}
@@ -233,11 +269,11 @@ function installDependencies() {
 
 function gitCheckoutUpdate(target: string) {
 	try {
-		execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
-		process.stdout.write(chalk.green('done!') + os.EOL);
+		execSync(`git checkout ${target}`, { stdio: ["pipe", "pipe", "pipe"] });
+		process.stdout.write(chalk.green("done!") + os.EOL);
 	} catch (e: any) {
 		/* istanbul ignore next */
-		process.stdout.write(chalk.red('failed!') + os.EOL);
+		process.stdout.write(chalk.red("failed!") + os.EOL);
 		/* istanbul ignore next */
 		console.error(e.stack);
 	}
@@ -246,13 +282,26 @@ function gitCheckoutUpdate(target: string) {
 async function downloadAndExtractReleaseTarball(tarballUrl: string) {
 	const res = await fetch(tarballUrl);
 	if (!res.body) {
-		throw new Error(`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`);
+		throw new Error(
+			`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`,
+		);
 	}
 
 	await stream.pipeline(res.body, tar.x({ strip: 1 }));
 }
 
-function logDownOrUpgradeMessage(current: string, target: string, downgrade: boolean): void {
-	const Verb = downgrade ? 'Downgrading' : 'Upgrading';
-	process.stdout.write(Verb + ' from ' + chalk.magenta(current) + ' to ' + chalk.magenta(target) + '... ');
+function logDownOrUpgradeMessage(
+	current: string,
+	target: string,
+	downgrade: boolean,
+): void {
+	const Verb = downgrade ? "Downgrading" : "Upgrading";
+	process.stdout.write(
+		Verb +
+			" from " +
+			chalk.magenta(current) +
+			" to " +
+			chalk.magenta(target) +
+			"... ",
+	);
 }

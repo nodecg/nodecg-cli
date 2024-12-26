@@ -1,24 +1,29 @@
-process.title = 'nodecg';
+process.title = "nodecg";
 
-import semver from 'semver';
-import chalk from 'chalk';
-import { Command } from 'commander';
-import util from './lib/util';
+import semver from "semver";
+import chalk from "chalk";
+import { Command } from "commander";
+import util from "./lib/util";
 
-const program = new Command('nodecg');
-const packageVersion: string = require('../package.json').version;
+const program = new Command("nodecg");
+const packageVersion: string = require("../package.json").version;
 
 // Check for updates, asynchronously, so as to not make the CLI startup time excessively slow
-util.getLatestCLIRelease()
+util
+	.getLatestCLIRelease()
 	.then((release) => {
 		if (semver.gt(release.version, packageVersion)) {
 			console.log(
-				chalk.yellow('?') +
-					' A new update is available for nodecg-cli: ' +
+				chalk.yellow("?") +
+					" A new update is available for nodecg-cli: " +
 					chalk.green.bold(release.version) +
-					chalk.dim(' (current: ' + packageVersion + ')'),
+					chalk.dim(" (current: " + packageVersion + ")"),
 			);
-			console.log('  Run ' + chalk.cyan.bold('npm install -g nodecg-cli') + ' to install the latest version');
+			console.log(
+				"  Run " +
+					chalk.cyan.bold("npm install -g nodecg-cli") +
+					" to install the latest version",
+			);
 		}
 	})
 	.catch(() => {
@@ -26,14 +31,14 @@ util.getLatestCLIRelease()
 	});
 
 // Initialise CLI
-program.version(packageVersion).usage('<command> [options]');
+program.version(packageVersion).usage("<command> [options]");
 
 // Initialise commands
-require('./commands')(program);
+require("./commands")(program);
 
 // Handle unknown commands
-program.on('*', () => {
-	console.log('Unknown command:', program.args.join(' '));
+program.on("*", () => {
+	console.log("Unknown command:", program.args.join(" "));
 	program.help();
 });
 
