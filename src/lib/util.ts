@@ -84,7 +84,7 @@ export default {
 			throw new Error(`Failed to fetch NodeCG release information from npm, status code ${res.status}`);
 		}
 
-		return res.json();
+		return res.json() as Promise<NPMRelease>;
 	},
 };
 
