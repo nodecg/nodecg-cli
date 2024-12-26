@@ -5,8 +5,7 @@ import { PackageJson } from 'type-fest';
 import { Command } from 'commander';
 import { createMockProgram, MockCommand } from '../mocks/program';
 import setupCommand from '../../src/commands/setup';
-import { beforeEach, mock, test } from 'node:test';
-import assert from 'node:assert/strict';
+import { beforeEach, expect, test, vi } from 'vitest';
 
 let program: MockCommand;
 let currentDir = temp.dirSync();
@@ -31,72 +30,68 @@ beforeEach(() => {
 test('should install the latest NodeCG when no version is specified', async () => {
 	chdir();
 	await program.runWith('setup --skip-dependencies');
-	assert.equal(readPackageJson().name, 'nodecg');
+	expect(readPackageJson().name).toBe('nodecg');
 });
 
 test('should install v2 NodeCG when specified', async () => {
 	chdir();
 	await program.runWith('setup v2.0.0 --skip-dependencies');
-	assert.equal(readPackageJson().name, 'nodecg');
-	assert.equal(readPackageJson().version, '2.0.0');
+	expect(readPackageJson().name).toBe('nodecg');
+	expect(readPackageJson().version).toBe('2.0.0');
 });
 
 test('should install v1 NodeCG when specified', async () => {
 	chdir();
 	await program.runWith('setup 1.9.0 -u --skip-dependencies');
-	assert.equal(readPackageJson().name, 'nodecg');
-	assert.equal(readPackageJson().version, '1.9.0');
+	expect(readPackageJson().name).toBe('nodecg');
+	expect(readPackageJson().version).toBe('1.9.0');
 });
 
 test('should ask the user for confirmation when downgrading versions', async () => {
-	const spy = mock.method(inquirer, 'prompt');
-	spy.mock.mockImplementation((async () => ({ installOlder: true })) as any);
+	const spy = vi.spyOn(inquirer, 'prompt').mockReturnValue(Promise.resolve({ installOlder: true }) as any);
 	await program.runWith('setup 0.8.1 -u --skip-dependencies');
-	assert.ok(spy.mock.callCount() > 0);
-	assert.equal(readPackageJson().version, '0.8.1');
-	spy.mock.restore();
+	expect(spy).toBeCalled();
+	expect(readPackageJson().version).toBe('0.8.1');
+	spy.mockRestore();
 });
 
 test('should let the user change upgrade versions', async () => {
 	await program.runWith('setup 0.8.2 -u --skip-dependencies');
-	assert.equal(readPackageJson().version, '0.8.2');
+	expect(readPackageJson().version).toBe('0.8.2');
 });
 
 test('should print an error when the target version is the same as current', async () => {
-	const spy = mock.method(console, 'log');
+	const spy = vi.spyOn(console, 'log');
 	await program.runWith('setup 0.8.2 -u --skip-dependencies');
-	assert.deepEqual(spy.mock.calls[0].arguments, [
-		'The target version (%s) is equal to the current version (%s). No action will be taken.',
-		'\u001b[35mv0.8.2\u001b[39m',
-		'\u001b[35m0.8.2\u001b[39m',
-	]);
-	spy.mock.restore();
+	expect(spy.mock.calls[0]).toMatchInlineSnapshot(`
+		[
+		  "The target version (%s) is equal to the current version (%s). No action will be taken.",
+		  "v0.8.2",
+		  "0.8.2",
+		]
+	`);
+	spy.mockRestore();
 });
 
 test('should correctly handle and refuse when you try to downgrade from v2 to v1', async () => {
 	chdir();
-	const spy = mock.method(inquirer, 'prompt');
-	spy.mock.mockImplementation((async () => ({ installOlder: true })) as any);
+	vi.spyOn(inquirer, 'prompt').mockReturnValue(Promise.resolve({ installOlder: true }) as any);
 	await program.runWith('setup 2.0.0 --skip-dependencies');
-	assert.equal(readPackageJson().version, '2.0.0');
+	expect(readPackageJson().version).toBe('2.0.0');
 	await program.runWith('setup 1.9.0 -u --skip-dependencies');
-	assert.equal(readPackageJson().version, '2.0.0');
-	spy.mock.restore();
+	expect(readPackageJson().version).toBe('2.0.0');
 });
 
 test("should print an error when the target version doesn't exist", async () => {
-	const spy = mock.method(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('setup 0.0.99 -u --skip-dependencies');
-	assert.equal(
-		spy.mock.calls[0].arguments[0],
-		'No releases match the supplied semver range (\u001b[35m0.0.99\u001b[39m)',
-	);
-	spy.mock.restore();
+	expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"No releases match the supplied semver range (0.0.99)"`);
+	spy.mockRestore();
 });
 
 test('should print an error and exit, when nodecg is already installed in the current directory ', async () => {
-	const spy = mock.method(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('setup 0.7.0 --skip-dependencies');
-	assert.equal(spy.mock.calls[0].arguments[0], 'NodeCG is already installed in this directory.');
-	spy.mock.restore();
+	expect(spy).toBeCalledWith('NodeCG is already installed in this directory.');
+	spy.mockRestore();
 });

@@ -5,8 +5,7 @@ import temp from 'tmp';
 import { createMockProgram, MockCommand } from '../mocks/program';
 import installCommand from '../../src/commands/install';
 import { Command } from 'commander';
-import { beforeEach, it, mock } from 'node:test';
-import assert from 'node:assert/strict';
+import { beforeEach, expect, it, vi } from 'vitest';
 
 let program: MockCommand;
 const tempFolder = temp.dirSync();
@@ -20,20 +19,21 @@ beforeEach(() => {
 
 it('should install a bundle and its dependencies', async () => {
 	await program.runWith('install supportclass/lfg-streamtip');
-	assert.ok(fs.existsSync('./bundles/lfg-streamtip/package.json'));
-	assert.ok(fs.readdirSync('./bundles/lfg-streamtip/node_modules').length > 0);
+	expect(fs.existsSync('./bundles/lfg-streamtip/package.json')).toBe(true);
+	expect(fs.readdirSync('./bundles/lfg-streamtip/node_modules').length).toBeGreaterThan(0);
+	expect(fs.readdirSync('./bundles/lfg-streamtip/bower_components').length).toBeGreaterThan(0);
 });
 
 it('should install a version that satisfies a provided semver range', async () => {
 	await program.runWith('install supportclass/lfg-nucleus#^1.1.0');
-	assert.ok(fs.existsSync('./bundles/lfg-nucleus/package.json'));
+	expect(fs.existsSync('./bundles/lfg-nucleus/package.json')).toBe(true);
 
 	const pjson = JSON.parse(
 		fs.readFileSync('./bundles/lfg-nucleus/package.json', {
 			encoding: 'utf8',
 		}),
 	);
-	assert.ok(semver.satisfies(pjson.version, '^1.1.0'));
+	expect(semver.satisfies(pjson.version, '^1.1.0')).toBe(true);
 });
 
 it('should install bower & npm dependencies when run with no arguments in a bundle directory', async () => {
@@ -42,16 +42,13 @@ it('should install bower & npm dependencies when run with no arguments in a bund
 
 	process.chdir('./bundles/lfg-streamtip');
 	await program.runWith('install');
-	assert.ok(fs.readdirSync('./node_modules').length > 0);
-	assert.ok(fs.readdirSync('./bower_components').length > 0);
+	expect(fs.readdirSync('./node_modules').length).toBeGreaterThan(0);
+	expect(fs.readdirSync('./bower_components').length).toBeGreaterThan(0);
 });
 
 it('should print an error when no valid git repo is provided', async () => {
-	const spy = mock.method(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('install 123');
-	assert.equal(
-		spy.mock.calls[0].arguments[0],
-		'Please enter a valid git repository URL or GitHub username/repo pair.',
-	);
-	spy.mock.restore();
+	expect(spy).toBeCalledWith('Please enter a valid git repository URL or GitHub username/repo pair.');
+	spy.mockRestore();
 });
