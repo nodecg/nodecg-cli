@@ -3,18 +3,18 @@ import path from "node:path";
 
 import { Command } from "commander";
 import fse from "fs-extra";
-import temp from "tmp";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import defaultConfigCommand from "../../src/commands/defaultconfig";
 import { createMockProgram, MockCommand } from "../mocks/program";
+import { setupTmpDir } from "./tmp-dir";
 
 let program: MockCommand;
 
 beforeEach(() => {
 	// Set up environment.
-	const tempFolder = temp.dirSync();
-	process.chdir(tempFolder.name);
+	const tempFolder = setupTmpDir();
+	process.chdir(tempFolder);
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.

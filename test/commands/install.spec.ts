@@ -3,15 +3,15 @@ import fs from "node:fs";
 import { Command } from "commander";
 import rimraf from "rimraf";
 import semver from "semver";
-import temp from "tmp";
 import { beforeEach, expect, it, vi } from "vitest";
 
 import installCommand from "../../src/commands/install";
 import { createMockProgram, MockCommand } from "../mocks/program";
+import { setupTmpDir } from "./tmp-dir";
 
 let program: MockCommand;
-const tempFolder = temp.dirSync();
-process.chdir(tempFolder.name);
+const tempFolder = setupTmpDir();
+process.chdir(tempFolder);
 fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 beforeEach(() => {

@@ -2,21 +2,21 @@ import fs from "node:fs";
 
 import { Command } from "commander";
 import inquirer from "inquirer";
-import temp from "tmp";
 import { PackageJson } from "type-fest";
 import { beforeEach, expect, test, vi } from "vitest";
 
 import setupCommand from "../../src/commands/setup";
 import { createMockProgram, MockCommand } from "../mocks/program";
+import { setupTmpDir } from "./tmp-dir";
 
 let program: MockCommand;
-let currentDir = temp.dirSync();
+let currentDir = setupTmpDir();
 const chdir = (keepCurrentDir = false) => {
 	if (!keepCurrentDir) {
-		currentDir = temp.dirSync();
+		currentDir = setupTmpDir();
 	}
 
-	process.chdir(currentDir.name);
+	process.chdir(currentDir);
 };
 
 const readPackageJson = (): PackageJson => {
