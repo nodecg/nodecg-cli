@@ -31,7 +31,7 @@ function action(bundleName: string, options: { force: boolean }) {
 	if (options.force) {
 		deleteBundle(bundleName, bundlePath);
 	} else {
-		inquirer
+		void inquirer
 			.prompt<{ confirmUninstall: boolean }>([
 				{
 					name: "confirmUninstall",

@@ -5,5 +5,7 @@ export default function (repoUrl: string) {
 		.toString()
 		.trim()
 		.split("\n");
-	return rawTags.map((rawTag) => rawTag.split("refs/tags/").pop()!);
+	return rawTags
+		.map((rawTag) => rawTag.split("refs/tags/").pop())
+		.filter((t) => typeof t === "string");
 }

@@ -8,7 +8,7 @@ import path from "path";
 import { Command } from "commander";
 
 export = function (program: Command) {
-	const commands: { [x: string]: (program: Command) => void } = {};
+	const commands: Record<string, (program: Command) => void> = {};
 	const loadPath = path.dirname(__filename);
 
 	// Loop though command files
@@ -17,9 +17,10 @@ export = function (program: Command) {
 			return filename.endsWith(".js") && filename !== "index.js";
 		})
 		.forEach((filename) => {
-			const name = filename.substr(0, filename.lastIndexOf("."));
+			const name = filename.slice(0, filename.lastIndexOf("."));
 
 			// Require command
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const command = require(path.join(loadPath, filename));
 
 			// Initialize command

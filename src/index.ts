@@ -1,12 +1,16 @@
 process.title = "nodecg";
 
+import fs from "node:fs";
+import path from "node:path";
 import semver from "semver";
 import chalk from "chalk";
 import { Command } from "commander";
 import util from "./lib/util";
 
 const program = new Command("nodecg");
-const packageVersion: string = require("../package.json").version;
+const packageVersion: string = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "../package.json"), "utf8"),
+);
 
 // Check for updates, asynchronously, so as to not make the CLI startup time excessively slow
 util
@@ -34,6 +38,7 @@ util
 program.version(packageVersion).usage("<command> [options]");
 
 // Initialise commands
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("./commands")(program);
 
 // Handle unknown commands

@@ -143,7 +143,7 @@ async function decideActionVersion(
 			return;
 		}
 
-		await actionV1(current, target, isUpdate);
+		actionV1(current, target, isUpdate);
 	} else if (semver.lt(target, "v3.0.0")) {
 		await actionV2(current, target, isUpdate);
 	} else {
@@ -168,7 +168,7 @@ async function decideActionVersion(
 	}
 }
 
-async function actionV1(
+function actionV1(
 	current: string | undefined,
 	target: string,
 	isUpdate: boolean,

@@ -64,8 +64,8 @@ function action(repo: string, options: { dev: boolean }) {
 	}
 
 	// Extract repo name from git url
-	const temp = repoUrl.split("/").pop()!;
-	const bundleName = temp.substr(0, temp.length - 4);
+	const temp = repoUrl.split("/").pop() ?? "";
+	const bundleName = temp.slice(0, temp.length - 4);
 	const bundlePath = path.join(nodecgPath, "bundles/", bundleName);
 
 	// Figure out what version to checkout

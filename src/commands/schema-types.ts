@@ -53,7 +53,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		useTabs: true,
 	};
 
-	const compilePromises: Array<Promise<void>> = [];
+	const compilePromises: Promise<void>[] = [];
 	const compile = (input: string, output: string, cwd = processCwd) => {
 		const promise = compileFromFile(input, {
 			cwd,
@@ -65,7 +65,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 			.then(() => {
 				console.log(output);
 			})
-			.catch((err) => {
+			.catch((err: unknown) => {
 				console.error(err);
 			});
 		compilePromises.push(promise);
