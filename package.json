@@ -34,7 +34,6 @@
   "dependencies": {
     "chalk": "3.0.0",
     "commander": "^6.1.0",
-    "fs-extra": "7.0.1",
     "inquirer": "^7.3.3",
     "json-schema-defaults": "0.4.0",
     "json-schema-to-typescript": "11.0.3",
@@ -47,7 +46,6 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@gamesdonequick/prettier-config": "^2.2.1",
-    "@types/fs-extra": "5.0.4",
     "@types/hosted-git-info": "2.7.0",
     "@types/inquirer": "^7.3.1",
     "@types/node": "18",
