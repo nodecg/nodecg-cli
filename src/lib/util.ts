@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import fetch from "node-fetch";
 import semver from "semver";
 
 export default {
@@ -96,7 +95,7 @@ export default {
 			);
 		}
 
-		return res.json();
+		return res.json() as Promise<NPMRelease>;
 	},
 };
 

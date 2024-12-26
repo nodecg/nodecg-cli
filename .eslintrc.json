@@ -4,6 +4,7 @@
 	"rules": {
 		"capitalized-comments": 0,
 		"no-void": 0,
+		"no-undef": 0,
 		"@typescript-eslint/no-floating-promises": 0,
 		"@typescript-eslint/no-var-requires": 0,
 		"@typescript-eslint/no-implicit-any-catch": 0,
