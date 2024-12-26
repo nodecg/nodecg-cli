@@ -52,7 +52,7 @@ async function decideActionVersion(version: string, options: { update: boolean; 
 	let tags;
 	try {
 		tags = fetchTags(NODECG_GIT_URL);
-	} catch (e) {
+	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */
@@ -214,7 +214,7 @@ function installDependencies() {
 		execSync('npm i --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 
 		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
+	} catch (e: any) {
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		console.error(e.stack);
 		return;
@@ -225,7 +225,7 @@ function installDependencies() {
 		try {
 			execSync('bower install --production', { stdio: ['pipe', 'pipe', 'pipe'] });
 			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
+		} catch (e: any) {
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			console.error(e.stack);
 		}
@@ -236,7 +236,7 @@ function gitCheckoutUpdate(target: string) {
 	try {
 		execSync(`git checkout ${target}`, { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
+	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */

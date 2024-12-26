@@ -53,7 +53,7 @@ function deleteBundle(name: string, path: string) {
 	process.stdout.write('Uninstalling ' + chalk.magenta(name) + '... ');
 	try {
 		rimraf.sync(path);
-	} catch (e) {
+	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */

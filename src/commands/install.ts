@@ -75,7 +75,7 @@ function action(repo: string, options: { dev: boolean }) {
 			range,
 		);
 		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
+	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */
@@ -89,7 +89,7 @@ function action(repo: string, options: { dev: boolean }) {
 	try {
 		execSync(`git clone ${repoUrl} "${bundlePath}"`, { stdio: ['pipe', 'pipe', 'pipe'] });
 		process.stdout.write(chalk.green('done!') + os.EOL);
-	} catch (e) {
+	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red('failed!') + os.EOL);
 		/* istanbul ignore next */
@@ -116,7 +116,7 @@ function action(repo: string, options: { dev: boolean }) {
 					stdio: ['pipe', 'pipe', 'pipe'],
 				});
 				process.stdout.write(chalk.green('done!') + os.EOL);
-			} catch (e) {
+			} catch (e: any) {
 				/* istanbul ignore next */
 				process.stdout.write(chalk.red('failed!') + os.EOL);
 				/* istanbul ignore next */
