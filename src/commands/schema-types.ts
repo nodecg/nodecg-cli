@@ -55,7 +55,9 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 			enableConstEnums: true,
 			style,
 		})
-			.then((ts) => fs.promises.writeFile(output, ts))
+			.then((ts) =>
+				fs.promises.writeFile(output, "/* prettier-ignore */\n" + ts),
+			)
 			.then(() => {
 				console.log(output);
 			})
