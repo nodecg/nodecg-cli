@@ -28,7 +28,7 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write \"**/*.ts\"",
     "fix:eslint": "eslint --fix \"**/*.ts\"",
-    "test": "tsx --test \"test/**/*.test.ts\""
+    "test": "tsx --test"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {

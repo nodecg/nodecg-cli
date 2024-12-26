@@ -1,6 +1,6 @@
 {
 	"parserOptions": {
-		"project": "test/tsconfig.json"
+		"project": "__tests__/tsconfig.json"
 	},
 	"env": {
 		"jest": true
