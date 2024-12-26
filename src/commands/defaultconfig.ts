@@ -1,11 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { Ajv, type JSONSchemaType } from "ajv";
 import chalk from "chalk";
 import { Command } from "commander";
-import defaults from "json-schema-defaults";
 
 import util from "../lib/util.js";
+
+const ajv = new Ajv({ useDefaults: true, strict: true });
 
 export function defaultconfigCommand(program: Command) {
 	program
@@ -58,7 +60,9 @@ function action(bundleName?: string) {
 		fs.mkdirSync(cfgPath);
 	}
 
-	const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+	const schema: JSONSchemaType<unknown> = JSON.parse(
+		fs.readFileSync(schemaPath, "utf8"),
+	);
 	const configPath = path.join(nodecgPath, "cfg/", bundleName + ".json");
 	if (fs.existsSync(configPath)) {
 		console.error(
@@ -67,15 +71,13 @@ function action(bundleName?: string) {
 		);
 	} else {
 		try {
-			fs.writeFileSync(
-				configPath,
-				JSON.stringify(defaults(schema), null, "  "),
-			);
+			const validate = ajv.compile(schema);
+			const data = {};
+			validate(data);
+
+			fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
 			console.log(
-				chalk.green("Success:") +
-					" Created %s's default config from schema\n\n" +
-					JSON.stringify(defaults(schema), null, "  "),
-				bundleName,
+				chalk`{green Success:} Created {bold ${bundleName}}'s default config from schema\n`,
 			);
 		} catch (e) {
 			console.error(chalk.red("Error: ") + String(e));
