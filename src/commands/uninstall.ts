@@ -5,7 +5,6 @@ import path from "node:path";
 import chalk from "chalk";
 import { Command } from "commander";
 import inquirer from "inquirer";
-import rimraf from "rimraf";
 
 import util from "../lib/util.js";
 
@@ -60,7 +59,7 @@ function deleteBundle(name: string, path: string) {
 
 	process.stdout.write("Uninstalling " + chalk.magenta(name) + "... ");
 	try {
-		rimraf.sync(path);
+		fs.rmSync(path, { recursive: true, force: true });
 	} catch (e: any) {
 		/* istanbul ignore next */
 		process.stdout.write(chalk.red("failed!") + os.EOL);
