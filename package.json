@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "nodecg-cli",
   "version": "8.6.8",
   "description": "The NodeCG command line interface.",
@@ -11,6 +10,7 @@
     "url": "git://github.com/nodecg/nodecg-cli.git"
   },
   "license": "MIT",
+  "type": "module",
   "bin": {
     "nodecg": "dist/bin/nodecg.js"
   },
