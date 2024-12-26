@@ -5,6 +5,7 @@ import temp from 'tmp';
 import { Command } from 'commander';
 import { createMockProgram, MockCommand } from '../mocks/program';
 import defaultConfigCommand from '../../src/commands/defaultconfig';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 let program: MockCommand;
 
@@ -32,26 +33,26 @@ describe('when run with a bundle argument', () => {
 	});
 
 	it('should print an error when the target bundle does not have a configschema.json', async () => {
-		const spy = jest.spyOn(console, 'error');
+		const spy = vi.spyOn(console, 'error');
 		fse.mkdirpSync(path.resolve(process.cwd(), './bundles/missing-schema-bundle'));
 		await program.runWith('defaultconfig missing-schema-bundle');
-		expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m Bundle %s does not have a configschema.json');
+		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"Error: Bundle %s does not have a configschema.json"`);
 		spy.mockRestore();
 	});
 
 	it('should print an error when the target bundle does not exist', async () => {
-		const spy = jest.spyOn(console, 'error');
+		const spy = vi.spyOn(console, 'error');
 		await program.runWith('defaultconfig not-installed');
-		expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m Bundle %s does not exist');
+		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"Error: Bundle %s does not exist"`);
 		spy.mockRestore();
 	});
 
 	it('should print an error when the target bundle already has a config', async () => {
-		const spy = jest.spyOn(console, 'error');
+		const spy = vi.spyOn(console, 'error');
 		fs.mkdirSync('./cfg');
 		fs.writeFileSync('./cfg/config-schema.json', JSON.stringify({ fake: 'data' }));
 		await program.runWith('defaultconfig config-schema');
-		expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m Bundle %s already has a config file');
+		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"Error: Bundle %s already has a config file"`);
 		spy.mockRestore();
 	});
 });
@@ -67,9 +68,9 @@ describe('when run with no arguments', () => {
 		fse.mkdirpSync(path.resolve(process.cwd(), './bundles/not-a-bundle'));
 		process.chdir('./bundles/not-a-bundle');
 
-		const spy = jest.spyOn(console, 'error');
+		const spy = vi.spyOn(console, 'error');
 		await program.runWith('defaultconfig');
-		expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m No bundle found in the current directory!');
+		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"Error: No bundle found in the current directory!"`);
 		spy.mockRestore();
 	});
 });

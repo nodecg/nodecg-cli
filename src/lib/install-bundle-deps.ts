@@ -41,7 +41,7 @@ export default function (bundlePath: string, installDev = false) {
 				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
+		} catch (e: any) {
 			/* istanbul ignore next */
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			/* istanbul ignore next */
@@ -62,7 +62,7 @@ export default function (bundlePath: string, installDev = false) {
 				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 			process.stdout.write(chalk.green('done!') + os.EOL);
-		} catch (e) {
+		} catch (e: any) {
 			/* istanbul ignore next */
 			process.stdout.write(chalk.red('failed!') + os.EOL);
 			/* istanbul ignore next */

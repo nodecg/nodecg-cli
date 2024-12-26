@@ -5,6 +5,7 @@ import temp from 'tmp';
 import { MockCommand, createMockProgram } from '../mocks/program';
 import schemaTypesCommand from '../../src/commands/schema-types';
 import { EventEmitter } from 'events';
+import { beforeEach, expect, it, vi } from 'vitest';
 
 let program: MockCommand;
 
@@ -42,20 +43,18 @@ it('should successfully create d.ts files from the replicant schemas and create 
 	const outputPath = './src/types/schemas/example.d.ts';
 	expect(fs.existsSync(outputPath)).toBe(true);
 
-	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
-		fs.readFileSync('../../results/schema-types/example.d.ts', 'utf8'),
-	);
+	expect(fs.readFileSync(outputPath, 'utf8')).toMatchFileSnapshot('../fixtures/results/schema-types/example.d.ts');
 
 	const indexPath = './src/types/schemas/index.d.ts';
 	expect(fs.existsSync(indexPath)).toBe(true);
-	expect(fs.readFileSync(indexPath, 'utf8')).toBe(fs.readFileSync('../../results/schema-types/index.d.ts', 'utf8'));
+	expect(fs.readFileSync(indexPath, 'utf8')).toMatchFileSnapshot('../fixtures/results/schema-types/index.d.ts');
 });
 
 it('should print an error when the target bundle does not have a schemas dir', async () => {
 	process.chdir('bundles/uninstall-test');
-	const spy = jest.spyOn(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('schema-types');
-	expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m Input directory ("%s") does not exist');
+	expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`"Error: Input directory ("%s") does not exist"`);
 	spy.mockRestore();
 });
 
@@ -68,12 +67,15 @@ it('should successfully compile the config schema', async () => {
 	const outputPath = './src/types/schemas/configschema.d.ts';
 	expect(fs.existsSync(outputPath)).toBe(true);
 
-	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
-		fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8'),
+	expect(fs.readFileSync(outputPath, 'utf8')).toMatchFileSnapshot(
+		'../fixtures/results/schema-types/configschema.d.ts',
 	);
-	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toBe(
-		"/* eslint-disable */\n// @ts-ignore\nexport * from './configschema';\n",
-	);
+	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toMatchInlineSnapshot(`
+		"/* eslint-disable */
+		// @ts-ignore
+		export * from './configschema';
+		"
+	`);
 });
 
 async function waitForEvent(emitter: EventEmitter, eventName: string) {

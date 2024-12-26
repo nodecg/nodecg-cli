@@ -6,6 +6,7 @@ import fse from 'fs-extra';
 import { Command } from 'commander';
 import { MockCommand, createMockProgram } from '../mocks/program';
 import uninstallCommand from '../../src/commands/uninstall';
+import { beforeEach, expect, it, vi } from 'vitest';
 
 let program: MockCommand;
 
@@ -24,7 +25,7 @@ beforeEach(() => {
 });
 
 it("should delete the bundle's folder after prompting for confirmation", async () => {
-	const spy = jest.spyOn(inquirer, 'prompt').mockImplementation(() => {
+	const spy = vi.spyOn(inquirer, 'prompt').mockImplementation(() => {
 		return Promise.resolve({ confirmUninstall: true }) as any;
 	});
 	await program.runWith('uninstall uninstall-test');
@@ -33,7 +34,7 @@ it("should delete the bundle's folder after prompting for confirmation", async (
 });
 
 it('should print an error when the target bundle is not installed', async () => {
-	const spy = jest.spyOn(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('uninstall not-installed');
 	expect(spy.mock.calls[0][0]).toBe('Cannot uninstall %s: bundle is not installed.');
 	spy.mockRestore();

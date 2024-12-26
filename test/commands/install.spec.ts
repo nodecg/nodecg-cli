@@ -5,6 +5,7 @@ import temp from 'tmp';
 import { createMockProgram, MockCommand } from '../mocks/program';
 import installCommand from '../../src/commands/install';
 import { Command } from 'commander';
+import { beforeEach, expect, it, vi } from 'vitest';
 
 let program: MockCommand;
 const tempFolder = temp.dirSync();
@@ -46,7 +47,7 @@ it('should install bower & npm dependencies when run with no arguments in a bund
 });
 
 it('should print an error when no valid git repo is provided', async () => {
-	const spy = jest.spyOn(console, 'error');
+	const spy = vi.spyOn(console, 'error');
 	await program.runWith('install 123');
 	expect(spy).toBeCalledWith('Please enter a valid git repository URL or GitHub username/repo pair.');
 	spy.mockRestore();

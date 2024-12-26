@@ -28,7 +28,8 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write \"**/*.ts\"",
     "fix:eslint": "eslint --fix \"**/*.ts\"",
-    "test": "jest --colors --coverage"
+    "test": "vitest",
+    "test-ci": "vitest run --coverage"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
@@ -50,8 +51,7 @@
     "@types/fs-extra": "5.0.4",
     "@types/hosted-git-info": "2.7.0",
     "@types/inquirer": "^7.3.1",
-    "@types/jest": "^26.0.14",
-    "@types/node": "16",
+    "@types/node": "18",
     "@types/node-fetch": "^2.6.2",
     "@types/npm-package-arg": "6.1.0",
     "@types/rimraf": "2.0.2",
@@ -60,18 +60,18 @@
     "@types/tmp": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
+    "@vitest/coverage-v8": "^2.1.8",
     "coveralls": "^3.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-config-xo": "^0.32.1",
     "eslint-config-xo-typescript": "^0.33.0",
-    "jest": "^26.4.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.1.2",
     "tmp": "0.2.1",
-    "ts-jest": "^26.4.1",
     "type-fest": "^0.17.0",
-    "typescript": "4.2.3"
+    "typescript": "~5.7.2",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": "^18.12.0 || ^20.9.0 || ^22.11.0"
