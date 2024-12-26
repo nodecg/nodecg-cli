@@ -1,8 +1,8 @@
 import { mock } from "node:test";
 
-import commander from "commander";
+import { Command } from "commander";
 
-export class MockCommand extends commander.Command {
+export class MockCommand extends Command {
 	log() {
 		// To be mocked later
 	}
@@ -11,7 +11,7 @@ export class MockCommand extends commander.Command {
 		throw new Error("Unexpected request: " + JSON.stringify(opts, null, 2));
 	}
 
-	async runWith(argString: string) {
+	runWith(argString: string) {
 		return this.parseAsync(["node", "./", ...argString.split(" ")]);
 	}
 }
