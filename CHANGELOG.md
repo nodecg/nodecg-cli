@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.7.0](https://github.com/nodecg/nodecg-cli/compare/v8.6.8...v8.7.0) (2024-12-26)
+
+
+### Features
+
+* update commander and inquirer ([#109](https://github.com/nodecg/nodecg-cli/issues/109)) ([579b79e](https://github.com/nodecg/nodecg-cli/commit/579b79ed255875e76cb06b453a54f150f6f76172))
+* update node version to 18/20/22 ([#98](https://github.com/nodecg/nodecg-cli/issues/98)) ([9990349](https://github.com/nodecg/nodecg-cli/commit/999034977350695e4c09fbf12446e900743f81db))
+* use esm and update packages ([#108](https://github.com/nodecg/nodecg-cli/issues/108)) ([058be35](https://github.com/nodecg/nodecg-cli/commit/058be35204e48ee989161b96f7cc36b7b5eeb904))
+
+
+### Bug Fixes
+
+* remove __dirname ([#113](https://github.com/nodecg/nodecg-cli/issues/113)) ([8c9a033](https://github.com/nodecg/nodecg-cli/commit/8c9a033dce5630f6ef0edf5515ffdc8f1f673f6d))
+* remove node-fetch ([#102](https://github.com/nodecg/nodecg-cli/issues/102)) ([50a6323](https://github.com/nodecg/nodecg-cli/commit/50a632382fba9a05f087042d78dde09ae3c96997))
+
 ## [8.6.8](https://github.com/nodecg/nodecg-cli/compare/v8.6.7...v8.6.8) (2023-06-20)
 
 ### Bug Fixes
