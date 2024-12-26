@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Command } from "commander";
-import fse from "fs-extra";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import defaultConfigCommand from "../../src/commands/defaultconfig";
@@ -18,7 +17,7 @@ beforeEach(() => {
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
-	fse.copySync(path.resolve(__dirname, "../fixtures/"), "./");
+	fs.cpSync(path.resolve(__dirname, "../fixtures/"), "./", { recursive: true });
 
 	// Build program.
 	program = createMockProgram();
@@ -38,8 +37,9 @@ describe("when run with a bundle argument", () => {
 
 	it("should print an error when the target bundle does not have a configschema.json", async () => {
 		const spy = vi.spyOn(console, "error");
-		fse.mkdirpSync(
+		fs.mkdirSync(
 			path.resolve(process.cwd(), "./bundles/missing-schema-bundle"),
+			{ recursive: true },
 		);
 		await program.runWith("defaultconfig missing-schema-bundle");
 		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
@@ -80,7 +80,9 @@ describe("when run with no arguments", () => {
 	});
 
 	it("should print an error when in a folder with no package.json", async () => {
-		fse.mkdirpSync(path.resolve(process.cwd(), "./bundles/not-a-bundle"));
+		fs.mkdirSync(path.resolve(process.cwd(), "./bundles/not-a-bundle"), {
+			recursive: true,
+		});
 		process.chdir("./bundles/not-a-bundle");
 
 		const spy = vi.spyOn(console, "error");

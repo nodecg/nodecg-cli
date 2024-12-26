@@ -2,7 +2,6 @@ import { EventEmitter } from "node:events";
 import fs from "node:fs";
 import path from "node:path";
 
-import fse from "fs-extra";
 import { beforeEach, expect, it, vi } from "vitest";
 
 import schemaTypesCommand from "../../src/commands/schema-types";
@@ -18,7 +17,7 @@ beforeEach(() => {
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
-	fse.copySync(path.resolve(__dirname, "../fixtures/"), "./");
+	fs.cpSync(path.resolve(__dirname, "../fixtures/"), "./", { recursive: true });
 
 	// Build program.
 	program = createMockProgram();
