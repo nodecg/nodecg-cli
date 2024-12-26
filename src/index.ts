@@ -2,6 +2,7 @@ process.title = "nodecg";
 
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import chalk from "chalk";
 import { Command } from "commander";
@@ -10,8 +11,9 @@ import semver from "semver";
 import util from "./lib/util.js";
 
 const program = new Command("nodecg");
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageVersion: string = JSON.parse(
-	fs.readFileSync(path.join(__dirname, "../package.json"), "utf8"),
+	fs.readFileSync(path.join(dirname, "../package.json"), "utf8"),
 );
 
 // Check for updates, asynchronously, so as to not make the CLI startup time excessively slow

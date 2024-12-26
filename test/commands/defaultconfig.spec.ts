@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { Command } from "commander";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -7,6 +8,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defaultconfigCommand } from "../../src/commands/defaultconfig.js";
 import { createMockProgram, MockCommand } from "../mocks/program.js";
 import { setupTmpDir } from "./tmp-dir.js";
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let program: MockCommand;
 
@@ -17,7 +20,7 @@ beforeEach(() => {
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
-	fs.cpSync(path.resolve(__dirname, "../fixtures/"), "./", { recursive: true });
+	fs.cpSync(path.resolve(dirname, "../fixtures/"), "./", { recursive: true });
 
 	// Build program.
 	program = createMockProgram();
