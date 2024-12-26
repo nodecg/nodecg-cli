@@ -50,11 +50,11 @@
   },
   "prettier": {},
   "dependencies": {
+    "ajv": "^8.17.1",
     "chalk": "^5.4.1",
     "commander": "^12.1.0",
     "hosted-git-info": "^8.0.2",
     "inquirer": "^12.3.0",
-    "json-schema-defaults": "0.4.0",
     "json-schema-to-typescript": "^15.0.3",
     "npm-package-arg": "^12.0.1",
     "semver": "^7.6.3",
