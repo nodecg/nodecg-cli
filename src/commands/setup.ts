@@ -7,7 +7,6 @@ import semver from "semver";
 import fs from "fs";
 import fetchTags from "../lib/fetch-tags";
 import { Command } from "commander";
-import fetch from "node-fetch";
 import tar from "tar";
 import stream from "stream/promises";
 
