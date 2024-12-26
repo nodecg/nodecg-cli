@@ -1,12 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import { promisify } from "node:util";
 
 import chalk from "chalk";
 import { Command } from "commander";
 import { compileFromFile } from "json-schema-to-typescript";
-
-const writeFilePromise = promisify(fs.writeFile);
 
 export function schemaTypesCommand(program: Command) {
 	program
@@ -58,7 +55,9 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 			enableConstEnums: true,
 			style,
 		})
-			.then((ts) => writeFilePromise(output, ts))
+			.then((ts) =>
+				fs.promises.writeFile(output, "/* prettier-ignore */\n" + ts),
+			)
 			.then(() => {
 				console.log(output);
 			})
@@ -68,18 +67,11 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		compilePromises.push(promise);
 	};
 
-	const indexFiles = ["/* eslint-disable */"];
-
 	if (fs.existsSync(configSchemaPath) && cmd.configSchema) {
 		compile(configSchemaPath, path.resolve(outDir, "configschema.d.ts"));
-		indexFiles.push("// @ts-ignore");
-		indexFiles.push(`export * from './configschema';`);
 	}
 
 	for (const schema of schemas) {
-		indexFiles.push("// @ts-ignore");
-		indexFiles.push(`export * from './${schema.replace(/\.json$/i, "")}';`);
-
 		compile(
 			path.resolve(schemasDir, schema),
 			path.resolve(outDir, schema.replace(/\.json$/i, ".d.ts")),
@@ -87,12 +79,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		);
 	}
 
-	const indexPromise = writeFilePromise(
-		path.resolve(outDir, "index.d.ts"),
-		`${indexFiles.join("\n")}\n`,
-	);
-
-	return Promise.all([indexPromise, ...compilePromises]).then(() => {
+	return Promise.all(compilePromises).then(() => {
 		(process.emit as any)("schema-types-done");
 	});
 }
