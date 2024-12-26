@@ -2,9 +2,9 @@ import { execSync } from "node:child_process";
 
 import { Command } from "commander";
 
-import util from "../lib/util";
+import util from "../lib/util.js";
 
-export = function (program: Command) {
+export function startCommand(program: Command) {
 	program
 		.command("start")
 		.option("-d, --disable-source-maps", "Disable source map support")
@@ -21,4 +21,4 @@ export = function (program: Command) {
 				console.warn("No NodeCG installation found in this folder.");
 			}
 		});
-};
+}

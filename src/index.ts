@@ -7,7 +7,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import semver from "semver";
 
-import util from "./lib/util";
+import util from "./lib/util.js";
 
 const program = new Command("nodecg");
 const packageVersion: string = JSON.parse(
@@ -40,8 +40,8 @@ util
 program.version(packageVersion).usage("<command> [options]");
 
 // Initialise commands
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require("./commands")(program);
+const { setupCommands } = await import("./commands/index.js");
+setupCommands(program as any);
 
 // Handle unknown commands
 program.on("*", () => {

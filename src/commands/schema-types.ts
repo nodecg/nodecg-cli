@@ -8,7 +8,7 @@ import { compileFromFile } from "json-schema-to-typescript";
 
 const writeFilePromise = promisify(fs.writeFile);
 
-export = function (program: Command) {
+export function schemaTypesCommand(program: Command) {
 	program
 		.command("schema-types [dir]")
 		.option(
@@ -24,7 +24,7 @@ export = function (program: Command) {
 			"Generate d.ts TypeScript typedef files from Replicant schemas and configschema.json (if present)",
 		)
 		.action(action);
-};
+}
 
 function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 	const processCwd = process.cwd();
