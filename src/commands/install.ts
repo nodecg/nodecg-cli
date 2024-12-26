@@ -5,7 +5,7 @@ import path from "node:path";
 
 import chalk from "chalk";
 import { Command } from "commander";
-import * as HostedGitInfo from "hosted-git-info";
+import HostedGitInfo from "hosted-git-info";
 import npa from "npm-package-arg";
 import semver, { SemVer } from "semver";
 
@@ -110,10 +110,10 @@ function action(repo: string, options: { dev: boolean }) {
 
 	// If a bundle has no git tags, target will be null.
 	if (target) {
-		process.stdout.write(`Checking out version ${target}... `);
+		process.stdout.write(`Checking out version ${target.version}... `);
 		try {
 			// First try the target as-is.
-			execSync(`git checkout ${target}`, {
+			execSync(`git checkout ${target.version}`, {
 				cwd: bundlePath,
 				stdio: ["pipe", "pipe", "pipe"],
 			});
@@ -121,7 +121,7 @@ function action(repo: string, options: { dev: boolean }) {
 		} catch (_) {
 			try {
 				// Next try prepending `v` to the target, which may have been stripped by `semver.coerce`.
-				execSync(`git checkout v${target}`, {
+				execSync(`git checkout v${target.version}`, {
 					cwd: bundlePath,
 					stdio: ["pipe", "pipe", "pipe"],
 				});
