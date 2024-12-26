@@ -21,8 +21,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "del-cli dist && tsc --build",
-    "dev": "tsc --build --watch",
+    "build": "del-cli dist && tsc --build tsconfig.build.json",
+    "dev": "tsc --build tsconfig.build.json --watch",
     "format": "prettier --write \"**/*.ts\"",
     "static": "run-s static:*",
     "static:prettier": "prettier --check \"**/*.ts\"",
@@ -30,15 +30,14 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write \"**/*.ts\"",
     "fix:eslint": "eslint --fix",
-    "test": "vitest",
-    "test-ci": "vitest run --coverage"
+    "test": "vitest"
   },
   "prettier": {},
   "dependencies": {
     "chalk": "^5.4.1",
-    "commander": "^6.2.1",
+    "commander": "^12.1.0",
     "hosted-git-info": "^8.0.2",
-    "inquirer": "^7.3.3",
+    "inquirer": "^12.3.0",
     "json-schema-defaults": "0.4.0",
     "json-schema-to-typescript": "^15.0.3",
     "npm-package-arg": "^12.0.1",
@@ -48,7 +47,6 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/hosted-git-info": "^3.0.5",
-    "@types/inquirer": "^7.3.3",
     "@types/node": "18",
     "@types/npm-package-arg": "^6.1.4",
     "@types/semver": "^7.5.8",

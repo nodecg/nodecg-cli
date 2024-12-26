@@ -8,9 +8,6 @@
 		"module": "Node16",
 		"types": ["node"],
 
-		"sourceMap": true,
-		"outDir": "./dist",
-
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true,
 		"forceConsistentCasingInFileNames": true,
@@ -25,6 +22,5 @@
 		"noPropertyAccessFromIndexSignature": true,
 
 		"skipLibCheck": true
-	},
-	"include": ["./src/**/*.ts"]
+	}
 }
