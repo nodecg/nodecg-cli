@@ -77,7 +77,7 @@ function action(bundleName?: string) {
 
 			fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
 			console.log(
-				chalk`{green Success:} Created {bold ${bundleName}}'s default config from schema\n`,
+				`${chalk.green("Success:")} Created ${chalk.bold(bundleName)}'s default config from schema\n`,
 			);
 		} catch (e) {
 			console.error(chalk.red("Error: ") + String(e));
