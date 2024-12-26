@@ -31,6 +31,7 @@
     "test": "vitest",
     "test-ci": "vitest run --coverage"
   },
+  "prettier": {},
   "dependencies": {
     "chalk": "3.0.0",
     "commander": "^6.1.0",
