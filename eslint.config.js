@@ -41,6 +41,12 @@ export default tseslint.config(
 			"simple-import-sort/exports": "error",
 		},
 	},
+	{
+		files: ["test/**/*.ts"],
+		rules: {
+			"@typescript-eslint/no-non-null-assertion": "off",
+		},
+	},
 	prettier,
 	{
 		ignores: [
@@ -48,7 +54,7 @@ export default tseslint.config(
 			"coverage",
 			"dist",
 			"test/fixtures",
-			"eslint.config.mjs",
+			"eslint.config.js",
 		],
 	},
 );
