@@ -4,9 +4,9 @@ import path from "node:path";
 import { Command } from "commander";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import defaultConfigCommand from "../../src/commands/defaultconfig";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import { setupTmpDir } from "./tmp-dir";
+import { defaultconfigCommand } from "../../src/commands/defaultconfig.js";
+import { createMockProgram, MockCommand } from "../mocks/program.js";
+import { setupTmpDir } from "./tmp-dir.js";
 
 let program: MockCommand;
 
@@ -21,7 +21,7 @@ beforeEach(() => {
 
 	// Build program.
 	program = createMockProgram();
-	defaultConfigCommand(program as unknown as Command);
+	defaultconfigCommand(program as unknown as Command);
 });
 
 describe("when run with a bundle argument", () => {
@@ -42,7 +42,7 @@ describe("when run with a bundle argument", () => {
 			{ recursive: true },
 		);
 		await program.runWith("defaultconfig missing-schema-bundle");
-		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
+		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
 			`"Error: Bundle %s does not have a configschema.json"`,
 		);
 		spy.mockRestore();
@@ -51,7 +51,7 @@ describe("when run with a bundle argument", () => {
 	it("should print an error when the target bundle does not exist", async () => {
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig not-installed");
-		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
+		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
 			`"Error: Bundle %s does not exist"`,
 		);
 		spy.mockRestore();
@@ -65,7 +65,7 @@ describe("when run with a bundle argument", () => {
 			JSON.stringify({ fake: "data" }),
 		);
 		await program.runWith("defaultconfig config-schema");
-		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
+		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
 			`"Error: Bundle %s already has a config file"`,
 		);
 		spy.mockRestore();
@@ -87,7 +87,7 @@ describe("when run with no arguments", () => {
 
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig");
-		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
+		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
 			`"Error: No bundle found in the current directory!"`,
 		);
 		spy.mockRestore();

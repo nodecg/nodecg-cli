@@ -5,7 +5,7 @@ import { format } from "node:util";
 
 import chalk from "chalk";
 
-import util from "./util";
+import util from "./util.js";
 
 /**
  * Installs npm and bower dependencies for the NodeCG bundle present at the given path.

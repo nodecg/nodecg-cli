@@ -7,14 +7,14 @@ import { execSync } from "child_process";
 import { Command } from "commander";
 import inquirer from "inquirer";
 import semver from "semver";
-import tar from "tar";
+import * as tar from "tar";
 
-import fetchTags from "../lib/fetch-tags";
-import util from "../lib/util";
+import fetchTags from "../lib/fetch-tags.js";
+import util from "../lib/util.js";
 
 const NODECG_GIT_URL = "https://github.com/nodecg/nodecg.git";
 
-export = function (program: Command) {
+export function setupCommand(program: Command) {
 	program
 		.command("setup [version]")
 		.option("-u, --update", "Update the local NodeCG installation")
@@ -24,7 +24,7 @@ export = function (program: Command) {
 		)
 		.description("Install a new NodeCG instance")
 		.action(decideActionVersion);
-};
+}
 
 async function decideActionVersion(
 	version: string,

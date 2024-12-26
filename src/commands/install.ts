@@ -9,11 +9,11 @@ import * as HostedGitInfo from "hosted-git-info";
 import npa from "npm-package-arg";
 import semver, { SemVer } from "semver";
 
-import fetchTags from "../lib/fetch-tags";
-import installBundleDeps from "../lib/install-bundle-deps";
-import util from "../lib/util";
+import fetchTags from "../lib/fetch-tags.js";
+import installBundleDeps from "../lib/install-bundle-deps.js";
+import util from "../lib/util.js";
 
-export = function (program: Command) {
+export function installCommand(program: Command) {
 	program
 		.command("install [repo]")
 		.description(
@@ -22,7 +22,7 @@ export = function (program: Command) {
 		)
 		.option("-d, --dev", "install development npm & bower dependencies")
 		.action(action);
-};
+}
 
 function action(repo: string, options: { dev: boolean }) {
 	const dev = options.dev || false;
@@ -36,8 +36,8 @@ function action(repo: string, options: { dev: boolean }) {
 	let range = "";
 	if (repo.indexOf("#") > 0) {
 		const repoParts = repo.split("#");
-		range = repoParts[1];
-		repo = repoParts[0];
+		range = repoParts[1] ?? "";
+		repo = repoParts[0] ?? "";
 	}
 
 	const nodecgPath = util.getNodeCGPath();

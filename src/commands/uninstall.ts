@@ -7,15 +7,15 @@ import { Command } from "commander";
 import inquirer from "inquirer";
 import rimraf from "rimraf";
 
-import util from "../lib/util";
+import util from "../lib/util.js";
 
-export = function (program: Command) {
+export function uninstallCommand(program: Command) {
 	program
 		.command("uninstall <bundle>")
 		.description("Uninstalls a bundle.")
 		.option("-f, --force", "ignore warnings")
 		.action(action);
-};
+}
 
 function action(bundleName: string, options: { force: boolean }) {
 	const nodecgPath = util.getNodeCGPath();

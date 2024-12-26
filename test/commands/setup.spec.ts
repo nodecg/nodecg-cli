@@ -2,12 +2,12 @@ import fs from "node:fs";
 
 import { Command } from "commander";
 import inquirer from "inquirer";
-import { PackageJson } from "type-fest";
+import type { PackageJson } from "type-fest";
 import { beforeEach, expect, test, vi } from "vitest";
 
-import setupCommand from "../../src/commands/setup";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import { setupTmpDir } from "./tmp-dir";
+import { setupCommand } from "../../src/commands/setup.js";
+import { createMockProgram, MockCommand } from "../mocks/program.js";
+import { setupTmpDir } from "./tmp-dir.js";
 
 let program: MockCommand;
 let currentDir = setupTmpDir();
@@ -91,7 +91,7 @@ test("should correctly handle and refuse when you try to downgrade from v2 to v1
 test("should print an error when the target version doesn't exist", async () => {
 	const spy = vi.spyOn(console, "error");
 	await program.runWith("setup 0.0.99 -u --skip-dependencies");
-	expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
+	expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
 		`"No releases match the supplied semver range (0.0.99)"`,
 	);
 	spy.mockRestore();

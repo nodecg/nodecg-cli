@@ -5,9 +5,9 @@ import rimraf from "rimraf";
 import semver from "semver";
 import { beforeEach, expect, it, vi } from "vitest";
 
-import installCommand from "../../src/commands/install";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import { setupTmpDir } from "./tmp-dir";
+import { installCommand } from "../../src/commands/install.js";
+import { createMockProgram, MockCommand } from "../mocks/program.js";
+import { setupTmpDir } from "./tmp-dir.js";
 
 let program: MockCommand;
 const tempFolder = setupTmpDir();

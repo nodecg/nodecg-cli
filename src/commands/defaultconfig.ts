@@ -5,14 +5,14 @@ import chalk from "chalk";
 import { Command } from "commander";
 import defaults from "json-schema-defaults";
 
-import util from "../lib/util";
+import util from "../lib/util.js";
 
-export = function (program: Command) {
+export function defaultconfigCommand(program: Command) {
 	program
 		.command("defaultconfig [bundle]")
 		.description("Generate default config from configschema.json")
 		.action(action);
-};
+}
 
 function action(bundleName?: string) {
 	const cwd = process.cwd();
