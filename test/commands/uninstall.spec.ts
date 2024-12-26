@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Command } from "commander";
-import fse from "fs-extra";
 import inquirer from "inquirer";
 import { beforeEach, expect, it, vi } from "vitest";
 
@@ -19,7 +18,7 @@ beforeEach(() => {
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
-	fse.copySync(path.resolve(__dirname, "../fixtures/"), "./");
+	fs.cpSync(path.resolve(__dirname, "../fixtures/"), "./", { recursive: true });
 
 	// Build program.
 	program = createMockProgram();

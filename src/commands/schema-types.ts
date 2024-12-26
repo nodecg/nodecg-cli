@@ -4,7 +4,6 @@ import { promisify } from "node:util";
 
 import chalk from "chalk";
 import { Command } from "commander";
-import fse from "fs-extra";
 import { compileFromFile } from "json-schema-to-typescript";
 
 const writeFilePromise = promisify(fs.writeFile);
@@ -40,7 +39,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 
 	const outDir = path.resolve(processCwd, cmd.outDir);
 	if (!fs.existsSync(outDir)) {
-		fse.mkdirpSync(outDir);
+		fs.mkdirSync(outDir, { recursive: true });
 	}
 
 	const configSchemaPath = path.join(processCwd, "configschema.json");

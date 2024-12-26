@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Command } from "commander";
-import fse from "fs-extra";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import defaultConfigCommand from "../../src/commands/defaultconfig";
@@ -18,7 +17,7 @@ beforeEach(() => {
 	fs.writeFileSync("package.json", JSON.stringify({ name: "nodecg" }));
 
 	// Copy fixtures.
-	fse.copySync(path.resolve(__dirname, "../fixtures/"), "./");
+	fs.cpSync(path.resolve(__dirname, "../fixtures/"), "./", { recursive: true });
 
 	// Build program.
 	program = createMockProgram();
@@ -29,7 +28,7 @@ describe("when run with a bundle argument", () => {
 	it("should successfully create a bundle config file when bundle has configschema.json", async () => {
 		await program.runWith("defaultconfig config-schema");
 		const config = JSON.parse(
-			fs.readFileSync("./cfg/config-schema.json", { encoding: "utf8" }),
+			fs.readFileSync("./cfg/config-schema.json", { encoding: "utf8" })
 		);
 		expect(config.username).toBe("user");
 		expect(config.value).toBe(5);
@@ -38,12 +37,13 @@ describe("when run with a bundle argument", () => {
 
 	it("should print an error when the target bundle does not have a configschema.json", async () => {
 		const spy = vi.spyOn(console, "error");
-		fse.mkdirpSync(
+		fs.mkdirSync(
 			path.resolve(process.cwd(), "./bundles/missing-schema-bundle"),
+			{ recursive: true }
 		);
 		await program.runWith("defaultconfig missing-schema-bundle");
 		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s does not have a configschema.json"`,
+			`"Error: Bundle %s does not have a configschema.json"`
 		);
 		spy.mockRestore();
 	});
@@ -52,7 +52,7 @@ describe("when run with a bundle argument", () => {
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig not-installed");
 		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s does not exist"`,
+			`"Error: Bundle %s does not exist"`
 		);
 		spy.mockRestore();
 	});
@@ -62,11 +62,11 @@ describe("when run with a bundle argument", () => {
 		fs.mkdirSync("./cfg");
 		fs.writeFileSync(
 			"./cfg/config-schema.json",
-			JSON.stringify({ fake: "data" }),
+			JSON.stringify({ fake: "data" })
 		);
 		await program.runWith("defaultconfig config-schema");
 		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s already has a config file"`,
+			`"Error: Bundle %s already has a config file"`
 		);
 		spy.mockRestore();
 	});
@@ -80,13 +80,15 @@ describe("when run with no arguments", () => {
 	});
 
 	it("should print an error when in a folder with no package.json", async () => {
-		fse.mkdirpSync(path.resolve(process.cwd(), "./bundles/not-a-bundle"));
+		fs.mkdirSync(path.resolve(process.cwd(), "./bundles/not-a-bundle"), {
+			recursive: true,
+		});
 		process.chdir("./bundles/not-a-bundle");
 
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig");
 		expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(
-			`"Error: No bundle found in the current directory!"`,
+			`"Error: No bundle found in the current directory!"`
 		);
 		spy.mockRestore();
 	});
