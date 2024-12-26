@@ -1,3 +1,4 @@
+import { mock } from 'node:test';
 import commander from 'commander';
 
 export class MockCommand extends commander.Command {
@@ -17,8 +18,7 @@ export class MockCommand extends commander.Command {
 export const createMockProgram = () => {
 	const program = new MockCommand();
 
-	// eslint-disable-next-line no-void
-	jest.spyOn(program, 'log').mockReturnValue(void 0);
+	mock.method(program, 'log').mock.mockImplementation(() => void 0);
 
 	return program;
 };

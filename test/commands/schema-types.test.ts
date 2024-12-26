@@ -5,6 +5,8 @@ import temp from 'tmp';
 import { MockCommand, createMockProgram } from '../mocks/program';
 import schemaTypesCommand from '../../src/commands/schema-types';
 import { EventEmitter } from 'events';
+import { beforeEach, it, mock } from 'node:test';
+import assert from 'node:assert/strict';
 
 let program: MockCommand;
 
@@ -40,23 +42,24 @@ it('should successfully create d.ts files from the replicant schemas and create 
 	await Promise.all([program.runWith('schema-types'), waitForEvent(process, 'schema-types-done')]);
 
 	const outputPath = './src/types/schemas/example.d.ts';
-	expect(fs.existsSync(outputPath)).toBe(true);
+	assert.ok(fs.existsSync(outputPath));
 
-	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
+	assert.equal(
+		fs.readFileSync(outputPath, 'utf8'),
 		fs.readFileSync('../../results/schema-types/example.d.ts', 'utf8'),
 	);
 
 	const indexPath = './src/types/schemas/index.d.ts';
-	expect(fs.existsSync(indexPath)).toBe(true);
-	expect(fs.readFileSync(indexPath, 'utf8')).toBe(fs.readFileSync('../../results/schema-types/index.d.ts', 'utf8'));
+	assert.ok(fs.existsSync(indexPath));
+	assert.equal(fs.readFileSync(indexPath, 'utf8'), fs.readFileSync('../../results/schema-types/index.d.ts', 'utf8'));
 });
 
 it('should print an error when the target bundle does not have a schemas dir', async () => {
 	process.chdir('bundles/uninstall-test');
-	const spy = jest.spyOn(console, 'error');
+	const spy = mock.method(console, 'error');
 	await program.runWith('schema-types');
-	expect(spy.mock.calls[0][0]).toBe('\u001b[31mError:\u001b[39m Input directory ("%s") does not exist');
-	spy.mockRestore();
+	assert.equal(spy.mock.calls[0].arguments[0], '\u001b[31mError:\u001b[39m Input directory ("%s") does not exist');
+	spy.mock.restore();
 });
 
 it('should successfully compile the config schema', async () => {
@@ -66,12 +69,14 @@ it('should successfully compile the config schema', async () => {
 	await Promise.all([program.runWith('schema-types empty-dir'), waitForEvent(process, 'schema-types-done')]);
 
 	const outputPath = './src/types/schemas/configschema.d.ts';
-	expect(fs.existsSync(outputPath)).toBe(true);
+	assert.ok(fs.existsSync(outputPath));
 
-	expect(fs.readFileSync(outputPath, 'utf8')).toBe(
+	assert.equal(
+		fs.readFileSync(outputPath, 'utf8'),
 		fs.readFileSync('../../results/schema-types/configschema.d.ts', 'utf8'),
 	);
-	expect(fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8')).toBe(
+	assert.equal(
+		fs.readFileSync('./src/types/schemas/index.d.ts', 'utf8'),
 		"/* eslint-disable */\n// @ts-ignore\nexport * from './configschema';\n",
 	);
 });
