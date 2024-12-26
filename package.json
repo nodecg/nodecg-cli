@@ -28,7 +28,8 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write \"**/*.ts\"",
     "fix:eslint": "eslint --fix \"**/*.ts\"",
-    "test": "vitest"
+    "test": "vitest",
+    "test-ci": "vitest run --coverage"
   },
   "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
