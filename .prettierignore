@@ -1,4 +1,4 @@
 /node_modules
 /coverage
 /dist
-/__tests__/fixtures
+/test/fixtures
