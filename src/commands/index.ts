@@ -3,8 +3,9 @@
  * https://github.com/tsantef/commander-starter
  */
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+
 import { Command } from "commander";
 
 export = function (program: Command) {

@@ -1,9 +1,11 @@
-import util from "../lib/util";
+import fs from "node:fs";
+import path from "node:path";
+
 import chalk from "chalk";
-import fs from "fs";
-import path from "path";
-import defaults from "json-schema-defaults";
 import { Command } from "commander";
+import defaults from "json-schema-defaults";
+
+import util from "../lib/util";
 
 export = function (program: Command) {
 	program

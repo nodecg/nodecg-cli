@@ -1,11 +1,13 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+
+import { Command } from "commander";
 import fse from "fs-extra";
 import temp from "tmp";
-import { Command } from "commander";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import defaultConfigCommand from "../../src/commands/defaultconfig";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import defaultConfigCommand from "../../src/commands/defaultconfig";
+import { createMockProgram, MockCommand } from "../mocks/program";
 
 let program: MockCommand;
 

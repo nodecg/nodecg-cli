@@ -1,13 +1,11 @@
-// Native
-import fs from "fs";
-import path from "path";
-import { promisify } from "util";
+import fs from "node:fs";
+import path from "node:path";
+import { promisify } from "node:util";
 
-// Packages
 import chalk from "chalk";
+import { Command } from "commander";
 import fse from "fs-extra";
 import { compileFromFile } from "json-schema-to-typescript";
-import { Command } from "commander";
 
 const writeFilePromise = promisify(fs.writeFile);
 

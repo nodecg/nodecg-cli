@@ -1,14 +1,16 @@
-import util from "../lib/util";
-import { execSync } from "child_process";
-import os from "os";
+import fs from "node:fs";
+import os from "node:os";
+import stream from "node:stream/promises";
+
 import chalk from "chalk";
+import { execSync } from "child_process";
+import { Command } from "commander";
 import inquirer from "inquirer";
 import semver from "semver";
-import fs from "fs";
-import fetchTags from "../lib/fetch-tags";
-import { Command } from "commander";
 import tar from "tar";
-import stream from "stream/promises";
+
+import fetchTags from "../lib/fetch-tags";
+import util from "../lib/util";
 
 const NODECG_GIT_URL = "https://github.com/nodecg/nodecg.git";
 

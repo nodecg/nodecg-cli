@@ -1,11 +1,13 @@
-import fs from "fs";
-import path from "path";
+import { EventEmitter } from "node:events";
+import fs from "node:fs";
+import path from "node:path";
+
 import fse from "fs-extra";
 import temp from "tmp";
-import { MockCommand, createMockProgram } from "../mocks/program";
-import schemaTypesCommand from "../../src/commands/schema-types";
-import { EventEmitter } from "events";
 import { beforeEach, expect, it, vi } from "vitest";
+
+import schemaTypesCommand from "../../src/commands/schema-types";
+import { createMockProgram, MockCommand } from "../mocks/program";
 
 let program: MockCommand;
 

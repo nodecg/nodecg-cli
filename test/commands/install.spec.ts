@@ -1,11 +1,13 @@
-import fs from "fs";
+import fs from "node:fs";
+
+import { Command } from "commander";
 import rimraf from "rimraf";
 import semver from "semver";
 import temp from "tmp";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import installCommand from "../../src/commands/install";
-import { Command } from "commander";
 import { beforeEach, expect, it, vi } from "vitest";
+
+import installCommand from "../../src/commands/install";
+import { createMockProgram, MockCommand } from "../mocks/program";
 
 let program: MockCommand;
 const tempFolder = temp.dirSync();

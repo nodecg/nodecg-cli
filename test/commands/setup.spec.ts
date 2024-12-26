@@ -1,11 +1,13 @@
-import fs from "fs";
+import fs from "node:fs";
+
+import { Command } from "commander";
 import inquirer from "inquirer";
 import temp from "tmp";
 import { PackageJson } from "type-fest";
-import { Command } from "commander";
-import { createMockProgram, MockCommand } from "../mocks/program";
-import setupCommand from "../../src/commands/setup";
 import { beforeEach, expect, test, vi } from "vitest";
+
+import setupCommand from "../../src/commands/setup";
+import { createMockProgram, MockCommand } from "../mocks/program";
 
 let program: MockCommand;
 let currentDir = temp.dirSync();

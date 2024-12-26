@@ -1,6 +1,8 @@
-import util from "../lib/util";
+import { execSync } from "node:child_process";
+
 import { Command } from "commander";
-import { execSync } from "child_process";
+
+import util from "../lib/util";
 
 export = function (program: Command) {
 	program

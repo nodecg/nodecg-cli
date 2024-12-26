@@ -2,9 +2,11 @@ process.title = "nodecg";
 
 import fs from "node:fs";
 import path from "node:path";
-import semver from "semver";
+
 import chalk from "chalk";
 import { Command } from "commander";
+import semver from "semver";
+
 import util from "./lib/util";
 
 const program = new Command("nodecg");
