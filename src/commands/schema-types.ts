@@ -1,13 +1,11 @@
-// Native
-import fs from "fs";
-import path from "path";
-import { promisify } from "util";
+import fs from "node:fs";
+import path from "node:path";
+import { promisify } from "node:util";
 
-// Packages
 import chalk from "chalk";
+import { Command } from "commander";
 import fse from "fs-extra";
 import { compileFromFile } from "json-schema-to-typescript";
-import { Command } from "commander";
 
 const writeFilePromise = promisify(fs.writeFile);
 
@@ -53,7 +51,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 		useTabs: true,
 	};
 
-	const compilePromises: Array<Promise<void>> = [];
+	const compilePromises: Promise<void>[] = [];
 	const compile = (input: string, output: string, cwd = processCwd) => {
 		const promise = compileFromFile(input, {
 			cwd,
@@ -65,7 +63,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 			.then(() => {
 				console.log(output);
 			})
-			.catch((err) => {
+			.catch((err: unknown) => {
 				console.error(err);
 			});
 		compilePromises.push(promise);

@@ -1,15 +1,17 @@
-import fs from "fs";
-import os from "os";
-import installBundleDeps from "../lib/install-bundle-deps";
-import { execSync } from "child_process";
-import npa from "npm-package-arg";
-import path from "path";
-import util from "../lib/util";
-import semver, { SemVer } from "semver";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+
 import chalk from "chalk";
-import fetchTags from "../lib/fetch-tags";
 import { Command } from "commander";
 import * as HostedGitInfo from "hosted-git-info";
+import npa from "npm-package-arg";
+import semver, { SemVer } from "semver";
+
+import fetchTags from "../lib/fetch-tags";
+import installBundleDeps from "../lib/install-bundle-deps";
+import util from "../lib/util";
 
 export = function (program: Command) {
 	program
@@ -64,8 +66,8 @@ function action(repo: string, options: { dev: boolean }) {
 	}
 
 	// Extract repo name from git url
-	const temp = repoUrl.split("/").pop()!;
-	const bundleName = temp.substr(0, temp.length - 4);
+	const temp = repoUrl.split("/").pop() ?? "";
+	const bundleName = temp.slice(0, temp.length - 4);
 	const bundlePath = path.join(nodecgPath, "bundles/", bundleName);
 
 	// Figure out what version to checkout

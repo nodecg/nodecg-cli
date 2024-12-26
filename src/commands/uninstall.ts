@@ -1,11 +1,13 @@
-import fs from "fs";
-import inquirer from "inquirer";
-import path from "path";
-import util from "../lib/util";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+
 import chalk from "chalk";
-import rimraf from "rimraf";
-import os from "os";
 import { Command } from "commander";
+import inquirer from "inquirer";
+import rimraf from "rimraf";
+
+import util from "../lib/util";
 
 export = function (program: Command) {
 	program
@@ -31,7 +33,7 @@ function action(bundleName: string, options: { force: boolean }) {
 	if (options.force) {
 		deleteBundle(bundleName, bundlePath);
 	} else {
-		inquirer
+		void inquirer
 			.prompt<{ confirmUninstall: boolean }>([
 				{
 					name: "confirmUninstall",

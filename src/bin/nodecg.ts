@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
+import { execSync } from "node:child_process";
+
 import chalk from "chalk";
-import { execSync } from "child_process";
 
 const REQUIRED_VERSION = "v0.11.22";
 
@@ -34,4 +35,5 @@ try {
 	process.exit(1);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("..");

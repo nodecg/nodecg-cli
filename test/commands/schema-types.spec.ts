@@ -1,11 +1,13 @@
-import fs from "fs";
-import path from "path";
+import { EventEmitter } from "node:events";
+import fs from "node:fs";
+import path from "node:path";
+
 import fse from "fs-extra";
 import temp from "tmp";
-import { MockCommand, createMockProgram } from "../mocks/program";
-import schemaTypesCommand from "../../src/commands/schema-types";
-import { EventEmitter } from "events";
 import { beforeEach, expect, it, vi } from "vitest";
+
+import schemaTypesCommand from "../../src/commands/schema-types";
+import { createMockProgram, MockCommand } from "../mocks/program";
 
 let program: MockCommand;
 
@@ -46,13 +48,13 @@ it("should successfully create d.ts files from the replicant schemas and create 
 	const outputPath = "./src/types/schemas/example.d.ts";
 	expect(fs.existsSync(outputPath)).toBe(true);
 
-	expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
+	await expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
 		"../fixtures/results/schema-types/example.d.ts",
 	);
 
 	const indexPath = "./src/types/schemas/index.d.ts";
 	expect(fs.existsSync(indexPath)).toBe(true);
-	expect(fs.readFileSync(indexPath, "utf8")).toMatchFileSnapshot(
+	await expect(fs.readFileSync(indexPath, "utf8")).toMatchFileSnapshot(
 		"../fixtures/results/schema-types/index.d.ts",
 	);
 });
@@ -79,7 +81,7 @@ it("should successfully compile the config schema", async () => {
 	const outputPath = "./src/types/schemas/configschema.d.ts";
 	expect(fs.existsSync(outputPath)).toBe(true);
 
-	expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
+	await expect(fs.readFileSync(outputPath, "utf8")).toMatchFileSnapshot(
 		"../fixtures/results/schema-types/configschema.d.ts",
 	);
 	expect(fs.readFileSync("./src/types/schemas/index.d.ts", "utf8"))

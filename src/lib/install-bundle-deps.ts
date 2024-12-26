@@ -1,8 +1,10 @@
-import fs from "fs";
-import { format } from "util";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import { format } from "node:util";
+
 import chalk from "chalk";
-import os from "os";
-import { execSync } from "child_process";
+
 import util from "./util";
 
 /**

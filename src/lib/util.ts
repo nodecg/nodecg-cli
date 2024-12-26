@@ -1,5 +1,6 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+
 import semver from "semver";
 
 export default {
@@ -10,7 +11,7 @@ export default {
 	pathContainsNodeCG(pathToCheck: string): boolean {
 		const pjsonPath = path.join(pathToCheck, "package.json");
 		if (fs.existsSync(pjsonPath)) {
-			const pjson = require(pjsonPath);
+			const pjson = JSON.parse(fs.readFileSync(pjsonPath, "utf8"));
 			return pjson.name.toLowerCase() === "nodecg";
 		}
 
@@ -50,7 +51,7 @@ export default {
 	isBundleFolder(pathToCheck: string) {
 		const pjsonPath = path.join(pathToCheck, "package.json");
 		if (fs.existsSync(pjsonPath)) {
-			const pjson = require(pjsonPath);
+			const pjson = JSON.parse(fs.readFileSync(pjsonPath, "utf8"));
 			return typeof pjson.nodecg === "object";
 		}
 
@@ -106,12 +107,12 @@ export interface NPMRelease {
 	bugs?: { url: string };
 	repository?: { type: string; url: string };
 	license: string;
-	bin?: { [key: string]: string };
-	scripts?: { [key: string]: string };
-	dependencies?: { [key: string]: string };
-	devDependencies?: { [key: string]: string };
-	engines?: { [key: string]: string };
-	contributors?: Array<{ [key: string]: string }>;
+	bin?: Record<string, string>;
+	scripts?: Record<string, string>;
+	dependencies?: Record<string, string>;
+	devDependencies?: Record<string, string>;
+	engines?: Record<string, string>;
+	contributors?: Record<string, string>[];
 	gitHead?: string;
 	homepage?: string;
 	dist: {
@@ -120,12 +121,12 @@ export interface NPMRelease {
 		tarball: string;
 		fileCount: number;
 		unpackedSize: number;
-		signatures: Array<{
+		signatures: {
 			keyid: string;
 			sig: string;
-		}>;
+		}[];
 		"npm-signature": string;
 	};
-	directories?: { [key: string]: string };
-	maintainers: Array<{ [key: string]: string }>;
+	directories?: Record<string, string>;
+	maintainers: Record<string, string>[];
 }
