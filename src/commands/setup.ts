@@ -92,7 +92,7 @@ async function decideActionVersion(
 
 		target = maxSatisfying;
 	} else {
-		target = semver.maxSatisfying(tags, "");
+		target = semver.maxSatisfying(tags, "") ?? "";
 	}
 
 	process.stdout.write(chalk.green("done!") + os.EOL);
