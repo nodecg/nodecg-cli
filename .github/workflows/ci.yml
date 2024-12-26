@@ -22,6 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
       - run: npm i -g bower
       - run: npm ci
       - run: npm run static
@@ -31,16 +32,17 @@ jobs:
       - run: npm run build
 
   canary-publish:
-    if: github.event_name == 'push' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     needs: test
+    if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
       - run: npm ci
       - run: npm run build
       - run: |
-          npm version 0.0.0-canary.${{ github.sha }}
+          npm version 0.0.0-canary.${{ github.sha }} --no-git-tag-version
           npm publish --tag canary
