@@ -1,9 +1,9 @@
-import fs from 'fs';
-import { format } from 'util';
-import chalk from 'chalk';
-import os from 'os';
-import { execSync } from 'child_process';
-import util from './util';
+import fs from "fs";
+import { format } from "util";
+import chalk from "chalk";
+import os from "os";
+import { execSync } from "child_process";
+import util from "./util";
 
 /**
  * Installs npm and bower dependencies for the NodeCG bundle present at the given path.
@@ -13,9 +13,9 @@ import util from './util';
 export default function (bundlePath: string, installDev = false) {
 	if (!util.isBundleFolder(bundlePath)) {
 		console.error(
-			chalk.red('Error:') +
+			chalk.red("Error:") +
 				" There doesn't seem to be a valid NodeCG bundle in this folder:" +
-				'\n\t' +
+				"\n\t" +
 				chalk.magenta(bundlePath),
 		);
 		process.exit(1);
@@ -24,26 +24,33 @@ export default function (bundlePath: string, installDev = false) {
 	let cmdline;
 
 	const cachedCwd = process.cwd();
-	if (fs.existsSync(bundlePath + '/package.json')) {
+	if (fs.existsSync(bundlePath + "/package.json")) {
 		process.chdir(bundlePath);
 		let cmdline: string;
-		if (fs.existsSync(bundlePath + '/yarn.lock')) {
-			cmdline = installDev ? 'yarn' : 'yarn --production';
-			process.stdout.write(format('Installing npm dependencies with yarn (dev: %s)... ', installDev));
+		if (fs.existsSync(bundlePath + "/yarn.lock")) {
+			cmdline = installDev ? "yarn" : "yarn --production";
+			process.stdout.write(
+				format(
+					"Installing npm dependencies with yarn (dev: %s)... ",
+					installDev,
+				),
+			);
 		} else {
-			cmdline = installDev ? 'npm install' : 'npm install --production';
-			process.stdout.write(format('Installing npm dependencies (dev: %s)... ', installDev));
+			cmdline = installDev ? "npm install" : "npm install --production";
+			process.stdout.write(
+				format("Installing npm dependencies (dev: %s)... ", installDev),
+			);
 		}
 
 		try {
 			execSync(cmdline, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe'],
+				stdio: ["pipe", "pipe", "pipe"],
 			});
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e: any) {
 			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			/* istanbul ignore next */
 			console.error(e.stack);
 			/* istanbul ignore next */
@@ -53,18 +60,20 @@ export default function (bundlePath: string, installDev = false) {
 		process.chdir(cachedCwd);
 	}
 
-	if (fs.existsSync(bundlePath + '/bower.json')) {
-		cmdline = format('bower install %s', installDev ? '' : '--production');
-		process.stdout.write(format('Installing bower dependencies (dev: %s)... ', installDev));
+	if (fs.existsSync(bundlePath + "/bower.json")) {
+		cmdline = format("bower install %s", installDev ? "" : "--production");
+		process.stdout.write(
+			format("Installing bower dependencies (dev: %s)... ", installDev),
+		);
 		try {
 			execSync(cmdline, {
 				cwd: bundlePath,
-				stdio: ['pipe', 'pipe', 'pipe'],
+				stdio: ["pipe", "pipe", "pipe"],
 			});
-			process.stdout.write(chalk.green('done!') + os.EOL);
+			process.stdout.write(chalk.green("done!") + os.EOL);
 		} catch (e: any) {
 			/* istanbul ignore next */
-			process.stdout.write(chalk.red('failed!') + os.EOL);
+			process.stdout.write(chalk.red("failed!") + os.EOL);
 			/* istanbul ignore next */
 			console.error(e.stack);
 		}

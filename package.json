@@ -31,7 +31,6 @@
     "test": "vitest",
     "test-ci": "vitest run --coverage"
   },
-  "prettier": "@gamesdonequick/prettier-config",
   "dependencies": {
     "chalk": "3.0.0",
     "commander": "^6.1.0",
@@ -67,7 +66,7 @@
     "eslint-config-xo": "^0.32.1",
     "eslint-config-xo-typescript": "^0.33.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.1.2",
+    "prettier": "^3.4.2",
     "tmp": "0.2.1",
     "type-fest": "^0.17.0",
     "typescript": "~5.7.2",
