@@ -9,9 +9,9 @@ import HostedGitInfo from "hosted-git-info";
 import npa from "npm-package-arg";
 import semver, { SemVer } from "semver";
 
-import fetchTags from "../lib/fetch-tags.js";
-import installBundleDeps from "../lib/install-bundle-deps.js";
-import util from "../lib/util.js";
+import { fetchTags } from "../lib/fetch-tags.js";
+import { installBundleDeps } from "../lib/install-bundle-deps.js";
+import { getNodeCGPath } from "../lib/util.js";
 
 export function installCommand(program: Command) {
 	program
@@ -40,7 +40,7 @@ function action(repo: string, options: { dev: boolean }) {
 		repo = repoParts[0] ?? "";
 	}
 
-	const nodecgPath = util.getNodeCGPath();
+	const nodecgPath = getNodeCGPath();
 	const parsed = npa(repo);
 	if (!parsed.hosted) {
 		console.error(

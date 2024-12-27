@@ -9,8 +9,12 @@ import inquirer from "inquirer";
 import semver from "semver";
 import * as tar from "tar";
 
-import fetchTags from "../lib/fetch-tags.js";
-import util from "../lib/util.js";
+import { fetchTags } from "../lib/fetch-tags.js";
+import {
+	getCurrentNodeCGVersion,
+	getNodeCGRelease,
+	pathContainsNodeCG,
+} from "../lib/util.js";
 
 const NODECG_GIT_URL = "https://github.com/nodecg/nodecg.git";
 
@@ -36,7 +40,7 @@ async function decideActionVersion(
 	// If NodeCG exists in the cwd, but the `-u` flag was not supplied, display an error and return.
 	// If it was supplied, fetch the latest tags and set the `isUpdate` flag to true for later use.
 	// Else, if this is a clean, empty directory, then we need to clone a fresh copy of NodeCG into the cwd.
-	if (util.pathContainsNodeCG(process.cwd())) {
+	if (pathContainsNodeCG(process.cwd())) {
 		if (!options.update) {
 			console.error("NodeCG is already installed in this directory.");
 			console.error(
@@ -101,7 +105,7 @@ async function decideActionVersion(
 	let downgrade = false;
 
 	if (isUpdate) {
-		current = util.getCurrentNodeCGVersion();
+		current = getCurrentNodeCGVersion();
 
 		if (semver.eq(target, current)) {
 			console.log(
@@ -230,7 +234,7 @@ async function actionV2(
 	}
 
 	process.stdout.write(`Downloading ${target} from npm... `);
-	const release = await util.getNodeCGRelease(target);
+	const release = await getNodeCGRelease(target);
 
 	process.stdout.write(chalk.green("done!") + os.EOL);
 

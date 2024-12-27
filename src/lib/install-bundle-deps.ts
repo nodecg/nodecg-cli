@@ -5,15 +5,15 @@ import { format } from "node:util";
 
 import chalk from "chalk";
 
-import util from "./util.js";
+import { isBundleFolder } from "./util.js";
 
 /**
  * Installs npm and bower dependencies for the NodeCG bundle present at the given path.
  * @param bundlePath - The path of the NodeCG bundle to install dependencies for.
  * @param installDev - Whether to install devDependencies.
  */
-export default function (bundlePath: string, installDev = false) {
-	if (!util.isBundleFolder(bundlePath)) {
+export function installBundleDeps(bundlePath: string, installDev = false) {
+	if (!isBundleFolder(bundlePath)) {
 		console.error(
 			chalk.red("Error:") +
 				" There doesn't seem to be a valid NodeCG bundle in this folder:" +

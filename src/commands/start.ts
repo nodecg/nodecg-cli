@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 
 import { Command } from "commander";
 
-import util from "../lib/util.js";
+import { pathContainsNodeCG } from "../lib/util.js";
 
 export function startCommand(program: Command) {
 	program
@@ -11,7 +11,7 @@ export function startCommand(program: Command) {
 		.description("Start NodeCG")
 		.action((options: { disableSourceMaps: boolean }) => {
 			// Check if nodecg is already installed
-			if (util.pathContainsNodeCG(process.cwd())) {
+			if (pathContainsNodeCG(process.cwd())) {
 				if (options.disableSourceMaps) {
 					execSync("node index.js", { stdio: "inherit" });
 				} else {
