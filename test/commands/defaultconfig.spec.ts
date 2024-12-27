@@ -45,8 +45,12 @@ describe("when run with a bundle argument", () => {
 			{ recursive: true },
 		);
 		await program.runWith("defaultconfig missing-schema-bundle");
-		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s does not have a configschema.json"`,
+		expect(spy.mock.calls[0]).toMatchInlineSnapshot(
+			`
+			[
+			  "Error: Bundle missing-schema-bundle does not have a configschema.json",
+			]
+		`,
 		);
 		spy.mockRestore();
 	});
@@ -54,8 +58,12 @@ describe("when run with a bundle argument", () => {
 	it("should print an error when the target bundle does not exist", async () => {
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig not-installed");
-		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s does not exist"`,
+		expect(spy.mock.calls[0]).toMatchInlineSnapshot(
+			`
+			[
+			  "Error: Bundle not-installed does not exist",
+			]
+		`,
 		);
 		spy.mockRestore();
 	});
@@ -68,8 +76,12 @@ describe("when run with a bundle argument", () => {
 			JSON.stringify({ fake: "data" }),
 		);
 		await program.runWith("defaultconfig config-schema");
-		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-			`"Error: Bundle %s already has a config file"`,
+		expect(spy.mock.calls[0]).toMatchInlineSnapshot(
+			`
+			[
+			  "Error: Bundle config-schema already has a config file",
+			]
+		`,
 		);
 		spy.mockRestore();
 	});
@@ -90,8 +102,12 @@ describe("when run with no arguments", () => {
 
 		const spy = vi.spyOn(console, "error");
 		await program.runWith("defaultconfig");
-		expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-			`"Error: No bundle found in the current directory!"`,
+		expect(spy.mock.calls[0]).toMatchInlineSnapshot(
+			`
+			[
+			  "Error: No bundle found in the current directory!",
+			]
+		`,
 		);
 		spy.mockRestore();
 	});

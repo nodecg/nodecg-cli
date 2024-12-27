@@ -22,8 +22,7 @@ function action(bundleName: string, options: { force: boolean }) {
 
 	if (!fs.existsSync(bundlePath)) {
 		console.error(
-			"Cannot uninstall %s: bundle is not installed.",
-			chalk.magenta(bundleName),
+			`Cannot uninstall ${chalk.magenta(bundleName)}: bundle is not installed.`,
 		);
 		return;
 	}
@@ -48,7 +47,7 @@ function deleteBundle(name: string, path: string) {
 		return;
 	}
 
-	process.stdout.write("Uninstalling " + chalk.magenta(name) + "... ");
+	process.stdout.write(`Uninstalling ${chalk.magenta(name)}... `);
 	try {
 		fs.rmSync(path, { recursive: true, force: true });
 	} catch (e: any) {

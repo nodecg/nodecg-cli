@@ -73,8 +73,12 @@ it("should print an error when the target bundle does not have a schemas dir", a
 	process.chdir("bundles/uninstall-test");
 	const spy = vi.spyOn(console, "error");
 	await program.runWith("schema-types");
-	expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-		`"Error: Input directory ("%s") does not exist"`,
+	expect(spy.mock.calls[0]).toMatchInlineSnapshot(
+		`
+		[
+		  "Error: Input directory does not exist",
+		]
+	`,
 	);
 	spy.mockRestore();
 });

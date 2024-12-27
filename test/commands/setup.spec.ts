@@ -82,9 +82,11 @@ test("should correctly handle and refuse when you try to downgrade from v2 to v1
 test("should print an error when the target version doesn't exist", async () => {
 	const spy = vi.spyOn(console, "error");
 	await program.runWith("setup 0.0.99 -u --skip-dependencies");
-	expect(spy.mock.calls[0]![0]).toMatchInlineSnapshot(
-		`"No releases match the supplied semver range (0.0.99)"`,
-	);
+	expect(spy.mock.calls[0]).toMatchInlineSnapshot(`
+		[
+		  "No releases match the supplied semver range (0.0.99)",
+		]
+	`);
 	spy.mockRestore();
 });
 
