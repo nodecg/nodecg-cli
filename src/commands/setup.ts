@@ -1,11 +1,11 @@
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import stream from "node:stream/promises";
 
+import { confirm } from "@inquirer/prompts";
 import chalk from "chalk";
-import { execSync } from "child_process";
 import { Command } from "commander";
-import inquirer from "inquirer";
 import semver from "semver";
 import * as tar from "tar";
 
@@ -44,9 +44,7 @@ async function decideActionVersion(
 		if (!options.update) {
 			console.error("NodeCG is already installed in this directory.");
 			console.error(
-				"Use " +
-					chalk.cyan("nodecg setup [version] -u") +
-					" if you want update your existing install.",
+				`Use ${chalk.cyan("nodecg setup [version] -u")} if you want update your existing install.`,
 			);
 			return;
 		}
@@ -56,9 +54,7 @@ async function decideActionVersion(
 
 	if (version) {
 		process.stdout.write(
-			"Finding latest release that satisfies semver range " +
-				chalk.magenta(version) +
-				"... ",
+			`Finding latest release that satisfies semver range ${chalk.magenta(version)}... `,
 		);
 	} else if (isUpdate) {
 		process.stdout.write("Checking against local install for updates... ");
@@ -69,12 +65,9 @@ async function decideActionVersion(
 	let tags;
 	try {
 		tags = fetchTags(NODECG_GIT_URL);
-	} catch (e: any) {
-		/* istanbul ignore next */
+	} catch (error) {
 		process.stdout.write(chalk.red("failed!") + os.EOL);
-		/* istanbul ignore next */
-		console.error(e.stack);
-		/* istanbul ignore next */
+		console.error(error instanceof Error ? error.message : error);
 		return;
 	}
 
@@ -87,9 +80,7 @@ async function decideActionVersion(
 		if (!maxSatisfying) {
 			process.stdout.write(chalk.red("failed!") + os.EOL);
 			console.error(
-				"No releases match the supplied semver range (" +
-					chalk.magenta(version) +
-					")",
+				`No releases match the supplied semver range (${chalk.magenta(version)})`,
 			);
 			return;
 		}
@@ -109,30 +100,21 @@ async function decideActionVersion(
 
 		if (semver.eq(target, current)) {
 			console.log(
-				"The target version (%s) is equal to the current version (%s). No action will be taken.",
-				chalk.magenta(target),
-				chalk.magenta(current),
+				`The target version (${chalk.magenta(target)}) is equal to the current version (${chalk.magenta(current)}). No action will be taken.`,
 			);
 			return;
 		}
 
 		if (semver.lt(target, current)) {
 			console.log(
-				chalk.red("WARNING: ") +
-					"The target version (%s) is older than the current version (%s)",
-				chalk.magenta(target),
-				chalk.magenta(current),
+				`${chalk.red("WARNING:")} The target version (${chalk.magenta(target)}) is older than the current version (${chalk.magenta(current)})`,
 			);
 
-			const answers = await inquirer.prompt<{ installOlder: boolean }>([
-				{
-					name: "installOlder",
-					message: "Are you sure you wish to continue?",
-					type: "confirm",
-				},
-			]);
+			const answer = await confirm({
+				message: "Are you sure you wish to continue?",
+			});
 
-			if (!answers.installOlder) {
+			if (!answer) {
 				console.log("Setup cancelled.");
 				return;
 			}

@@ -2,9 +2,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { confirm } from "@inquirer/prompts";
 import chalk from "chalk";
 import { Command } from "commander";
-import inquirer from "inquirer";
 
 import { getNodeCGPath } from "../lib/util.js";
 
@@ -32,22 +32,13 @@ function action(bundleName: string, options: { force: boolean }) {
 	if (options.force) {
 		deleteBundle(bundleName, bundlePath);
 	} else {
-		void inquirer
-			.prompt<{ confirmUninstall: boolean }>([
-				{
-					name: "confirmUninstall",
-					message:
-						"Are you sure you wish to uninstall " +
-						chalk.magenta(bundleName) +
-						"?",
-					type: "confirm",
-				},
-			])
-			.then((answers) => {
-				if (answers.confirmUninstall) {
-					deleteBundle(bundleName, bundlePath);
-				}
-			});
+		void confirm({
+			message: `Are you sure you wish to uninstall ${chalk.magenta(bundleName)}?`,
+		}).then((answer) => {
+			if (answer) {
+				deleteBundle(bundleName, bundlePath);
+			}
+		});
 	}
 }
 

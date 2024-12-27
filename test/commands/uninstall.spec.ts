@@ -3,12 +3,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { Command } from "commander";
-import inquirer from "inquirer";
 import { beforeEach, expect, it, vi } from "vitest";
 
 import { uninstallCommand } from "../../src/commands/uninstall.js";
 import { createMockProgram, MockCommand } from "../mocks/program.js";
 import { setupTmpDir } from "./tmp-dir.js";
+
+vi.mock("@inquirer/prompts", () => ({ confirm: () => Promise.resolve(true) }));
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,12 +30,8 @@ beforeEach(() => {
 });
 
 it("should delete the bundle's folder after prompting for confirmation", async () => {
-	const spy = vi.spyOn(inquirer, "prompt").mockImplementation(() => {
-		return Promise.resolve({ confirmUninstall: true }) as any;
-	});
 	await program.runWith("uninstall uninstall-test");
 	expect(fs.existsSync("./bundles/uninstall-test")).toBe(false);
-	spy.mockRestore();
 });
 
 it("should print an error when the target bundle is not installed", async () => {

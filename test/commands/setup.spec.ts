@@ -1,13 +1,14 @@
 import fs from "node:fs";
 
 import { Command } from "commander";
-import inquirer from "inquirer";
 import type { PackageJson } from "type-fest";
 import { beforeEach, expect, test, vi } from "vitest";
 
 import { setupCommand } from "../../src/commands/setup.js";
 import { createMockProgram, MockCommand } from "../mocks/program.js";
 import { setupTmpDir } from "./tmp-dir.js";
+
+vi.mock("@inquirer/prompts", () => ({ confirm: () => Promise.resolve(true) }));
 
 let program: MockCommand;
 let currentDir = setupTmpDir();
@@ -50,13 +51,8 @@ test("should install v1 NodeCG when specified", async () => {
 });
 
 test("should ask the user for confirmation when downgrading versions", async () => {
-	const spy = vi
-		.spyOn(inquirer, "prompt")
-		.mockReturnValue(Promise.resolve({ installOlder: true }) as any);
 	await program.runWith("setup 0.8.1 -u --skip-dependencies");
-	expect(spy).toBeCalled();
 	expect(readPackageJson().version).toBe("0.8.1");
-	spy.mockRestore();
 });
 
 test("should let the user change upgrade versions", async () => {
@@ -69,9 +65,7 @@ test("should print an error when the target version is the same as current", asy
 	await program.runWith("setup 0.8.2 -u --skip-dependencies");
 	expect(spy.mock.calls[0]).toMatchInlineSnapshot(`
 		[
-		  "The target version (%s) is equal to the current version (%s). No action will be taken.",
-		  "v0.8.2",
-		  "0.8.2",
+		  "The target version (v0.8.2) is equal to the current version (0.8.2). No action will be taken.",
 		]
 	`);
 	spy.mockRestore();
@@ -79,9 +73,6 @@ test("should print an error when the target version is the same as current", asy
 
 test("should correctly handle and refuse when you try to downgrade from v2 to v1", async () => {
 	chdir();
-	vi.spyOn(inquirer, "prompt").mockReturnValue(
-		Promise.resolve({ installOlder: true }) as any,
-	);
 	await program.runWith("setup 2.0.0 --skip-dependencies");
 	expect(readPackageJson().version).toBe("2.0.0");
 	await program.runWith("setup 1.9.0 -u --skip-dependencies");

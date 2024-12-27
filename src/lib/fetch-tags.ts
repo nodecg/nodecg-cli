@@ -1,11 +1,10 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 export function fetchTags(repoUrl: string) {
-	const rawTags = execSync(`git ls-remote --refs --tags ${repoUrl}`)
-		.toString()
+	return execFileSync("git", ["ls-remote", "--refs", "--tags", repoUrl])
+		.toString("utf-8")
 		.trim()
-		.split("\n");
-	return rawTags
-		.map((rawTag) => rawTag.split("refs/tags/").pop())
+		.split("\n")
+		.map((rawTag) => rawTag.split("refs/tags/").at(-1))
 		.filter((t) => typeof t === "string");
 }
