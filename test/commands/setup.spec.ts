@@ -38,61 +38,58 @@ test("should install the latest NodeCG when no version is specified", async () =
 
 test("should install v2 NodeCG when specified", async () => {
 	chdir();
-	await program.runWith("setup v2.0.0 --skip-dependencies");
+	await program.runWith("setup 2.0.0 --skip-dependencies");
 	expect(readPackageJson().name).toBe("nodecg");
+	expect(readPackageJson().version).toBe("2.0.0");
+
+	await program.runWith("setup 2.1.0 -u --skip-dependencies");
+	expect(readPackageJson().version).toBe("2.1.0");
+
+	await program.runWith("setup 2.0.0 -u --skip-dependencies");
 	expect(readPackageJson().version).toBe("2.0.0");
 });
 
-test("should install v1 NodeCG when specified", async () => {
+test("should throw when trying to install v1 NodeCG", async () => {
 	chdir();
+	const consoleError = vi.spyOn(console, "error");
 	await program.runWith("setup 1.9.0 -u --skip-dependencies");
-	expect(readPackageJson().name).toBe("nodecg");
-	expect(readPackageJson().version).toBe("1.9.0");
-});
-
-test("should ask the user for confirmation when downgrading versions", async () => {
-	await program.runWith("setup 0.8.1 -u --skip-dependencies");
-	expect(readPackageJson().version).toBe("0.8.1");
-});
-
-test("should let the user change upgrade versions", async () => {
-	await program.runWith("setup 0.8.2 -u --skip-dependencies");
-	expect(readPackageJson().version).toBe("0.8.2");
+	expect(consoleError.mock.calls[0]).toMatchInlineSnapshot(`
+		[
+		  "nodecg-cli does not support NodeCG versions older than v2.0.0.",
+		]
+	`);
 });
 
 test("should print an error when the target version is the same as current", async () => {
+	chdir();
 	const spy = vi.spyOn(console, "log");
-	await program.runWith("setup 0.8.2 -u --skip-dependencies");
-	expect(spy.mock.calls[0]).toMatchInlineSnapshot(`
+	await program.runWith("setup 2.1.0 --skip-dependencies");
+	await program.runWith("setup 2.1.0 -u --skip-dependencies");
+	expect(spy.mock.calls[1]).toMatchInlineSnapshot(`
 		[
-		  "The target version (v0.8.2) is equal to the current version (0.8.2). No action will be taken.",
+		  "The target version (v2.1.0) is equal to the current version (2.1.0). No action will be taken.",
 		]
 	`);
 	spy.mockRestore();
 });
 
-test("should correctly handle and refuse when you try to downgrade from v2 to v1", async () => {
-	chdir();
-	await program.runWith("setup 2.0.0 --skip-dependencies");
-	expect(readPackageJson().version).toBe("2.0.0");
-	await program.runWith("setup 1.9.0 -u --skip-dependencies");
-	expect(readPackageJson().version).toBe("2.0.0");
-});
-
 test("should print an error when the target version doesn't exist", async () => {
+	chdir();
 	const spy = vi.spyOn(console, "error");
-	await program.runWith("setup 0.0.99 -u --skip-dependencies");
+	await program.runWith("setup 999.999.999 --skip-dependencies");
 	expect(spy.mock.calls[0]).toMatchInlineSnapshot(`
 		[
-		  "No releases match the supplied semver range (0.0.99)",
+		  "No releases match the supplied semver range (999.999.999)",
 		]
 	`);
 	spy.mockRestore();
 });
 
 test("should print an error and exit, when nodecg is already installed in the current directory ", async () => {
+	chdir();
 	const spy = vi.spyOn(console, "error");
-	await program.runWith("setup 0.7.0 --skip-dependencies");
+	await program.runWith("setup 2.0.0 --skip-dependencies");
+	await program.runWith("setup 2.0.0 --skip-dependencies");
 	expect(spy).toBeCalledWith("NodeCG is already installed in this directory.");
 	spy.mockRestore();
 });

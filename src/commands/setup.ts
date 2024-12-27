@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import stream from "node:stream/promises";
@@ -10,11 +10,8 @@ import semver from "semver";
 import * as tar from "tar";
 
 import { fetchTags } from "../lib/fetch-tags.js";
-import {
-	getCurrentNodeCGVersion,
-	getNodeCGRelease,
-	pathContainsNodeCG,
-} from "../lib/util.js";
+import type { NpmRelease } from "../lib/sample/npm-release.js";
+import { getCurrentNodeCGVersion, pathContainsNodeCG } from "../lib/util.js";
 
 const NODECG_GIT_URL = "https://github.com/nodecg/nodecg.git";
 
@@ -124,23 +121,13 @@ async function decideActionVersion(
 	}
 
 	if (semver.lt(target, "v2.0.0")) {
-		if (current && semver.gte(current, "v2.0.0")) {
-			console.error(
-				`You are attempting to downgrade NodeCG from v2.x to v1.x, which is not supported.`,
-			);
-			return;
-		}
-
-		actionV1(current, target, isUpdate);
-	} else if (semver.lt(target, "v3.0.0")) {
-		await actionV2(current, target, isUpdate);
-	} else {
 		console.error(
-			`Unknown NodeCG verison ${chalk.magenta(
-				version,
-			)}, perhaps you need to update nodecg-cli? (${chalk.cyan.bold("npm i -g nodecg-cli@latest")})`,
+			"nodecg-cli does not support NodeCG versions older than v2.0.0.",
 		);
+		return;
 	}
+
+	await installNodecg(current, target, isUpdate);
 
 	// Install NodeCG's dependencies
 	// This operation takes a very long time, so we don't test it.
@@ -156,52 +143,7 @@ async function decideActionVersion(
 	}
 }
 
-function actionV1(
-	current: string | undefined,
-	target: string,
-	isUpdate: boolean,
-) {
-	const isGitRepo = fs.existsSync(".git");
-	if (isGitRepo && isUpdate) {
-		process.stdout.write("Downloading latest release...");
-		try {
-			execSync("git fetch", { stdio: ["pipe", "pipe", "pipe"] });
-			process.stdout.write(chalk.green("done!") + os.EOL);
-		} catch (e) {
-			process.stdout.write(chalk.red("failed!") + os.EOL);
-			throw e;
-		}
-
-		if (current) {
-			logDownOrUpgradeMessage(current, target, semver.lt(target, current));
-		}
-
-		gitCheckoutUpdate(target);
-	} else {
-		process.stdout.write("Cloning NodeCG... ");
-		try {
-			execSync(`git clone ${NODECG_GIT_URL} .`, {
-				stdio: ["pipe", "pipe", "pipe"],
-			});
-			process.stdout.write(chalk.green("done!") + os.EOL);
-		} catch (e) {
-			process.stdout.write(chalk.red("failed!") + os.EOL);
-			throw e;
-		}
-
-		// Check out the target version.
-		process.stdout.write(`Checking out version ${target}... `);
-		try {
-			execSync(`git checkout ${target}`, { stdio: ["pipe", "pipe", "pipe"] });
-			process.stdout.write(chalk.green("done!") + os.EOL);
-		} catch (e) {
-			process.stdout.write(chalk.red("failed!") + os.EOL);
-			throw e;
-		}
-	}
-}
-
-async function actionV2(
+async function installNodecg(
 	current: string | undefined,
 	target: string,
 	isUpdate: boolean,
@@ -216,22 +158,43 @@ async function actionV2(
 	}
 
 	process.stdout.write(`Downloading ${target} from npm... `);
-	const release = await getNodeCGRelease(target);
+
+	const targetVersion = semver.coerce(target)?.version;
+	if (!targetVersion) {
+		throw new Error(`Failed to determine target NodeCG version`);
+	}
+	const releaseResponse = await fetch(
+		`http://registry.npmjs.org/nodecg/${targetVersion}`,
+	);
+	if (!releaseResponse.ok) {
+		throw new Error(
+			`Failed to fetch NodeCG release information from npm, status code ${releaseResponse.status}`,
+		);
+	}
+	const release = (await releaseResponse.json()) as NpmRelease;
 
 	process.stdout.write(chalk.green("done!") + os.EOL);
 
 	if (current) {
-		logDownOrUpgradeMessage(current, target, semver.lt(target, current));
+		const verb = semver.lt(target, current) ? "Downgrading" : "Upgrading";
+		process.stdout.write(
+			`${verb} from ${chalk.magenta(current)} to ${chalk.magenta(target)}... `,
+		);
 	}
 
-	await downloadAndExtractReleaseTarball(release.dist.tarball);
+	const tarballResponse = await fetch(release.dist.tarball);
+	if (!tarballResponse.ok || !tarballResponse.body) {
+		throw new Error(
+			`Failed to fetch release tarball from ${release.dist.tarball}, status code ${tarballResponse.status}`,
+		);
+	}
+	await stream.pipeline(tarballResponse.body, tar.x({ strip: 1 }));
 }
 
-/* istanbul ignore next: takes forever, not worth testing */
 function installDependencies() {
 	try {
 		process.stdout.write("Installing production npm dependencies... ");
-		execSync("npm i --production", { stdio: ["pipe", "pipe", "pipe"] });
+		execFileSync("npm", ["install", "--production"]);
 
 		process.stdout.write(chalk.green("done!") + os.EOL);
 	} catch (e: any) {
@@ -252,38 +215,4 @@ function installDependencies() {
 			console.error(e.stack);
 		}
 	}
-}
-
-function gitCheckoutUpdate(target: string) {
-	try {
-		execSync(`git checkout ${target}`, { stdio: ["pipe", "pipe", "pipe"] });
-		process.stdout.write(chalk.green("done!") + os.EOL);
-	} catch (e: any) {
-		/* istanbul ignore next */
-		process.stdout.write(chalk.red("failed!") + os.EOL);
-		/* istanbul ignore next */
-		console.error(e.stack);
-	}
-}
-
-async function downloadAndExtractReleaseTarball(tarballUrl: string) {
-	const res = await fetch(tarballUrl);
-	if (!res.body) {
-		throw new Error(
-			`Failed to fetch release tarball from ${tarballUrl}, status code ${res.status}`,
-		);
-	}
-
-	await stream.pipeline(res.body, tar.x({ strip: 1 }));
-}
-
-function logDownOrUpgradeMessage(
-	current: string,
-	target: string,
-	downgrade: boolean,
-): void {
-	const verb = downgrade ? "Downgrading" : "Upgrading";
-	process.stdout.write(
-		`${verb} from ${chalk.magenta(current)} to ${chalk.magenta(target)}... `,
-	);
 }
