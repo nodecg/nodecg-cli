@@ -5,7 +5,7 @@ import { Ajv, type JSONSchemaType } from "ajv";
 import chalk from "chalk";
 import { Command } from "commander";
 
-import util from "../lib/util.js";
+import { getNodeCGPath, isBundleFolder } from "../lib/util.js";
 
 const ajv = new Ajv({ useDefaults: true, strict: true });
 
@@ -18,10 +18,10 @@ export function defaultconfigCommand(program: Command) {
 
 function action(bundleName?: string) {
 	const cwd = process.cwd();
-	const nodecgPath = util.getNodeCGPath();
+	const nodecgPath = getNodeCGPath();
 
 	if (!bundleName) {
-		if (util.isBundleFolder(cwd)) {
+		if (isBundleFolder(cwd)) {
 			bundleName = bundleName ?? path.basename(cwd);
 		} else {
 			console.error(

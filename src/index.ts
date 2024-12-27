@@ -8,7 +8,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import semver from "semver";
 
-import util from "./lib/util.js";
+import { getLatestCLIRelease } from "./lib/util.js";
 
 const program = new Command("nodecg");
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,8 +17,7 @@ const packageVersion: string = JSON.parse(
 );
 
 // Check for updates, asynchronously, so as to not make the CLI startup time excessively slow
-util
-	.getLatestCLIRelease()
+getLatestCLIRelease()
 	.then((release) => {
 		if (semver.gt(release.version, packageVersion)) {
 			console.log(

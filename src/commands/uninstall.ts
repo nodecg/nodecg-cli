@@ -6,7 +6,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import inquirer from "inquirer";
 
-import util from "../lib/util.js";
+import { getNodeCGPath } from "../lib/util.js";
 
 export function uninstallCommand(program: Command) {
 	program
@@ -17,7 +17,7 @@ export function uninstallCommand(program: Command) {
 }
 
 function action(bundleName: string, options: { force: boolean }) {
-	const nodecgPath = util.getNodeCGPath();
+	const nodecgPath = getNodeCGPath();
 	const bundlePath = path.join(nodecgPath, "bundles/", bundleName);
 
 	if (!fs.existsSync(bundlePath)) {
