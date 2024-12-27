@@ -3,6 +3,11 @@
 import { execFileSync } from "node:child_process";
 
 import chalk from "chalk";
+import updateNotifier from "update-notifier";
+
+import packageJson from "../../package.json" with { type: "json" };
+
+updateNotifier({ pkg: packageJson }).notify();
 
 try {
 	execFileSync("git", ["--version"]);

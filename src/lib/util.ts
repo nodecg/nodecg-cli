@@ -1,8 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import type { NpmRelease } from "./sample/npm-release.js";
-
 /**
  * Checks if the given directory contains a NodeCG installation.
  * @param pathToCheck
@@ -64,15 +62,4 @@ export function getCurrentNodeCGVersion(): string {
 	const nodecgPath = getNodeCGPath();
 	return JSON.parse(fs.readFileSync(`${nodecgPath}/package.json`, "utf8"))
 		.version;
-}
-
-export async function getLatestCLIRelease(): Promise<NpmRelease> {
-	const res = await fetch("http://registry.npmjs.org/nodecg-cli/latest");
-	if (res.status !== 200) {
-		throw new Error(
-			`Failed to fetch NodeCG release information from npm, status code ${res.status}`,
-		);
-	}
-
-	return res.json() as Promise<NpmRelease>;
 }
