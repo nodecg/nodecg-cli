@@ -1,28 +1,17 @@
 process.title = "nodecg";
 
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { Command } from "commander";
-import updateNotifier from "update-notifier";
 
 import packageJson from "../package.json" with { type: "json" };
-
-updateNotifier({ pkg: packageJson }).notify();
+import { setupCommands } from "./commands/index.js";
 
 const program = new Command("nodecg");
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageVersion: string = JSON.parse(
-	fs.readFileSync(path.join(dirname, "../package.json"), "utf8"),
-);
 
 // Initialise CLI
-program.version(packageVersion).usage("<command> [options]");
+program.version(packageJson.version).usage("<command> [options]");
 
 // Initialise commands
-const { setupCommands } = await import("./commands/index.js");
-setupCommands(program as any);
+setupCommands(program);
 
 // Handle unknown commands
 program.on("*", () => {
