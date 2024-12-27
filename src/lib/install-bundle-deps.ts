@@ -2,7 +2,6 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { format } from "node:util";
 
 import chalk from "chalk";
 
@@ -16,10 +15,7 @@ import { isBundleFolder } from "./util.js";
 export function installBundleDeps(bundlePath: string, installDev = false) {
 	if (!isBundleFolder(bundlePath)) {
 		console.error(
-			chalk.red("Error:") +
-				" There doesn't seem to be a valid NodeCG bundle in this folder:" +
-				"\n\t" +
-				chalk.magenta(bundlePath),
+			`${chalk.red("Error:")} There doesn't seem to be a valid NodeCG bundle in this folder:\n\t${chalk.magenta(bundlePath)}`,
 		);
 		process.exit(1);
 	}
@@ -33,15 +29,12 @@ export function installBundleDeps(bundlePath: string, installDev = false) {
 		if (fs.existsSync(path.join(bundlePath, "yarn.lock"))) {
 			cmdline = installDev ? "yarn" : "yarn --production";
 			process.stdout.write(
-				format(
-					"Installing npm dependencies with yarn (dev: %s)... ",
-					installDev,
-				),
+				`Installling npm dependencies with yarn (dev: ${installDev})... `,
 			);
 		} else {
 			cmdline = installDev ? "npm install" : "npm install --production";
 			process.stdout.write(
-				format("Installing npm dependencies (dev: %s)... ", installDev),
+				`Installing npm dependencies (dev: ${installDev})... `,
 			);
 		}
 
@@ -64,9 +57,9 @@ export function installBundleDeps(bundlePath: string, installDev = false) {
 	}
 
 	if (fs.existsSync(path.join(bundlePath, "bower.json"))) {
-		cmdline = format("bower install %s", installDev ? "" : "--production");
+		cmdline = installDev ? "bower install" : "bower install --production";
 		process.stdout.write(
-			format("Installing bower dependencies (dev: %s)... ", installDev),
+			`Installing bower dependencies (dev: ${installDev})... `,
 		);
 		try {
 			execSync(cmdline, {

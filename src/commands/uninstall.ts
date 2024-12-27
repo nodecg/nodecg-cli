@@ -22,8 +22,7 @@ function action(bundleName: string, options: { force: boolean }) {
 
 	if (!fs.existsSync(bundlePath)) {
 		console.error(
-			"Cannot uninstall %s: bundle is not installed.",
-			chalk.magenta(bundleName),
+			`Cannot uninstall ${chalk.magenta(bundleName)}: bundle is not installed.`,
 		);
 		return;
 	}

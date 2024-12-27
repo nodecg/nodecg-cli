@@ -7,7 +7,7 @@ export class MockCommand extends Command {
 	}
 
 	request(opts: any) {
-		throw new Error("Unexpected request: " + JSON.stringify(opts, null, 2));
+		throw new Error(`Unexpected request: ${JSON.stringify(opts, null, 2)}`);
 	}
 
 	runWith(argString: string) {

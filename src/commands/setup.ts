@@ -150,7 +150,7 @@ async function decideActionVersion(
 
 	if (isUpdate) {
 		const verb = downgrade ? "downgraded" : "upgraded";
-		console.log("NodeCG %s to", verb, chalk.magenta(target));
+		console.log(`NodeCG ${verb} to ${chalk.magenta(target)}`);
 	} else {
 		console.log(`NodeCG (${target}) installed to ${process.cwd()}`);
 	}
@@ -282,13 +282,8 @@ function logDownOrUpgradeMessage(
 	target: string,
 	downgrade: boolean,
 ): void {
-	const Verb = downgrade ? "Downgrading" : "Upgrading";
+	const verb = downgrade ? "Downgrading" : "Upgrading";
 	process.stdout.write(
-		Verb +
-			" from " +
-			chalk.magenta(current) +
-			" to " +
-			chalk.magenta(target) +
-			"... ",
+		`${verb} from ${chalk.magenta(current)} to ${chalk.magenta(target)}... `,
 	);
 }
