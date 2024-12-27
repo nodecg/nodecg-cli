@@ -11,12 +11,12 @@ import type { NpmRelease } from "./sample/npm-release.js";
  */
 export function pathContainsNodeCG(pathToCheck: string): boolean {
 	const pjsonPath = path.join(pathToCheck, "package.json");
-	if (fs.existsSync(pjsonPath)) {
-		const pjson = JSON.parse(fs.readFileSync(pjsonPath, "utf8"));
+	try {
+		const pjson = JSON.parse(fs.readFileSync(pjsonPath, "utf-8"));
 		return pjson.name.toLowerCase() === "nodecg";
+	} catch {
+		return false;
 	}
-
-	return false;
 }
 
 /**
