@@ -28,8 +28,7 @@ function action(inDir: string, cmd: { outDir: string; configSchema: boolean }) {
 	const schemasDir = path.resolve(processCwd, inDir || "schemas");
 	if (!fs.existsSync(schemasDir)) {
 		console.error(
-			chalk.red("Error:") + ' Input directory ("%s") does not exist',
-			inDir,
+			`${chalk.red("Error:")} Input directory "${inDir}" does not exist`,
 		);
 		return;
 	}

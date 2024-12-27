@@ -1,6 +1,5 @@
-import { mock } from "node:test";
-
 import { Command } from "commander";
+import { vi } from "vitest";
 
 export class MockCommand extends Command {
 	log() {
@@ -19,7 +18,7 @@ export class MockCommand extends Command {
 export const createMockProgram = () => {
 	const program = new MockCommand();
 
-	mock.method(program, "log").mock.mockImplementation(() => void 0);
+	vi.spyOn(program, "log").mockImplementation(() => void 0);
 
 	return program;
 };

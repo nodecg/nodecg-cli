@@ -25,7 +25,7 @@ function action(bundleName?: string) {
 			bundleName = bundleName ?? path.basename(cwd);
 		} else {
 			console.error(
-				chalk.red("Error:") + " No bundle found in the current directory!",
+				`${chalk.red("Error:")} No bundle found in the current directory!`,
 			);
 			return;
 		}
@@ -41,17 +41,13 @@ function action(bundleName?: string) {
 	const cfgPath = path.join(nodecgPath, "cfg/");
 
 	if (!fs.existsSync(bundlePath)) {
-		console.error(
-			chalk.red("Error:") + " Bundle %s does not exist",
-			bundleName,
-		);
+		console.error(`${chalk.red("Error:")} Bundle ${bundleName} does not exist`);
 		return;
 	}
 
 	if (!fs.existsSync(schemaPath)) {
 		console.error(
-			chalk.red("Error:") + " Bundle %s does not have a configschema.json",
-			bundleName,
+			`${chalk.red("Error:")} Bundle ${bundleName} does not have a configschema.json`,
 		);
 		return;
 	}
@@ -63,11 +59,10 @@ function action(bundleName?: string) {
 	const schema: JSONSchemaType<unknown> = JSON.parse(
 		fs.readFileSync(schemaPath, "utf8"),
 	);
-	const configPath = path.join(nodecgPath, "cfg/", bundleName + ".json");
+	const configPath = path.join(nodecgPath, "cfg/", `${bundleName}.json`);
 	if (fs.existsSync(configPath)) {
 		console.error(
-			chalk.red("Error:") + " Bundle %s already has a config file",
-			bundleName,
+			`${chalk.red("Error:")} Bundle ${bundleName} already has a config file`,
 		);
 	} else {
 		try {
@@ -79,8 +74,8 @@ function action(bundleName?: string) {
 			console.log(
 				`${chalk.green("Success:")} Created ${chalk.bold(bundleName)}'s default config from schema\n`,
 			);
-		} catch (e) {
-			console.error(chalk.red("Error: ") + String(e));
+		} catch (error) {
+			console.error(chalk.red("Error:"), error);
 		}
 	}
 }

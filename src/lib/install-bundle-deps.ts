@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
+import path from "node:path";
 import { format } from "node:util";
 
 import chalk from "chalk";
@@ -26,10 +27,10 @@ export function installBundleDeps(bundlePath: string, installDev = false) {
 	let cmdline;
 
 	const cachedCwd = process.cwd();
-	if (fs.existsSync(bundlePath + "/package.json")) {
+	if (fs.existsSync(path.join(bundlePath, "package.json"))) {
 		process.chdir(bundlePath);
 		let cmdline: string;
-		if (fs.existsSync(bundlePath + "/yarn.lock")) {
+		if (fs.existsSync(path.join(bundlePath, "yarn.lock"))) {
 			cmdline = installDev ? "yarn" : "yarn --production";
 			process.stdout.write(
 				format(
@@ -62,7 +63,7 @@ export function installBundleDeps(bundlePath: string, installDev = false) {
 		process.chdir(cachedCwd);
 	}
 
-	if (fs.existsSync(bundlePath + "/bower.json")) {
+	if (fs.existsSync(path.join(bundlePath, "bower.json"))) {
 		cmdline = format("bower install %s", installDev ? "" : "--production");
 		process.stdout.write(
 			format("Installing bower dependencies (dev: %s)... ", installDev),

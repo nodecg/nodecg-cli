@@ -48,7 +48,7 @@ function deleteBundle(name: string, path: string) {
 		return;
 	}
 
-	process.stdout.write("Uninstalling " + chalk.magenta(name) + "... ");
+	process.stdout.write(`Uninstalling ${chalk.magenta(name)}... `);
 	try {
 		fs.rmSync(path, { recursive: true, force: true });
 	} catch (e: any) {

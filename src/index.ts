@@ -21,15 +21,10 @@ getLatestCLIRelease()
 	.then((release) => {
 		if (semver.gt(release.version, packageVersion)) {
 			console.log(
-				chalk.yellow("?") +
-					" A new update is available for nodecg-cli: " +
-					chalk.green.bold(release.version) +
-					chalk.dim(" (current: " + packageVersion + ")"),
+				`${chalk.yellow("?")} A new update is available for nodecg-cli: ${chalk.green.bold(release.version)} ${chalk.dim(`(current: ${packageVersion})`)}`,
 			);
 			console.log(
-				"  Run " +
-					chalk.cyan.bold("npm install -g nodecg-cli") +
-					" to install the latest version",
+				` Run ${chalk.cyan.bold("npm install -g nodecg-cli")} to install the latest version`,
 			);
 		}
 	})
