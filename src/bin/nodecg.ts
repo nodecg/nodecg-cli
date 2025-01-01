@@ -7,7 +7,9 @@ import updateNotifier from "update-notifier";
 
 import packageJson from "../../package.json" with { type: "json" };
 
-console.warn('`nodecg-cli` package is deprecated. Please uninstall `nodecg-cli` and install `nodecg` instead.');
+console.warn(
+	"`nodecg-cli` package is deprecated. Please uninstall `nodecg-cli` and install `nodecg` instead.",
+);
 
 updateNotifier({ pkg: packageJson }).notify();
 
