@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.0](https://github.com/nodecg/nodecg-cli/compare/v8.7.0...v9.0.0) (2025-01-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **setup:** Drop support for nodecg 0.x.x and 1.x.x.
+* **schema-types:** schema-types command no longer outputs index file
+* `defaultconfig` command now uses ajv to generate default value. A config schema that are not object will throw an error. A config schema with top level default will now throw an error.
+
+### Features
+
+* deprecated package ([#128](https://github.com/nodecg/nodecg-cli/issues/128)) ([1726529](https://github.com/nodecg/nodecg-cli/commit/17265294e94cb93a0b88d19e31135cba6441ca12))
+* use ajv for defaultconfig command ([#117](https://github.com/nodecg/nodecg-cli/issues/117)) ([6f2c19d](https://github.com/nodecg/nodecg-cli/commit/6f2c19d8a7a99f9ca90c5cfff5cd636f5804333b))
+
+
+### Bug Fixes
+
+* **defaultconfig:** correct styling of log output ([#120](https://github.com/nodecg/nodecg-cli/issues/120)) ([7cf54f3](https://github.com/nodecg/nodecg-cli/commit/7cf54f3efeae36ad8008777e321128f5970ab939))
+* **schema-types:** don't output index file ([#119](https://github.com/nodecg/nodecg-cli/issues/119)) ([4ca2931](https://github.com/nodecg/nodecg-cli/commit/4ca29311b5220fdc53357c54dff41a3f1dc20686))
+
+
+### Code Refactoring
+
+* **setup:** remove support for nodecg less than 2.0.0 ([#124](https://github.com/nodecg/nodecg-cli/issues/124)) ([4536527](https://github.com/nodecg/nodecg-cli/commit/4536527088ccfb320cb6989a00bc9bf04b3a0266))
+
 ## [8.7.0](https://github.com/nodecg/nodecg-cli/compare/v8.6.8...v8.7.0) (2024-12-26)
 
 
