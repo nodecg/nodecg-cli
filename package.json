@@ -1,6 +1,6 @@
 {
   "name": "nodecg-cli",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "The NodeCG command line interface.",
   "bugs": {
     "url": "http://github.com/nodecg/nodecg-cli/issues"
