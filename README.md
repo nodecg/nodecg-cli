@@ -1,8 +1,17 @@
-# nodecg-cli
+# nodecg-cli [![CI](https://github.com/nodecg/nodecg-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/nodecg/nodecg-cli/actions/workflows/ci.yml)
 
 [NodeCG](https://github.com/nodecg/nodecg)'s command line interface.
 
-[![CI](https://github.com/nodecg/nodecg-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/nodecg/nodecg-cli/actions/workflows/ci.yml)
+## Deprecation Notice
+
+`nodecg-cli` has been migrated to [`nodecg`](github.com/nodecg/nodecg). This repository is now deprecated and will no longer be maintained. Please uninstall `nodecg-cli` and install `nodecg` instead.
+
+```sh
+npm un -g nodecg-cli
+npm i -g nodecg
+```
+
+The `nodecg` includes the CLI from v2.4.0, which is equivalent to `nodecg-cli@9.0.1`.
 
 ## Compatibility
 
