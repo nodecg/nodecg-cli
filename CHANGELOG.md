@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.1](https://github.com/nodecg/nodecg-cli/compare/v9.0.0...v9.0.1) (2025-01-03)
+
+
+### Bug Fixes
+
+* release CI bug ([4bb377a](https://github.com/nodecg/nodecg-cli/commit/4bb377a7540f4774edb75643d9694c21338de3a2))
+
 ## [9.0.0](https://github.com/nodecg/nodecg-cli/compare/v8.7.0...v9.0.0) (2025-01-01)
 
 
